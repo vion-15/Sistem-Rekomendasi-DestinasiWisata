@@ -1,0 +1,84 @@
+# ==================================================
+# Frontend (Next.js)
+# ==================================================
+
+# dependencies
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.*
+frontend/.yarn/*
+!frontend/.yarn/patches
+!frontend/.yarn/plugins
+!frontend/.yarn/releases
+!frontend/.yarn/versions
+
+# testing
+frontend/coverage/
+
+# next.js
+frontend/.next/
+frontend/out/
+
+# production
+frontend/build/
+
+# typescript
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+# debug
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+
+# vercel
+frontend/.vercel/
+
+# ==================================================
+# Backend (Go)
+# ==================================================
+
+backend/bin/
+backend/tmp/
+backend/vendor/
+
+# ==================================================
+# Recommendation Service (Python)
+# ==================================================
+
+recomendation-service/venv/
+recomendation-service/__pycache__/
+recomendation-service/**/*.pyc
+recomendation-service/**/*.pyo
+recomendation-service/**/*.pyd
+
+# ==================================================
+# Environment Files
+# ==================================================
+
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+
+# ==================================================
+# IDE
+# ==================================================
+
+.vscode/
+.idea/
+
+# ==================================================
+# OS Files
+# ==================================================
+
+.DS_Store
+Thumbs.db
+
+# ==================================================
+# Certificates
+# ==================================================
+
+*.pem
