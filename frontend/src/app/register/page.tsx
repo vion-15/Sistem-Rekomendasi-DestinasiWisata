@@ -3,19 +3,17 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { AlertCircle, CheckCircle, Eye, EyeOff } from "lucide-react";
 
 export default function RegisterWisatawanPage() {
     const router = useRouter();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [alamat, setAlamat] = useState("");
-    
+    const [alamat, setAlamat] = useState(""); 
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [successMsg, setSuccessMsg] = useState("");
-
     const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e: FormEvent) => {
@@ -31,7 +29,7 @@ export default function RegisterWisatawanPage() {
         formData.append("alamat", alamat);
 
         try {
-            const res = await fetch("http://localhost:8080/api/wisatawan/register", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
                 method: "POST",
                 body: formData,
             });
@@ -44,9 +42,8 @@ export default function RegisterWisatawanPage() {
 
             setSuccessMsg(data.message || "Registrasi berhasil!");
             
-            // Redirect ke halaman login setelah 2 detik sukses
             setTimeout(() => {
-                router.push("/wisatawan/login");
+                router.push("/login");
             }, 2000);
 
         } catch (err: unknown) {
@@ -61,68 +58,89 @@ export default function RegisterWisatawanPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-            <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-                <h1 className="text-2xl font-bold text-gray-800 text-center mb-2">Daftar Akun</h1>
-                <p className="text-gray-500 text-sm text-center mb-6">Mulai jelajahi destinasi terbaik pilihan Anda</p>
+        <div 
+            className="min-h-screen bg-gray-100 flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
+            style={{ backgroundImage: "url('/image/foto-bg-login-register.jpg')" }}
+            >
+            <div className="bg-white p-8 border border-slate-200 rounded-xl shadow-xl shadow-slate-900/5 w-full max-w-md">
+                <h1 className="text-2xl font-bold text-slate-800 text-center mb-2">Daftar Akun</h1>
+                <p className="text-slate-500 text-sm text-center mb-8">Mulai jelajahi destinasi terbaik pilihan Anda</p>
 
                 {errorMsg && (
-                    <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm border border-red-200">
-                        {errorMsg}
+                    <div className="mb-4 px-4 py-3 border border-red-200 bg-red-50 text-red-700 rounded-xl text-sm">
+                        <AlertCircle size={18} />
+                        <span>{errorMsg}</span>
                     </div>
                 )}
 
                 {successMsg && (
-                    <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg text-sm border border-green-200">
-                        {successMsg}
+                    <div className="mb-4 px-4 py-3 border border-green-200 bg-green-50 text-green-700 rounded-xl text-sm">
+                        <CheckCircle size={18} />
+                        <span>{successMsg}</span>
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                        <label 
+                            htmlFor="username"
+                            className="block text-sm font-medium text-slate-700 mb-2">Username</label>
                         <input
+                            id="username"
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg 
-                            text-slate-900 placeholder:text-slate-400 focus:ring-2 
-                            focus:ring-blue-500 outline-none transition-all"
-                            placeholder="Masukkan nama lengkap"
+                            placeholder="Masukkan username"
                             required
+                            className="w-full px-4 py-3 border border-slate-300 rounded-xl 
+                            text-slate-900 placeholder:text-slate-400 focus:ring-2 
+                            focus:ring-blue-500 outline-none transition-all duration-200 focus:border-blue-500"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <label
+                            htmlFor="email"
+                            className="block text-sm font-medium text-slate-700 mb-2">Email</label>
                         <input
+                            id="email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg 
-                            text-slate-900 placeholder:text-slate-400 focus:ring-2 
-                            focus:ring-blue-500 outline-none transition-all"
-                            placeholder="nama@email.com"
                             required
+                            placeholder="nama@email.com"
+                            className="
+                                w-full px-4 py-3 border border-slate-300 rounded-xl 
+                                text-slate-900 placeholder:text-slate-400 focus:ring-2 
+                                focus:ring-blue-500 outline-none transition-all duration-200 focus:border-blue-500
+                            "
                         />
                     </div>
 
                     <div className="relative">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <label 
+                            htmlFor="password"
+                            className="mb-2 block text-sm font-medium text-slate-700">Password</label>
                         <input
+                            id="password"
                             type={showPassword ? "text" : "password"}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg 
-                            text-slate-900 placeholder:text-slate-400 focus:ring-2 
-                            focus:ring-blue-500 outline-none transition-all"
-                            placeholder="Minimal 8 karakter"
                             required
+                            placeholder="Minimal 8 karakter"
+                            className="
+                                w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 
+                                text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 
+                                focus:border-blue-500 focus:ring-2 focus:ring-blue-500
+                            "
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-11 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                            className="
+                                absolute right-3 top-[70%] -translate-y-1/2 text-slate-500 transition-colors duration-200
+                                hover:text-slate-700
+                            "
                         >
                             {showPassword ? (
                                 <EyeOff size={20} />
@@ -133,33 +151,43 @@ export default function RegisterWisatawanPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Sekarang</label>
+                        <label 
+                            htmlFor="alamat"
+                            className="mb-2 block text-sm font-medium text-slate-700">Alamat Sekarang</label>
                         <textarea
+                            id="alamat"
                             value={alamat}
                             onChange={(e) => setAlamat(e.target.value)}
                             rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg 
-                            text-slate-900 placeholder:text-slate-400 focus:ring-2 
-                            focus:ring-blue-500 outline-none transition-all resize-none"
-                            placeholder="Masukkan alamat lengkap"
                             required
+                            placeholder="Masukkan alamat lengkap"
+                            className="
+                                w-full rounded-xl border border-slate-300 px-4 py-3
+                                text-slate-900 placeholder:text-slate-400 outline-none resize-none  
+                                focus:border-blue-500 transition-all duration-200 focus:ring-2 focus:ring-blue-500
+                            "
                         ></textarea>
                     </div>
 
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className={`w-full py-2.5 text-white rounded-lg font-medium transition-colors ${
-                            isLoading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                        className={`
+                            w-full rounded-xl px-4 py-3 font-semibold text-white transition-all duration-300 ${
+                            isLoading 
+                                ? "cursor-not-allowed bg-blue-400" 
+                                : "cursor-pointer bg-blue-600 shadow-lg shadow-blue-600/20 hover:bg-blue-700"
                         }`}
                     >
                         {isLoading ? "Memproses..." : "Daftar Sekarang"}
                     </button>
                 </form>
 
-                <div className="mt-6 text-center text-sm text-gray-600">
+                <div className="mt-6 text-center text-slate-600">
                     Sudah punya akun?{" "}
-                    <Link href="/login" className="text-blue-600 hover:underline font-medium">
+                    <Link 
+                        href="/login" 
+                        className="font-semibold text-blue-600 transition-colors duration-200 hover:text-blue-700">
                         Login di sini
                     </Link>
                 </div>

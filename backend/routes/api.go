@@ -23,6 +23,7 @@ func SetupRouter() *gin.Engine {
 		auth := api.Group("/auth")
 		{
 			auth.POST("/login", controllers.LoginUniversal)
+			auth.POST("/register", controllers.RegisterWisatawan)
 		}
 
 		admin := api.Group("/admin")
@@ -90,7 +91,6 @@ func SetupRouter() *gin.Engine {
 
 		wisatawan := api.Group("/wisatawan")
 		{
-			wisatawan.POST("/register", controllers.RegisterWisatawan)
 			wisatawan.GET("/", controllers.GetWisatawan)
 			wisatawan.DELETE("/:id", controllers.DeleteWisatawan)
 		}
