@@ -16,6 +16,8 @@ func SetupRouter() *gin.Engine {
 	// Pasang middleware CORS yang sudah dipisah
 	r.Use(middlewares.CORSMiddleware())
 
+	r.Static("/images", "./assets/images")
+
 	// Group routing untuk API
 	api := r.Group("/api")
 	{

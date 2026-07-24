@@ -9,10 +9,8 @@ export default function UniversalLoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
-
     const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async (e: FormEvent) => {
@@ -60,15 +58,12 @@ export default function UniversalLoginPage() {
     };
 
     return (
-        // UBAH DISINI: Menambahkan background alam dan properti cover/center
         <div 
             className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?q=80&w=1920&auto=format&fit=crop')" }}
+            style={{ backgroundImage: "url('/image/foto-bg-login-register.jpg')" }}
         >
-            {/* UBAH DISINI: Overlay gelap agar modal form tetap menonjol dan tidak tabrakan dengan warna background */}
             <div className="absolute inset-0 bg-slate-900/40 z-0"></div>
 
-            {/* Tambahan 'relative z-10' agar modal berada di atas overlay */}
             <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100 relative z-10">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Login</h1>
@@ -124,19 +119,23 @@ export default function UniversalLoginPage() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className={`w-full py-3 text-white rounded-xl font-bold tracking-wide transition-all shadow-md ${isLoading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5"
-                            }`}
+                        className={`w-full py-3 text-white rounded-xl font-bold tracking-wide transition-all 
+                                    shadow-md ${isLoading ? "bg-blue-400 cursor-not-allowed" 
+                                        : "bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5"
+                                }`}
                     >
                         {isLoading ? "Mengautentikasi..." : "Masuk ke Sistem"}
                     </button>
                 </form>
 
-                {/* Tombol ke halaman registrasi khusus wisatawan */}
-                <div className="mt-8 pt-6 border-t border-slate-100 text-center text-sm text-slate-600">
-                    Wisatawan baru?{" "}
-                    <Link href="/register" className="text-blue-600 hover:text-blue-700 hover:underline font-bold transition-colors">
-                        Buat Akun Mandiri
-                    </Link>
+                <div 
+                    className="mt-8 pt-6 border-t border-slate-100 text-center text-sm text-slate-600">
+                        Wisatawan baru?{" "}
+                        <Link 
+                            href="/register" 
+                            className="text-blue-600 hover:text-blue-700 hover:underline font-bold transition-colors">
+                            Buat Akun Mandiri
+                        </Link>
                 </div>
             </div>
         </div>

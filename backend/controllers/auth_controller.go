@@ -2,10 +2,8 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"net/mail"
-	"net/url"
 	"strings"
 
 	"backend-wisata/config"
@@ -17,7 +15,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// Struct untuk menampung request body dari frontend
 type LoginInput struct {
 	Email    string `json:"email" form:"email" binding:"required,email"`
 	Password string `json:"password" form:"password" binding:"required"`
@@ -26,7 +23,6 @@ type LoginInput struct {
 func LoginUniversal(c *gin.Context) {
 	var input LoginInput
 
-	// Bind dan validasi request
 	if err := c.ShouldBind(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "email atau password tidak valid",
@@ -37,7 +33,6 @@ func LoginUniversal(c *gin.Context) {
 	email := strings.ToLower(strings.TrimSpace(input.Email))
 	password := input.Password
 
-	// CEK ADMIN
 	var admin models.Admin
 
 	err := config.DB.
@@ -84,7 +79,6 @@ func LoginUniversal(c *gin.Context) {
 		return
 	}
 
-	// CEK PETUGAS
 	var petugas models.Petugas
 
 	err = config.DB.
@@ -131,7 +125,6 @@ func LoginUniversal(c *gin.Context) {
 		return
 	}
 
-	// CEK WISATAWAN
 	var wisatawan models.Wisatawan
 
 	err = config.DB.
@@ -178,20 +171,17 @@ func LoginUniversal(c *gin.Context) {
 		return
 	}
 
-	// LOGIN GAGAL
 	c.JSON(http.StatusUnauthorized, gin.H{
 		"error": "email atau password salah",
 	})
 }
 
 func RegisterWisatawan(c *gin.Context) {
-	// Ambil dan bersihkan input
 	username := strings.TrimSpace(c.PostForm("username"))
 	email := strings.ToLower(strings.TrimSpace(c.PostForm("email")))
 	password := c.PostForm("password")
 	alamat := strings.TrimSpace(c.PostForm("alamat"))
 
-	// Validasi field wajib
 	if username == "" || email == "" || password == "" || alamat == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "semua field wajib diisi",
@@ -199,7 +189,6 @@ func RegisterWisatawan(c *gin.Context) {
 		return
 	}
 
-	// Validasi username
 	if len(username) < 3 || len(username) > 50 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "username harus 3-50 karakter",
@@ -207,7 +196,6 @@ func RegisterWisatawan(c *gin.Context) {
 		return
 	}
 
-	// Validasi email
 	if _, err := mail.ParseAddress(email); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "format email tidak valid",
@@ -215,7 +203,6 @@ func RegisterWisatawan(c *gin.Context) {
 		return
 	}
 
-	// Validasi password
 	if len(password) < 8 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "password minimal 8 karakter",
@@ -223,7 +210,6 @@ func RegisterWisatawan(c *gin.Context) {
 		return
 	}
 
-	// Batas bcrypt
 	if len(password) > 72 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "password maksimal 72 karakter",
@@ -231,7 +217,6 @@ func RegisterWisatawan(c *gin.Context) {
 		return
 	}
 
-	// Validasi alamat
 	if len(alamat) < 5 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "alamat terlalu pendek",
@@ -239,7 +224,6 @@ func RegisterWisatawan(c *gin.Context) {
 		return
 	}
 
-	// Cek email duplikat
 	var existing models.Wisatawan
 
 	err := config.DB.
@@ -260,7 +244,6 @@ func RegisterWisatawan(c *gin.Context) {
 		return
 	}
 
-	// Hash password
 	hashedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte(password),
 		bcrypt.DefaultCost,
@@ -272,13 +255,8 @@ func RegisterWisatawan(c *gin.Context) {
 		return
 	}
 
-	// Avatar default
-	fotoDefault := fmt.Sprintf(
-		"https://ui-avatars.com/api/?name=%s&background=random",
-		url.QueryEscape(username),
-	)
+	fotoDefault := "http://localhost:8080/images/default-avatar.png"
 
-	// Simpan data
 	wisatawan := models.Wisatawan{
 		Username: username,
 		Email:    email,
