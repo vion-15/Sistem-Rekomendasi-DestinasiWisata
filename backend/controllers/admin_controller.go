@@ -17,7 +17,8 @@ import (
 func GetAdmin(c *gin.Context) {
 	var adminList []models.Admin
 
-	if err := config.DB.Select("id, username, email, foto, created_at").Find(&adminList).Error; err != nil {
+	if err := config.DB.Select("id, username, email, foto, created_at").
+		Find(&adminList).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "gagal mengambil data admin",
 		})
