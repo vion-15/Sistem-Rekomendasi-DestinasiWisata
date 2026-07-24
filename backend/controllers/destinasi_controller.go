@@ -17,9 +17,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// ============================
-// HELPER: HIT API PYTHON UNTUK CLEAN TEXT
-// ============================
 type CleanRequest struct {
 	Text string `json:"text"`
 }
@@ -46,7 +43,7 @@ func getCleanTextFromPython(text string) string {
 	jsonBody, err := json.Marshal(reqBody)
 	if err != nil {
 		log.Printf("Error marshalling clean request: %v", err)
-		return text // Jika gagal, kembalikan teks aslinya sebagai fallback
+		return text
 	}
 
 	resp, err := http.Post("http://localhost:8000/clean-text", "application/json", bytes.NewBuffer(jsonBody))
@@ -70,12 +67,10 @@ func getCleanTextFromPython(text string) string {
 	return resBody.CleanedText
 }
 
-// ============================
-// CREATE DESTINASI
-// ============================
 func CreateDestinasi(c *gin.Context) {
 	nama := strings.TrimSpace(c.PostForm("nama"))
 	deskripsi := strings.TrimSpace(c.PostForm("deskripsi"))
+	aktivitas := strings.TrimSpace(c.PostForm("aktivitas"))
 	alamat := strings.TrimSpace(c.PostForm("alamat"))
 	kota := strings.TrimSpace(c.PostForm("kota"))
 	kategori := strings.TrimSpace(c.PostForm("kategori"))
@@ -83,8 +78,7 @@ func CreateDestinasi(c *gin.Context) {
 	latStr := strings.TrimSpace(c.PostForm("latitude"))
 	lonStr := strings.TrimSpace(c.PostForm("longitude"))
 
-	// 1. Validasi input wajib
-	if nama == "" || deskripsi == "" || alamat == "" || kota == "" || kategori == "" || latStr == "" || lonStr == "" {
+	if nama == "" || deskripsi == "" || aktivitas == "" || alamat == "" || kota == "" || kategori == "" || latStr == "" || lonStr == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "semua field wajib diisi"})
 		return
 	}
@@ -114,18 +108,11 @@ func CreateDestinasi(c *gin.Context) {
 
 		var petugas models.Petugas
 
-		// Jika ID tersebut memang milik petugas,
-		// simpan sebagai PetugasID.
 		if err := config.DB.First(&petugas, "id = ?", parsedID).Error; err == nil {
 			petugasID = &parsedID
 		}
-
-		// Jika tidak ditemukan,
-		// berarti kemungkinan admin.
-		// Biarkan PetugasID tetap nil.
 	}
 
-	// 4. Parse Latitude & Longitude (String ke Float64)
 	lat, errLat := strconv.ParseFloat(latStr, 64)
 	lon, errLon := strconv.ParseFloat(lonStr, 64)
 	if errLat != nil || errLon != nil {
@@ -147,7 +134,6 @@ func CreateDestinasi(c *gin.Context) {
 		return
 	}
 
-	// 5. Upload Gambar
 	fileHeader, err := c.FormFile("gambar")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "gambar destinasi wajib diunggah"})
@@ -167,14 +153,16 @@ func CreateDestinasi(c *gin.Context) {
 		return
 	}
 
-	// 🌟 PROSES CLEAN TEXT SEBELUM DISIMPAN 🌟
 	deskripsiClean := getCleanTextFromPython(deskripsi)
+	aktivitasClean := getCleanTextFromPython(aktivitas)
 
 	// 6. Simpan ke Database
 	destinasi := models.Destinasi{
 		Nama:           nama,
 		Deskripsi:      deskripsi,
-		DeskripsiClean: deskripsiClean, // 👈 Simpan hasil clean text
+		DeskripsiClean: deskripsiClean,
+		Aktivitas:      aktivitas,
+		AktivitasClean: aktivitasClean,
 		Alamat:         alamat,
 		Latitude:       lat,
 		Longitude:      lon,
@@ -201,7 +189,6 @@ func CreateDestinasi(c *gin.Context) {
 		}
 	}()
 
-	// Load relasi petugas agar respon JSON memiliki struktur objek Petugas yang lengkap
 	config.DB.Preload("Petugas").First(&destinasi, "id = ?", destinasi.ID)
 
 	c.JSON(http.StatusCreated, gin.H{
@@ -210,18 +197,12 @@ func CreateDestinasi(c *gin.Context) {
 	})
 }
 
-// ============================
-// GET ALL DESTINASI
-// ============================
 func GetDestinasi(c *gin.Context) {
 	var destinasiList []models.Destinasi
-
-	// Preload("Petugas") otomatis melakukan relasi join ke tabel petugas
 	if err := config.DB.Preload("Petugas").Find(&destinasiList).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "gagal mengambil data destinasi"})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"data": destinasiList,
 	})
@@ -514,18 +495,13 @@ func GetRandomDestinasi(c *gin.Context) {
 	})
 }
 
-// ============================
-// IMPORT DESTINASI VIA CSV
-// ============================
 func ImportDestinasiCSV(c *gin.Context) {
-	// 1. Tangkap file dari request multipart form
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "file CSV tidak ditemukan"})
 		return
 	}
 
-	// 2. Buka file yang diunggah
 	f, err := file.Open()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "gagal membuka file"})
@@ -533,7 +509,6 @@ func ImportDestinasiCSV(c *gin.Context) {
 	}
 	defer f.Close()
 
-	// 3. Baca isi CSV
 	reader := csv.NewReader(f)
 	records, err := reader.ReadAll()
 	if err != nil {
@@ -544,22 +519,18 @@ func ImportDestinasiCSV(c *gin.Context) {
 	var successCount int
 	var failCount int
 
-	// 4. Looping setiap baris data (Record)
 	for i, row := range records {
-		// Abaikan baris pertama jika itu adalah baris Header (Nama kolom)
 		if i == 0 && strings.ToLower(row[0]) == "nama" {
 			continue
 		}
 
-		// Pastikan jumlah kolom sesuai format minimal (7 kolom)
-		if len(row) < 7 {
+		if len(row) < 8 {
 			failCount++
 			continue
 		}
 
-		// Konversi tipe data Latitude dan Longitude dari String ke Float64
-		lat, errLat := strconv.ParseFloat(strings.TrimSpace(row[5]), 64)
-		lon, errLon := strconv.ParseFloat(strings.TrimSpace(row[6]), 64)
+		lat, errLat := strconv.ParseFloat(strings.TrimSpace(row[6]), 64)
+		lon, errLon := strconv.ParseFloat(strings.TrimSpace(row[7]), 64)
 
 		if errLat != nil || errLon != nil {
 			failCount++
@@ -567,21 +538,21 @@ func ImportDestinasiCSV(c *gin.Context) {
 		}
 
 		deskripsiAsli := strings.TrimSpace(row[1])
+		aktivitasAsli := strings.TrimSpace(row[2])
 
-		// Siapkan struct Destinasi baru
 		destinasi := models.Destinasi{
 			Nama:           strings.TrimSpace(row[0]),
 			Deskripsi:      deskripsiAsli,
-			DeskripsiClean: getCleanTextFromPython(deskripsiAsli), // 👈 Ambil clean text untuk data CSV
-			Alamat:         strings.TrimSpace(row[2]),
-			Kota:           strings.TrimSpace(row[3]),
-			Kategori:       strings.TrimSpace(row[4]),
+			DeskripsiClean: getCleanTextFromPython(deskripsiAsli),
+			Aktivitas:      aktivitasAsli,
+			AktivitasClean: getCleanTextFromPython(aktivitasAsli),
+			Alamat:         strings.TrimSpace(row[3]),
+			Kota:           strings.TrimSpace(row[4]),
+			Kategori:       strings.TrimSpace(row[5]),
 			Latitude:       lat,
 			Longitude:      lon,
-			// Kolom petugas dibiarkan kosong agar statusnya otomatis "Dikelola oleh Admin"
 		}
 
-		// Simpan ke database
 		if err := config.DB.Create(&destinasi).Error; err != nil {
 			failCount++
 		} else {

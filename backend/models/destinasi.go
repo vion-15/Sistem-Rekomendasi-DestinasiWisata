@@ -12,6 +12,8 @@ type Destinasi struct {
 	Nama           string    `gorm:"type:varchar(255);not null" json:"nama"`
 	Deskripsi      string    `gorm:"type:text;not null" json:"deskripsi"`
 	DeskripsiClean string    `json:"deskripsi_clean" gorm:"type:text"`
+	Aktivitas      string    `gorm:"type:text" json:"aktivitas"`
+	AktivitasClean string    `gorm:"type:text" json:"aktivitas_clean"`
 	Alamat         string    `gorm:"type:text;not null" json:"alamat"`
 	Latitude       float64   `gorm:"type:decimal(10,8);not null" json:"latitude"`
 	Longitude      float64   `gorm:"type:decimal(11,8);not null" json:"longitude"`

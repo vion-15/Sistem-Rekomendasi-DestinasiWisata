@@ -58,8 +58,7 @@ def test_preprocessing(req: CleanRequest):
     cleaned_text = clean_text(req.text)
 
     return {
-        "teks_asli": req.text,
-        "teks_bersih": cleaned_text
+        "cleaned_text": cleaned_text
     }
 
 
