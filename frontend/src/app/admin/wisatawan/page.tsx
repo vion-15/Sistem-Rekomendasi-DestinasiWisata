@@ -1,5 +1,6 @@
 "use client";
 
+import { TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
@@ -15,6 +16,8 @@ type Wisatawan = {
 export default function WisatawanPage() {
     const [wisatawanList, setWisatawanList] = useState<Wisatawan[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchWisatawan = async () => {
         try {
@@ -35,16 +38,14 @@ export default function WisatawanPage() {
         fetchWisatawan();
     }, []);
 
-    const handleDelete = async (id: string) => {
-        const confirmDelete = window.confirm(
-            "Apakah Anda yakin ingin menghapus wisatawan ini?"
-        );
+    const handleDelete = async () => {
+        if (!deleteId) return;
 
-        if (!confirmDelete) return;
+        setIsDeleting(true);
 
         try {
             const res = await fetch(
-                `http://localhost:8080/api/wisatawan/${id}`,
+                `http://localhost:8080/api/wisatawan/${deleteId}`,
                 {
                     method: "DELETE",
                 }
@@ -56,6 +57,7 @@ export default function WisatawanPage() {
                 throw new Error(data.error || "Gagal menghapus wisatawan");
             }
 
+            setDeleteId(null);
             fetchWisatawan();
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -63,10 +65,11 @@ export default function WisatawanPage() {
             } else {
                 alert("Terjadi kesalahan");
             }
+        } finally {
+            setIsDeleting(false);
         }
     };
 
-    // Fungsi untuk memformat tanggal (Opsional, agar tampilan tanggal lebih rapi)
     const formatDate = (dateString: string) => {
         const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
         return new Date(dateString).toLocaleDateString('id-ID', options);
@@ -74,14 +77,12 @@ export default function WisatawanPage() {
 
     return (
         <div>
-            {/* Header Area */}
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Wisatawan</h1>
                 </div>
             </div>
 
-            {/* Tabel Data Wisatawan */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead>
@@ -111,7 +112,7 @@ export default function WisatawanPage() {
                                     <td className="p-4 text-gray-600">{index + 1}</td>
                                     <td>
                                         <Image
-                                            src={w.foto || "https://ui-avatars.com/api/?name=User"}
+                                            src={w.foto || "image/default-avatar.png"}
                                             alt={`Foto ${w.username}`}
                                             height={40}
                                             width={40}
@@ -123,7 +124,7 @@ export default function WisatawanPage() {
                                     <td className="p-4 text-gray-600">{formatDate(w.created_at)}</td>
                                     <td className="p-4">
                                         <button
-                                            onClick={() => handleDelete(w.id)}
+                                            onClick={() => setDeleteId(w.id)}
                                             className="text-red-500 hover:text-red-700 mx-2 font-medium transition-colors"
                                         >
                                             Hapus
@@ -135,6 +136,52 @@ export default function WisatawanPage() {
                     </tbody>
                 </table>
             </div>
+
+            {deleteId && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                                <TriangleAlert className="text-red-600" />
+                            </div>
+
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-900">
+                                    Hapus Data Wisatawan
+                                </h2>
+
+                                <p className="mt-1 text-sm text-gray-600">
+                                    Apakah Anda yakin ingin menghapus data wisatawan ini?
+                                </p>
+
+                                <p className="mt-1 text-sm text-red-500">
+                                    Tindakan ini tidak dapat dibatalkan.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 flex justify-end gap-3">
+
+                            <button
+                                onClick={() => setDeleteId(null)}
+                                disabled={isDeleting}
+                                className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
+                            >
+                                Batal
+                            </button>
+
+                            <button
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                                className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                            >
+                                {isDeleting ? "Menghapus..." : "Hapus"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

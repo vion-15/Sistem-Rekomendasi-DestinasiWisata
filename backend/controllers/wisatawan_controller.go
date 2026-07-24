@@ -9,9 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ============================
-// GET ALL WISATAWAN (Admin Only)
-// ============================
 func GetWisatawan(c *gin.Context) {
 	var wisatawanList []models.Wisatawan
 
