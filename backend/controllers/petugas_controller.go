@@ -14,15 +14,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// ============================
-// CREATE PETUGAS
-// ============================
 func CreatePetugas(c *gin.Context) {
 	username := strings.TrimSpace(c.PostForm("username"))
 	email := strings.TrimSpace(c.PostForm("email"))
 	password := c.PostForm("password")
 
-	// 1. Validasi input
 	if username == "" || email == "" || password == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "username, email, password wajib diisi",
@@ -30,7 +26,6 @@ func CreatePetugas(c *gin.Context) {
 		return
 	}
 
-	// 2. Validasi email sederhana
 	if !strings.Contains(email, "@") {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "format email tidak valid",
@@ -38,7 +33,6 @@ func CreatePetugas(c *gin.Context) {
 		return
 	}
 
-	// 3. Cek email duplikat
 	var existing models.Petugas
 	if err := config.DB.Where("email = ?", email).First(&existing).Error; err == nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -47,7 +41,6 @@ func CreatePetugas(c *gin.Context) {
 		return
 	}
 
-	// 4. Hash password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -56,7 +49,6 @@ func CreatePetugas(c *gin.Context) {
 		return
 	}
 
-	// 5. Ambil file foto
 	fileHeader, err := c.FormFile("foto")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -74,7 +66,6 @@ func CreatePetugas(c *gin.Context) {
 	}
 	defer file.Close()
 
-	// 6. Upload ke Cloudinary
 	fotoURL, err := utils.UploadImage(file, "wisata_profiles/petugas")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -83,7 +74,6 @@ func CreatePetugas(c *gin.Context) {
 		return
 	}
 
-	// 7. Simpan ke database
 	petugas := models.Petugas{
 		Username: username,
 		Email:    email,
@@ -98,7 +88,6 @@ func CreatePetugas(c *gin.Context) {
 		return
 	}
 
-	// 8. Response aman (tidak expose password)
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "petugas berhasil ditambahkan",
 		"data": gin.H{
@@ -110,9 +99,6 @@ func CreatePetugas(c *gin.Context) {
 	})
 }
 
-// ============================
-// GET ALL PETUGAS
-// ============================
 func GetPetugas(c *gin.Context) {
 	var petugasList []models.Petugas
 
@@ -131,13 +117,9 @@ func GetPetugas(c *gin.Context) {
 	})
 }
 
-// ============================
-// UPDATE PETUGAS
-// ============================
 func UpdatePetugas(c *gin.Context) {
 	id := c.Param("id")
 
-	// Validasi UUID
 	petugasID, err := uuid.Parse(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -148,7 +130,6 @@ func UpdatePetugas(c *gin.Context) {
 
 	var petugas models.Petugas
 
-	// Cek apakah data ada
 	if err := config.DB.First(&petugas, "id = ?", petugasID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "data petugas tidak ditemukan",
@@ -156,23 +137,18 @@ func UpdatePetugas(c *gin.Context) {
 		return
 	}
 
-	// Ambil data form
 	username := strings.TrimSpace(c.PostForm("username"))
 	email := strings.TrimSpace(c.PostForm("email"))
 	password := c.PostForm("password")
 
-	// Menyimpan foto lama jika nanti ada upload foto baru
 	var oldFoto string
 
-	// Update username
 	if username != "" {
 		petugas.Username = username
 	}
 
-	// Update email
 	if email != "" && email != petugas.Email {
 
-		// Validasi format email
 		if _, err := mail.ParseAddress(email); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "format email tidak valid",
@@ -180,7 +156,6 @@ func UpdatePetugas(c *gin.Context) {
 			return
 		}
 
-		// Cek email duplicate selain dirinya sendiri
 		var existing models.Petugas
 
 		if err := config.DB.
@@ -196,7 +171,6 @@ func UpdatePetugas(c *gin.Context) {
 		petugas.Email = email
 	}
 
-	// Update password
 	if password != "" {
 
 		if len(password) < 8 {
@@ -221,11 +195,9 @@ func UpdatePetugas(c *gin.Context) {
 		petugas.Password = string(hashedPassword)
 	}
 
-	// Upload foto baru jika ada
 	fileHeader, err := c.FormFile("foto")
 	if err == nil {
 
-		// Simpan URL foto lama
 		oldFoto = petugas.Foto
 
 		file, err := fileHeader.Open()
@@ -252,7 +224,6 @@ func UpdatePetugas(c *gin.Context) {
 		petugas.Foto = fotoURL
 	}
 
-	// Simpan perubahan ke database
 	if err := config.DB.Save(&petugas).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "gagal mengupdate data petugas",
@@ -260,7 +231,6 @@ func UpdatePetugas(c *gin.Context) {
 		return
 	}
 
-	// Hapus foto lama setelah database berhasil diupdate
 	if oldFoto != "" {
 		_ = utils.DeleteImageByURL(oldFoto)
 	}
@@ -276,13 +246,9 @@ func UpdatePetugas(c *gin.Context) {
 	})
 }
 
-// ============================
-// DELETE PETUGAS
-// ============================
 func DeletePetugas(c *gin.Context) {
 	id := c.Param("id")
 
-	// Validasi UUID
 	petugasID, err := uuid.Parse(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -293,7 +259,6 @@ func DeletePetugas(c *gin.Context) {
 
 	var petugas models.Petugas
 
-	// Cek data
 	if err := config.DB.First(&petugas, "id = ?", petugasID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "data petugas tidak ditemukan",
@@ -305,7 +270,6 @@ func DeletePetugas(c *gin.Context) {
 		_ = utils.DeleteImageByURL(petugas.Foto)
 	}
 
-	// Soft delete
 	if err := config.DB.Delete(&petugas).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "gagal menghapus data petugas",

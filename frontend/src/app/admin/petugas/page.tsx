@@ -1,5 +1,6 @@
 "use client";
 
+import { TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, FormEvent } from "react";
 
@@ -17,12 +18,14 @@ export default function PetugasPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
 
-    // State untuk form input
     const [editingId, setEditingId] = useState<string | null>(null);
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [foto, setFoto] = useState<File | null>(null);
+
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchPetugas = async () => {
         try {
@@ -41,7 +44,6 @@ export default function PetugasPage() {
         fetchPetugas();
     }, []);
 
-    // Fungsi untuk membuka modal Tambah
     const handleOpenAddModal = () => {
         setEditingId(null);
         setUsername("");
@@ -52,40 +54,42 @@ export default function PetugasPage() {
         setIsModalOpen(true);
     };
 
-    // Fungsi untuk membuka modal Edit dan mengisi data awal
     const handleOpenEditModal = (petugas: Petugas) => {
         setEditingId(petugas.id);
         setUsername(petugas.username);
         setEmail(petugas.email);
-        setPassword(""); // Password dikosongkan, diisi kalau mau diganti saja
-        setFoto(null);   // Foto dikosongkan, diisi kalau mau diganti saja
+        setPassword("");
+        setFoto(null);
         setErrorMsg("");
         setIsModalOpen(true);
     };
 
-    // Fungsi Hapus (Delete)
-    const handleDelete = async (id: string) => {
-        if (!window.confirm("Apakah Anda yakin ingin menghapus data petugas ini?")) return;
+    const handleDelete = async () => {
+        if (!deleteId) return;
+
+        setIsDeleting(true);
 
         try {
-            const res = await fetch(`http://localhost:8080/api/petugas/${id}`, {
+            const res = await fetch(`http://localhost:8080/api/petugas/${deleteId}`, {
                 method: "DELETE",
             });
             const data = await res.json();
 
             if (!res.ok) throw new Error(data.error || "Gagal menghapus petugas");
 
-            fetchPetugas(); // Refresh data setelah berhasil dihapus
+            setDeleteId(null);
+            fetchPetugas();
         } catch (err: unknown) {
             if (err instanceof Error) {
                 alert(err.message);
             } else {
                 alert("Terjadi kesalahan");
             }
+        } finally {
+            setIsDeleting(false);
         }
     };
 
-    // Fungsi Submit (Create & Update)
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setErrorMsg("");
@@ -95,13 +99,10 @@ export default function PetugasPage() {
         formData.append("username", username);
         formData.append("email", email);
 
-        // Hanya kirim password jika diisi (penting untuk mode Edit)
         if (password) formData.append("password", password);
 
-        // Hanya kirim foto jika ada file yang dipilih
         if (foto) formData.append("foto", foto);
 
-        // Tentukan URL dan Method berdasarkan mode (Edit atau Create)
         const url = editingId
             ? `http://localhost:8080/api/petugas/${editingId}`
             : "http://localhost:8080/api/petugas/";
@@ -132,7 +133,6 @@ export default function PetugasPage() {
 
     return (
         <div>
-            {/* Header Area */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Petugas</h1>
                 <button
@@ -143,7 +143,6 @@ export default function PetugasPage() {
                 </button>
             </div>
 
-            {/* Tabel Data Petugas */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead>
@@ -164,7 +163,7 @@ export default function PetugasPage() {
                                 </td>
                                 <td className="p-4 text-gray-800 flex items-center gap-3">
                                     <Image
-                                        src={p.foto || "https://ui-avatars.com/api/?name=User"}
+                                        src={p.foto || "/image/default-avatar.png"}
                                         alt={`Foto ${p.username}`}
                                         height={40}
                                         width={40}
@@ -188,7 +187,7 @@ export default function PetugasPage() {
                                         Edit
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(p.id)}
+                                        onClick={() => setDeleteId(p.id)}
                                         className="text-red-500 hover:text-red-700 mx-2 font-medium transition-colors"
                                     >
                                         Hapus
@@ -207,7 +206,6 @@ export default function PetugasPage() {
                 </table>
             </div>
 
-            {/* Modal Form Tambah/Edit Petugas */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl">
@@ -261,7 +259,7 @@ export default function PetugasPage() {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 
                                     focus:ring-blue-500 outline-none text-slate-800 placeholder:text-slate-400"
                                     placeholder="••••••••"
-                                    required={!editingId} // Wajib jika mode Tambah, Opsional jika mode Edit
+                                    required={!editingId}
                                 />
                             </div>
                             <div>
@@ -276,29 +274,78 @@ export default function PetugasPage() {
                                     focus:ring-blue-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full 
                                     file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 
                                     hover:file:bg-blue-100 transition-all text-slate-800 placeholder:text-slate-400"
-                                    required={!editingId} // Wajib jika mode Tambah, Opsional jika mode Edit
+                                    required={!editingId}
                                 />
                             </div>
 
-                            {/* Tombol Modal */}
                             <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                                    className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg 
+                                    font-medium transition-colors"
                                 >
                                     Batal
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className={`px-4 py-2 text-white rounded-lg font-medium transition-colors ${isLoading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                                    className={`px-4 py-2 text-white rounded-lg font-medium transition-colors 
+                                        ${isLoading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                                         }`}
                                 >
                                     {isLoading ? "Menyimpan..." : "Simpan"}
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {deleteId && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                                <TriangleAlert className="text-red-600" />
+                            </div>
+
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-900">
+                                    Hapus Data Petugas
+                                </h2>
+
+                                <p className="mt-1 text-sm text-gray-600">
+                                    Apakah Anda yakin ingin menghapus data petugas ini?
+                                </p>
+
+                                <p className="mt-1 text-sm text-red-500">
+                                    Tindakan ini tidak dapat dibatalkan.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 flex justify-end gap-3">
+
+                            <button
+                                onClick={() => setDeleteId(null)}
+                                disabled={isDeleting}
+                                className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
+                            >
+                                Batal
+                            </button>
+
+                            <button
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                                className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                            >
+                                {isDeleting ? "Menghapus..." : "Hapus"}
+                            </button>
+
+                        </div>
+
                     </div>
                 </div>
             )}
