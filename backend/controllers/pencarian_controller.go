@@ -454,9 +454,6 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 func CariDestinasiAdminCBF(c *gin.Context) {
 	var input AdminSearchInput
 
-	// ============================
-	// 1. VALIDASI INPUT
-	// ============================
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "id_admin dan keyword wajib diisi",
@@ -480,19 +477,13 @@ func CariDestinasiAdminCBF(c *gin.Context) {
 		return
 	}
 
-	// ============================
-	// 2. CEK ADMIN ADA (Opsional)
-	// ============================
-	var admin models.Admin // Sesuaikan dengan nama model Admin Anda jika ada
+	var admin models.Admin
 	if err := config.DB.Where("id = ?", adminID).First(&admin).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "admin tidak ditemukan",
 		})
 		return
 	}
-
-	// Note: Langkah menyimpan riwayat pencarian wisatawan dilewati
-	// karena ini dilakukan oleh admin untuk keperluan monitoring/testing.
 
 	userHistoryText := keyword
 
@@ -509,9 +500,6 @@ func CariDestinasiAdminCBF(c *gin.Context) {
 		return
 	}
 
-	// ============================
-	// 3. REQUEST KE FASTAPI
-	// ============================
 	client := &http.Client{
 		Timeout: 60 * time.Second,
 	}
@@ -537,9 +525,6 @@ func CariDestinasiAdminCBF(c *gin.Context) {
 		return
 	}
 
-	// ============================
-	// 4. BACA & KIRIM RESPONSE
-	// ============================
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

@@ -74,12 +74,8 @@ def get_recommendations(request: RecommendationRequest):
         if recommendation.DESTINATION_EMBEDDINGS is None:
             build_destination_embeddings()
 
-        clean_history = clean_text(
-            request.user_history_text
-        )
-
         recommendations = get_cbf_recommendations(
-            user_history_text=clean_history,
+            user_history_text=request.user_history_text,
             top_n=request.top_n
         )
 

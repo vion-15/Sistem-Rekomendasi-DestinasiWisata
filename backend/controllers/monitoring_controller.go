@@ -4,13 +4,12 @@ import (
 	"net/http"
 	"time"
 
-	"backend-wisata/config" // Sesuaikan dengan path config database Anda
-	"backend-wisata/models" // Sesuaikan dengan path models Anda
+	"backend-wisata/config"
+	"backend-wisata/models"
 
 	"github.com/gin-gonic/gin"
 )
 
-// Struktur data balikan API
 type GrafikData struct {
 	Hari      string `json:"hari"`
 	Pencarian int64  `json:"pencarian"`
@@ -42,24 +41,19 @@ func GetStatistikPencarian(c *gin.Context) {
 	var response MonitoringResponse
 
 	now := time.Now()
-	// Normalisasi waktu ke jam 00:00:00 untuk hari ini
 	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 
-	// 1. Hitung Total Pencarian Keseluruhan
 	config.DB.Model(&models.RiwayatPencarian{}).Count(&total)
 	response.TotalPencarian = total
 
-	// 2. Hitung Pencarian Hari Ini
 	config.DB.Model(&models.RiwayatPencarian{}).Where("created_at >= ?", startOfDay).Count(&hariIni)
 	response.PencarianHariIni = hariIni
 
-	// 3. Hitung Rata-Rata per Hari (berdasarkan 30 hari terakhir agar logis)
 	var total30Hari int64
 	start30Days := startOfDay.AddDate(0, 0, -30)
 	config.DB.Model(&models.RiwayatPencarian{}).Where("created_at >= ?", start30Days).Count(&total30Hari)
 	response.RataRataHari = total30Hari / 30
 
-	// 4. Susun Data Grafik 7 Hari Terakhir & Cari Puncak Pencarian
 	namaHariIndo := map[time.Weekday]string{
 		time.Sunday:    "Minggu",
 		time.Monday:    "Senin",
@@ -74,7 +68,6 @@ func GetStatistikPencarian(c *gin.Context) {
 	var maxPencarian int64 = -1
 	puncakHari := "-"
 
-	// Loop mundur dari H-6 sampai H-0 (Hari ini)
 	for i := 6; i >= 0; i-- {
 		targetDate := startOfDay.AddDate(0, 0, -i)
 		nextDate := targetDate.AddDate(0, 0, 1)
@@ -90,7 +83,6 @@ func GetStatistikPencarian(c *gin.Context) {
 			Pencarian: count,
 		})
 
-		// Logika mencari hari dengan pencarian terbanyak dalam minggu ini
 		if count > maxPencarian {
 			maxPencarian = count
 			puncakHari = hariStr

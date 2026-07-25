@@ -26,12 +26,16 @@ type CleanResponse struct {
 }
 
 type DestinasiAI struct {
-	ID        uuid.UUID `json:"id"`
-	Nama      string    `json:"nama"`
-	Kategori  string    `json:"kategori"`
-	Deskripsi string    `json:"deskripsi"`
-	Latitude  float64   `json:"latitude"`
-	Longitude float64   `json:"longitude"`
+	ID             uuid.UUID `json:"id"`
+	Nama           string    `json:"nama"`
+	Kategori       string    `json:"kategori"`
+	Kota           string    `json:"kota"`
+	Aktivitas      string    `json:"aktivitas"`
+	AktivitasClean string    `json:"aktivitas_clean"`
+	Deskripsi      string    `json:"deskripsi"`
+	DeskripsiClean string    `json:"deskripsi_clean"`
+	Latitude       float64   `json:"latitude"`
+	Longitude      float64   `json:"longitude"`
 }
 
 func getCleanTextFromPython(text string) string {
@@ -594,12 +598,17 @@ func GetDestinasiForAI(c *gin.Context) {
 
 	for _, d := range destinasi {
 		result = append(result, DestinasiAI{
-			ID:        d.ID,
-			Nama:      d.Nama,
-			Kategori:  d.Kategori,
-			Deskripsi: d.Deskripsi,
-			Latitude:  d.Latitude,
-			Longitude: d.Longitude,
+			ID:             d.ID,
+			Nama:           d.Nama,
+			Kategori:       d.Kategori,
+			Kota:           d.Kota,
+			Aktivitas:      d.Aktivitas,
+			AktivitasClean: d.AktivitasClean,
+
+			Deskripsi:      d.Deskripsi,
+			DeskripsiClean: d.DeskripsiClean,
+			Latitude:       d.Latitude,
+			Longitude:      d.Longitude,
 		})
 	}
 
