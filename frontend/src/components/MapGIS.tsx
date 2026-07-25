@@ -17,14 +17,11 @@ L.Icon.Default.mergeOptions({
     shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-// Membuat Icon khusus untuk Lokasi User agar beda dari destinasi
 const userIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
+    iconUrl: '/image/icon-user.png',
+    iconSize: [55, 55],
+    iconAnchor: [23, 23],
+    popupAnchor: [0, -23],
 });
 
 type Destinasi = {
@@ -45,17 +42,14 @@ interface MapGISProps {
     routePath: [number, number][] | null;
 }
 
-// Cerdas FitBounds: Menyesuaikan kamera berdasarkan destinasi ATAU garis rute
 function FitBoundsView({ destinasiList, routePath }: { destinasiList: Destinasi[], routePath: [number, number][] | null }) {
     const map = useMap();
 
     useEffect(() => {
         if (routePath && routePath.length > 0) {
-            // Jika ada rute aktif, paskan kamera ke panjang rute tersebut
             const bounds = L.latLngBounds(routePath);
             map.fitBounds(bounds, { padding: [50, 50] });
         } else if (destinasiList && destinasiList.length > 0) {
-            // Jika tidak ada rute tapi ada destinasi hasil AI, paskan ke destinasi
             const koordinatMarkers = destinasiList.map(dest => [dest.latitude, dest.longitude] as [number, number]);
             const bounds = L.latLngBounds(koordinatMarkers);
             map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
@@ -79,7 +73,6 @@ export default function MapGIS({ destinasiList, selectedDest, onViewDetail, user
 
             <FitBoundsView destinasiList={destinasiList} routePath={routePath} />
 
-            {/* Marker Lokasi Wisatawan (Warna Merah) */}
             {userLoc && (
                 <Marker position={[userLoc.lat, userLoc.lng]} icon={userIcon}>
                     <Popup>
@@ -109,7 +102,6 @@ export default function MapGIS({ destinasiList, selectedDest, onViewDetail, user
                 </Marker>
             )}
 
-            {/* Marker Hasil Rekomendasi (Warna Biru Default) */}
             {destinasiList.map((dest) => (
                 <Marker key={dest.id} position={[dest.latitude, dest.longitude]}>
                     <Popup>
@@ -127,7 +119,6 @@ export default function MapGIS({ destinasiList, selectedDest, onViewDetail, user
                 </Marker>
             ))}
 
-            {/* Menggambar Garis Rute (Polyline) */}
             {routePath && (
                 <Polyline
                     positions={routePath}
