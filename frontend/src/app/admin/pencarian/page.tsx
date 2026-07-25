@@ -12,6 +12,7 @@ import {
     ResponsiveContainer
 } from "recharts";
 import { LoaderCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface GrafikData {
     hari: string;
@@ -106,11 +107,11 @@ export default function PencarianPage() {
 
                 router.push("/admin/hasil-rekomendasi");
             } else {
-                alert(data.error || "Gagal melakukan pencarian");
+                toast.error(data.error || "Gagal melakukan pencarian");
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("Terjadi kesalahan koneksi ke server.");
+            toast.error("Terjadi kesalahan koneksi ke server.");
         } finally {
             setIsLoading(false);
         }
@@ -154,13 +155,13 @@ export default function PencarianPage() {
             const data = await res.json();
 
             if (res.ok) {
-                alert("Sukses: " + data.message);
+                toast.success(data.message);
             } else {
-                alert("Gagal: " + data.error);
+                toast.error("data periode ini sudah pernah dikirim");
             }
         } catch (error) {
-            console.error("Error:", error);
-            alert("Terjadi kesalahan koneksi ke server.");
+            toast.error("terjadi kesalahan server");
+            console.error(error);
         }
     };
 
