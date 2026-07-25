@@ -36,10 +36,7 @@ export default function HasilRekomendasiPage() {
     }, []);
 
     const handleCekRute = (destinasi: RekomendasiDestinasi) => {
-        // 1. Simpan data destinasi ke localStorage
         localStorage.setItem("route_destination", JSON.stringify(destinasi));
-
-        // 2. Arahkan ke halaman Lokasi Destinasi
         router.push("/admin/lokasi-destinasi");
     };
 
@@ -64,6 +61,7 @@ export default function HasilRekomendasiPage() {
                     <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
                         Hasil Rekomendasi
                     </h1>
+                    <span className="text-slate-600">Query: {searchKeyword}</span>
                 </div>
             </div>
 
