@@ -7,6 +7,7 @@ import { Map } from "lucide-react";
 interface RekomendasiDestinasi {
     id?: string;
     nama: string;
+    kota: string;
     kategori?: string;
     deskripsi?: string;
     similarity_score?: number;
@@ -58,7 +59,6 @@ export default function HasilRekomendasiPage() {
 
     return (
         <div className="p-6 max-w-7xl mx-auto animate-in fade-in duration-300">
-            {/* Header Menu */}
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-gray-200 pb-5">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
@@ -67,34 +67,45 @@ export default function HasilRekomendasiPage() {
                 </div>
             </div>
 
-            {/* Empty State */}
             {hasilPencarian.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300 max-w-md mx-auto shadow-sm">
+                <div
+                    className="text-center py-16 bg-white rounded-2xl border border-dashed 
+                    border-gray-300 max-w-md mx-auto shadow-sm">
                     <span className="text-4xl block mb-3">🔍</span>
                     <h3 className="text-base font-semibold text-gray-800 mb-1">Tidak Ada Data Rekomendasi</h3>
-                    <p className="text-sm text-gray-500 mb-5 px-6">Silakan lakukan pencarian ulang dengan kata kunci destinasi lainnya.</p>
+                    <p className="text-sm text-gray-500 mb-5 px-6">
+                        Silakan lakukan pencarian ulang dengan kata kunci destinasi lainnya.
+                    </p>
                     <button
                         onClick={() => router.push("/admin/pencarian")}
-                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-sm"
+                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 
+                        rounded-lg transition-colors shadow-sm"
                     >
                         Kembali Ke Pencarian
                     </button>
                 </div>
             ) : (
-                /* Grid Layout Kartu */
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {hasilPencarian.map((destinasi, index) => (
                         <div
                             key={index}
-                            className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-200 group"
+                            className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col justify-between 
+                            shadow-sm hover:shadow-md transition-all duration-200 group"
                         >
                             <div>
-                                {/* Baris Atas: Kategori & Nilai Kemiripan */}
                                 <div className="flex justify-between items-start gap-2 mb-4">
-                                    <span className="bg-gray-100 text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-md uppercase tracking-wider border border-gray-200/60">
-                                        {destinasi.kategori || "Kuliner"}
-                                    </span>
-
+                                    <div className="flex flex-col gap-2">
+                                        <span 
+                                            className="bg-gray-100 text-gray-700 text-xs font-semibold px-2.5 py-1 
+                                            rounded-md uppercase tracking-wider border border-gray-200/60">
+                                            {destinasi.kategori}
+                                        </span>
+                                        <span 
+                                            className="bg-orange-300 text-white text-xs font-semibold px-2.5 py-1 
+                                            rounded-md uppercase tracking-wider border border-gray-200/60">
+                                            {destinasi.kota}
+                                        </span>
+                                    </div>
                                     {destinasi.similarity_score !== undefined && (
                                         <div className="text-right bg-blue-50/50 border border-blue-100 rounded-lg px-2 py-1">
                                             <div className="text-[9px] font-bold text-blue-500 uppercase tracking-wider">
@@ -110,22 +121,23 @@ export default function HasilRekomendasiPage() {
                                     )}
                                 </div>
 
-                                {/* Judul/Nama Destinasi Wisata */}
-                                <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors mb-2 line-clamp-1">
-                                    {destinasi.nama || "Nama Destinasi Kuliner"}
+                                <h3 
+                                    className="text-lg font-bold text-gray-900 group-hover:text-blue-600 
+                                    transition-colors mb-2 line-clamp-1">
+                                    {destinasi.nama}
                                 </h3>
 
-                                {/* Deskripsi Utama */}
                                 <p className="text-sm text-gray-600 line-clamp-4 leading-relaxed mb-6">
-                                    {destinasi.deskripsi || "Keterangan detail mengenai destinasi wisata ini belum tersedia."}
+                                    {destinasi.deskripsi}
                                 </p>
                             </div>
 
-                            {/* Tombol Rute Eksklusif */}
                             <div className="pt-4 border-t border-gray-100">
                                 <button
                                     onClick={() => handleCekRute(destinasi)}
-                                    className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-sm hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
+                                    className="w-full flex items-center justify-center gap-2 bg-emerald-600 
+                                    hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-sm 
+                                    hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
                                 >
                                     <Map size={18} />
                                     Lihat Rute
