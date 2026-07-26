@@ -16,8 +16,10 @@ import (
 )
 
 type LaporanInput struct {
-	AdminID string `json:"id_admin"`
-	Periode string `json:"periode"` // Menangkap periode dari input Next.js (contoh: "2026-07")
+	AdminID     string `json:"id_admin"`
+	Periode     string `json:"periode"`
+	DestinasiID string `json:"id_destinasi"`
+	Rating      *int   `json:"rating"`
 }
 
 func BuatLaporanPencarian(c *gin.Context) {
@@ -116,62 +118,444 @@ func DownloadLaporan(c *gin.Context) {
 		return
 	}
 
-	// Saat ini hanya mendukung Data Pencarian
-	if laporan.JenisLaporan != "Data Pencarian" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Jenis laporan ini belum memiliki format unduhan"})
-		return
-	}
+	switch laporan.JenisLaporan {
 
-	// 2. Parse string "Juli 2026" untuk mendapatkan rentang waktu pencarian
+	case "Data Pencarian":
+		downloadDataPencarian(c, laporan)
+		return
+
+	case "Data Lokasi Destinasi":
+		downloadDataLokasi(c, laporan)
+		return
+
+	case "Data Ulasan dan Rating":
+		downloadDataUlasan(c, laporan)
+		return
+
+	default:
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Jenis laporan ini belum memiliki format unduhan",
+		})
+	}
+}
+
+func downloadDataLokasi(c *gin.Context, laporan models.Laporan) {
+
+	// ==========================
+	// PARSE PERIODE
+	// ==========================
+
 	parts := strings.Split(laporan.Periode, " ")
+
 	if len(parts) != 2 {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Format periode laporan rusak di database"})
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Format periode tidak valid",
+		})
+
 		return
 	}
-
-	bulanStr := parts[0]
-	tahunStr := parts[1]
-	tahun, _ := strconv.Atoi(tahunStr)
 
 	bulanMap := map[string]time.Month{
-		"Januari": 1, "Februari": 2, "Maret": 3, "April": 4,
-		"Mei": 5, "Juni": 6, "Juli": 7, "Agustus": 8,
-		"September": 9, "Oktober": 10, "November": 11, "Desember": 12,
+		"Januari":   1,
+		"Februari":  2,
+		"Maret":     3,
+		"April":     4,
+		"Mei":       5,
+		"Juni":      6,
+		"Juli":      7,
+		"Agustus":   8,
+		"September": 9,
+		"Oktober":   10,
+		"November":  11,
+		"Desember":  12,
 	}
-	bulan := bulanMap[bulanStr]
 
-	// Tentukan tanggal awal bulan dan awal bulan depannya
-	startDate := time.Date(tahun, bulan, 1, 0, 0, 0, 0, time.Local)
-	endDate := startDate.AddDate(0, 1, 0)
+	bulan := bulanMap[parts[0]]
 
-	// 3. Ambil data dari tabel RiwayatPencarian
-	var riwayat []models.RiwayatPencarian
-	if err := config.DB.Where("created_at >= ? AND created_at < ?", startDate, endDate).Find(&riwayat).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data riwayat pencarian"})
+	tahun, err := strconv.Atoi(parts[1])
+
+	if err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Tahun tidak valid",
+		})
+
 		return
 	}
 
-	// 4. Siapkan File CSV untuk diunduh
-	namaFile := fmt.Sprintf("Data_Pencarian_%s.csv", strings.ReplaceAll(laporan.Periode, " ", "_"))
+	startDate := time.Date(
+		tahun,
+		bulan,
+		1,
+		0,
+		0,
+		0,
+		0,
+		time.Local,
+	)
 
-	// Set header HTTP agar browser menganggapnya sebagai unduhan file
-	c.Writer.Header().Set("Content-Type", "text/csv")
-	c.Writer.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", namaFile))
+	endDate := startDate.AddDate(0, 1, 0)
+
+	// ==========================
+	// QUERY DATABASE
+	// ==========================
+
+	var data []models.RiwayatDestinasi
+
+	err = config.DB.
+		Model(&models.RiwayatDestinasi{}).
+		Preload("Wisatawan").
+		Preload("Destinasi").
+		Where(
+			"created_at >= ? AND created_at < ?",
+			startDate,
+			endDate,
+		).
+		Find(&data).Error
+
+	if err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Gagal mengambil data riwayat destinasi",
+		})
+
+		return
+	}
+
+	// ==========================
+	// HEADER FILE
+	// ==========================
+
+	namaFile := fmt.Sprintf(
+		"Data_Lokasi_Destinasi_%s.csv",
+		strings.ReplaceAll(laporan.Periode, " ", "_"),
+	)
+
+	c.Writer.Header().Set(
+		"Content-Type",
+		"text/csv",
+	)
+
+	c.Writer.Header().Set(
+		"Content-Disposition",
+		fmt.Sprintf("attachment; filename=%s", namaFile),
+	)
 
 	writer := csv.NewWriter(c.Writer)
+
 	defer writer.Flush()
 
-	// Tulis Header Kolom CSV
-	writer.Write([]string{"No", "Waktu Pencarian", "ID Wisatawan", "Kata Kunci (Keyword)"})
+	// ==========================
+	// HEADER CSV
+	// ==========================
 
-	// Tulis Baris Data
-	for i, r := range riwayat {
+	writer.Write([]string{
+		"No",
+		"Tanggal",
+		"Username Wisatawan",
+		"Nama Destinasi",
+	})
+
+	// ==========================
+	// DATA CSV
+	// ==========================
+
+	for i, item := range data {
+
 		writer.Write([]string{
+
 			strconv.Itoa(i + 1),
-			r.CreatedAt.Format("02-01-2006 15:04:05"), // Format: DD-MM-YYYY HH:MM:SS
-			r.WisatawanID.String(),
-			r.Keyword,
+
+			item.CreatedAt.Format("02-01-2006 15:04:05"),
+
+			item.Wisatawan.Username,
+
+			item.Destinasi.Nama,
 		})
+
+	}
+}
+
+func downloadDataUlasan(c *gin.Context, laporan models.Laporan) {
+
+	// ==========================
+	// PARSE PERIODE
+	// ==========================
+
+	parts := strings.Split(laporan.Periode, " ")
+
+	if len(parts) != 2 {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Format periode tidak valid",
+		})
+		return
+	}
+
+	bulanMap := map[string]time.Month{
+		"Januari":   1,
+		"Februari":  2,
+		"Maret":     3,
+		"April":     4,
+		"Mei":       5,
+		"Juni":      6,
+		"Juli":      7,
+		"Agustus":   8,
+		"September": 9,
+		"Oktober":   10,
+		"November":  11,
+		"Desember":  12,
+	}
+
+	bulan := bulanMap[parts[0]]
+
+	tahun, err := strconv.Atoi(parts[1])
+
+	if err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Tahun tidak valid",
+		})
+
+		return
+	}
+
+	startDate := time.Date(
+		tahun,
+		bulan,
+		1,
+		0,
+		0,
+		0,
+		0,
+		time.Local,
+	)
+
+	endDate := startDate.AddDate(0, 1, 0)
+
+	// ==========================
+	// QUERY DATABASE
+	// ==========================
+
+	query := config.DB.
+		Model(&models.Ulasan{}).
+		Preload("Destinasi").
+		Preload("Wisatawan").
+		Where("created_at >= ? AND created_at < ?", startDate, endDate)
+
+	// Filter Destinasi
+
+	if laporan.DestinasiID != nil {
+
+		query = query.Where(
+			"destinasi_id = ?",
+			*laporan.DestinasiID,
+		)
+
+	}
+
+	// Filter Rating
+
+	if laporan.Rating != nil {
+
+		query = query.Where(
+			"rating = ?",
+			*laporan.Rating,
+		)
+
+	}
+
+	var data []models.Ulasan
+
+	if err := query.Find(&data).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Gagal mengambil data ulasan",
+		})
+
+		return
+
+	}
+
+	// ==========================
+	// HEADER FILE CSV
+	// ==========================
+
+	namaFile := fmt.Sprintf(
+		"Data_Ulasan_%s.csv",
+		strings.ReplaceAll(laporan.Periode, " ", "_"),
+	)
+
+	c.Writer.Header().Set(
+		"Content-Type",
+		"text/csv",
+	)
+
+	c.Writer.Header().Set(
+		"Content-Disposition",
+		fmt.Sprintf("attachment; filename=%s", namaFile),
+	)
+
+	writer := csv.NewWriter(c.Writer)
+
+	defer writer.Flush()
+
+	// ==========================
+	// HEADER CSV
+	// ==========================
+
+	writer.Write([]string{
+		"No",
+		"Tanggal",
+		"Nama Destinasi",
+		"Nama Wisatawan",
+		"Rating",
+		"Ulasan",
+	})
+
+	// ==========================
+	// DATA CSV
+	// ==========================
+
+	for i, item := range data {
+
+		writer.Write([]string{
+
+			strconv.Itoa(i + 1),
+
+			item.CreatedAt.Format("02-01-2006 15:04:05"),
+
+			item.Destinasi.Nama,
+
+			item.Wisatawan.Username,
+
+			strconv.Itoa(item.Rating),
+
+			item.Komentar,
+		})
+
+	}
+
+}
+
+func downloadDataPencarian(c *gin.Context, laporan models.Laporan) {
+	parts := strings.Split(laporan.Periode, " ")
+
+	if len(parts) != 2 {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Format periode laporan rusak di database",
+		})
+		return
+	}
+
+	bulanMap := map[string]time.Month{
+		"Januari":   1,
+		"Februari":  2,
+		"Maret":     3,
+		"April":     4,
+		"Mei":       5,
+		"Juni":      6,
+		"Juli":      7,
+		"Agustus":   8,
+		"September": 9,
+		"Oktober":   10,
+		"November":  11,
+		"Desember":  12,
+	}
+
+	bulan := bulanMap[parts[0]]
+
+	tahun, err := strconv.Atoi(parts[1])
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Tahun pada periode tidak valid",
+		})
+		return
+	}
+
+	// Tentukan rentang tanggal
+	startDate := time.Date(
+		tahun,
+		bulan,
+		1,
+		0,
+		0,
+		0,
+		0,
+		time.Local,
+	)
+
+	endDate := startDate.AddDate(0, 1, 0)
+
+	// ==========================
+	// QUERY DATABASE
+	// ==========================
+
+	var riwayat []models.RiwayatPencarian
+
+	if err := config.DB.
+		Where("created_at >= ? AND created_at < ?", startDate, endDate).
+		Find(&riwayat).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Gagal mengambil data riwayat pencarian",
+		})
+
+		return
+	}
+
+	// ==========================
+	// HEADER FILE CSV
+	// ==========================
+
+	namaFile := fmt.Sprintf(
+		"Data_Pencarian_%s.csv",
+		strings.ReplaceAll(laporan.Periode, " ", "_"),
+	)
+
+	c.Writer.Header().Set(
+		"Content-Type",
+		"text/csv",
+	)
+
+	c.Writer.Header().Set(
+		"Content-Disposition",
+		fmt.Sprintf("attachment; filename=%s", namaFile),
+	)
+
+	writer := csv.NewWriter(c.Writer)
+
+	defer writer.Flush()
+
+	// ==========================
+	// HEADER CSV
+	// ==========================
+
+	writer.Write([]string{
+		"No",
+		"Waktu Pencarian",
+		"ID Wisatawan",
+		"Kata Kunci (Keyword)",
+	})
+
+	// ==========================
+	// DATA CSV
+	// ==========================
+
+	for i, item := range riwayat {
+
+		writer.Write([]string{
+
+			strconv.Itoa(i + 1),
+
+			item.CreatedAt.Format("02-01-2006 15:04:05"),
+
+			item.WisatawanID.String(),
+
+			item.Keyword,
+		})
+
 	}
 }
 
@@ -234,11 +618,21 @@ func BuatLaporanDestinasi(c *gin.Context) {
 
 // Fungsi untuk mengirim data laporan ulasan
 func BuatLaporanUlasan(c *gin.Context) {
+
 	var input LaporanInput // Menggunakan struct LaporanInput yang sama
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Input tidak valid, pastikan id_admin dan periode terisi"})
 		return
+	}
+
+	var destinasiUUID *uuid.UUID
+
+	if input.DestinasiID != "" {
+		id, err := uuid.Parse(input.DestinasiID)
+		if err == nil {
+			destinasiUUID = &id
+		}
 	}
 
 	adminUUID, err := uuid.Parse(input.AdminID)
@@ -274,9 +668,11 @@ func BuatLaporanUlasan(c *gin.Context) {
 
 	// Buat record baru di tabel Laporan
 	laporanBaru := models.Laporan{
-		JenisLaporan: "Data Ulasan dan Rating", // Harus spesifik
+		JenisLaporan: "Data Ulasan dan Rating",
 		Periode:      periodeStr,
 		AdminID:      adminUUID,
+		DestinasiID:  destinasiUUID,
+		Rating:       input.Rating,
 	}
 
 	if err := config.DB.Create(&laporanBaru).Error; err != nil {

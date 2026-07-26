@@ -14,6 +14,9 @@ type Laporan struct {
 
 	AdminID uuid.UUID `gorm:"type:uuid;not null" json:"id_admin"`
 
+	DestinasiID *uuid.UUID `gorm:"type:uuid" json:"id_destinasi,omitempty"`
+	Rating      *int       `json:"rating,omitempty"`
+
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
