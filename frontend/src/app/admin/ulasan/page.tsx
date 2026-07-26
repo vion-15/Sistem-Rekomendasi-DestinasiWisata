@@ -174,7 +174,7 @@ export default function UlasanPage() {
     return (
         <div className="p-6 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-300">
             <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
-                <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">Menu Ulasan & Rating</h1>
+                <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">Ulasan & Rating</h1>
 
                 <div className="flex items-center gap-3">
                     <input
