@@ -5,33 +5,28 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-type AdminData = {
+type PetugasData = {
     username: string;
     email?: string;
     id?: string;
     foto?: string;
 };
 
-export default function AdminLayout({
+export default function PetugasLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
     const router = useRouter();
     const pathname = usePathname();
-
-    const [adminName, setAdminName] = useState<string | null>(null);
+    const [petugasName, setPetugasName] = useState<string | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [adminFoto, setAdminFoto] = useState<string | null>(null);
-
+    const [petugasFoto, setPetugasFoto] = useState<string | null>(null);
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     const executeLogout = () => {
-        // 1. Hapus sesi atau data login (sesuaikan dengan cara Anda menyimpan sesi)
         localStorage.removeItem("user_data");
-
-        // 2. Arahkan kembali ke halaman login
-        router.push("/login"); // Ubah rute ini sesuai dengan rute login Anda
+        router.push("/login");
     };
 
     const menus = [
@@ -45,43 +40,46 @@ export default function AdminLayout({
         { title: "Laporan", href: "/petugas/laporan" },
     ];
 
+    const loadUserData = () => {
+        const petugasData = localStorage.getItem("user_data");
+
+        if (petugasData) {
+            try {
+                const parsed = JSON.parse(petugasData) as PetugasData;
+                setPetugasName(parsed.username ?? null);
+                setPetugasFoto(parsed.foto ?? null);
+            } catch {
+                console.error("Invalid petugas data");
+                setPetugasName(null);
+                setPetugasFoto(null);
+            }
+        }
+    };
+
     useEffect(() => {
         const token = localStorage.getItem("token");
-        const adminData = localStorage.getItem("user_data");
 
         if (!token) {
             router.push("/login");
             return;
         }
 
-        if (adminData) {
-            try {
-                const parsed = JSON.parse(adminData) as AdminData;
-                // eslint-disable-next-line react-hooks/set-state-in-effect
-                setAdminName(parsed.username ?? null);
-                setAdminFoto(parsed.foto ?? null);
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (e) {
-                console.error("Invalid admin data");
-                setAdminName(null);
-            }
-        }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        loadUserData();
+
+        window.addEventListener("user-updated", loadUserData);
 
         setIsLoaded(true);
+
+        return () => {
+            window.removeEventListener("user-updated", loadUserData);
+        };
     }, [router]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("admin_data");
-        router.push("/login");
-    };
-
-    // guard render sampai data siap
     if (!isLoaded) return null;
 
     return (
         <div className="flex h-screen bg-gray-50">
-            {/* Sidebar */}
             <aside className="w-64 bg-slate-800 text-white flex flex-col shadow-xl">
                 <div className="p-5 text-xl font-bold border-b border-slate-700
                 flex flex-row items-end gap-4">
@@ -110,7 +108,6 @@ export default function AdminLayout({
                 </nav>
             </aside>
 
-            {/* Main */}
             <div className="flex-1 flex flex-col overflow-hidden">
                 <header className="bg-white shadow-sm flex items-center justify-between p-5 border-b border-gray-200">
                     <h2 className="text-lg font-semibold text-gray-700">
@@ -119,25 +116,25 @@ export default function AdminLayout({
 
                     <div className="flex items-center gap-4">
                         <span className="text-sm font-medium text-gray-600">
-                            {adminName ?? "Admin"}
+                            {petugasName ?? "Petugas"}
                         </span>
 
-                        {adminFoto ? (
+                        {petugasFoto ? (
                             <Image
-                                src={adminFoto}
-                                alt="Foto Admin"
+                                src={petugasFoto}
+                                alt="Foto Petugas"
                                 width={40}
                                 height={40}
                                 className="rounded-full object-cover w-10 h-10"
                             />
                         ) : (
                             <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
-                                {adminName?.charAt(0).toUpperCase() ?? "A"}
+                                {petugasName?.charAt(0).toUpperCase() ?? "A"}
                             </div>
                         )}
 
                         <button
-                            onClick={() => setIsLogoutModalOpen(true)} // <-- Hanya membuka modal
+                            onClick={() => setIsLogoutModalOpen(true)} //l
                             className="text-red-700 hover:text-red-600 font-medium flex items-center gap-2"
                         >
                             Logout
@@ -164,7 +161,6 @@ export default function AdminLayout({
 
                         <h2 className="text-xl font-bold text-gray-800 mb-10">Yakin ingin keluar?</h2>
                         <div className="flex justify-center gap-3">
-                            {/* Tombol Logout (KIRI) */}
                             <button
                                 onClick={executeLogout}
                                 className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-colors"
@@ -172,7 +168,6 @@ export default function AdminLayout({
                                 Logout
                             </button>
 
-                            {/* Tombol Batal (KANAN) */}
                             <button
                                 onClick={() => setIsLogoutModalOpen(false)}
                                 className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-colors"
