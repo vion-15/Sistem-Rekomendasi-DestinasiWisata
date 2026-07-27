@@ -1,5 +1,6 @@
 "use client";
 
+import { MoveLeft, MoveRight, TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, FormEvent } from "react";
 
@@ -12,6 +13,7 @@ type Destinasi = {
     id: string;
     nama: string;
     deskripsi: string;
+    aktivitas: string;
     alamat: string;
     kota: string;
     kategori: string;
@@ -30,39 +32,32 @@ interface UserData {
 
 export default function DestinasiPage() {
     const [destinasiList, setDestinasiList] = useState<Destinasi[]>([]);
-
-    // STATE UNTUK FILTER & PENCARIAN
     const [searchQuery, setSearchQuery] = useState("");
     const [filterKategori, setFilterKategori] = useState("");
     const [filterKota, setFilterKota] = useState("");
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [viewingDestinasi, setViewingDestinasi] = useState<Destinasi | null>(null);
-
     const [isLoading, setIsLoading] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
-
     const [editingId, setEditingId] = useState<string | null>(null);
     const [nama, setNama] = useState("");
     const [deskripsi, setDeskripsi] = useState("");
+    const [aktivitas, setAktivitas] = useState("");
     const [alamat, setAlamat] = useState("");
     const [kota, setKota] = useState("");
     const [kategori, setKategori] = useState("");
     const [latitude, setLatitude] = useState("");
     const [longitude, setLongitude] = useState("");
     const [gambar, setGambar] = useState<File | null>(null);
-
     const [csvFile, setCsvFile] = useState<File | null>(null);
-
     const [currentPage, setCurrentPage] = useState(1);
-
     const itemsPerPage = 10;
-
     const [userData, setUserData] = useState<UserData | null>(null);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const data = JSON.parse(
@@ -92,6 +87,7 @@ export default function DestinasiPage() {
         setEditingId(null);
         setNama("");
         setDeskripsi("");
+        setAktivitas("");
         setAlamat("");
         setKota("");
         setKategori("");
@@ -116,6 +112,7 @@ export default function DestinasiPage() {
         setEditingId(d.id);
         setNama(d.nama);
         setDeskripsi(d.deskripsi);
+        setAktivitas(d.aktivitas);
         setAlamat(d.alamat);
         setKota(d.kota);
         setKategori(d.kategori);
@@ -126,13 +123,16 @@ export default function DestinasiPage() {
         setIsModalOpen(true);
     };
 
-    const handleDelete = async (id: string) => {
-        if (!window.confirm("Apakah Anda yakin ingin menghapus destinasi ini?")) return;
+    const handleDelete = async () => {
+        if (!deleteId) return;
+
+        setIsDeleting(true);
 
         try {
-            const res = await fetch(`http://localhost:8080/api/destinasi/${id}`, { method: "DELETE" });
+            const res = await fetch(`http://localhost:8080/api/destinasi/${deleteId}`, { method: "DELETE" });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Gagal menghapus destinasi");
+            setDeleteId(null);
             fetchDestinasi();
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -140,6 +140,8 @@ export default function DestinasiPage() {
             } else {
                 alert("Terjadi kesalahan");
             }
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -151,6 +153,7 @@ export default function DestinasiPage() {
         const formData = new FormData();
         formData.append("nama", nama);
         formData.append("deskripsi", deskripsi);
+        formData.append("aktivitas", aktivitas);
         formData.append("alamat", alamat);
         formData.append("kota", kota);
         formData.append("kategori", kategori);
@@ -270,13 +273,13 @@ export default function DestinasiPage() {
 
     return (
         <div>
-            {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Destinasi Wisata</h1>
                 <div className="flex gap-3">
                     <button
                         onClick={handleOpenImportModal}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 
+                        rounded-lg font-medium transition-colors flex items-center gap-2"
                     >
                         📄 Import CSV
                     </button>
@@ -289,7 +292,6 @@ export default function DestinasiPage() {
                 </div>
             </div>
 
-            {/* Panel Filter dan Pencarian */}
             <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
@@ -298,14 +300,16 @@ export default function DestinasiPage() {
                         placeholder="Cari nama destinasi..."
                         value={searchQuery}
                         onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                        className="w-full pl-10 pr-4 text-slate-900 placeholder:text-slate-400 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
+                        className="w-full pl-10 pr-4 text-slate-900 placeholder:text-slate-400 py-2 border border-gray-200 
+                        rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
                     />
                 </div>
 
                 <select
                     value={filterKota}
                     onChange={(e) => { setFilterKota(e.target.value); setCurrentPage(1); }}
-                    className="w-full md:w-48 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-gray-700"
+                    className="w-full md:w-48 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 
+                    outline-none bg-white text-gray-700"
                 >
                     <option value="">Semua Kota</option>
                     {uniqueKota.map(kota => (
@@ -316,7 +320,8 @@ export default function DestinasiPage() {
                 <select
                     value={filterKategori}
                     onChange={(e) => { setFilterKategori(e.target.value); setCurrentPage(1); }}
-                    className="w-full md:w-48 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-gray-700"
+                    className="w-full md:w-48 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 
+                    outline-none bg-white text-gray-700"
                 >
                     <option value="">Semua Kategori</option>
                     {uniqueKategori.map(kat => (
@@ -324,7 +329,6 @@ export default function DestinasiPage() {
                     ))}
                 </select>
 
-                {/* Tombol Reset Filter jika ada filter yang aktif */}
                 {(searchQuery || filterKategori || filterKota) && (
                     <button
                         onClick={() => {
@@ -333,14 +337,14 @@ export default function DestinasiPage() {
                             setFilterKota("");
                             setCurrentPage(1);
                         }}
-                        className="px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg font-medium transition-colors whitespace-nowrap"
+                        className="px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg 
+                        font-medium transition-colors whitespace-nowrap"
                     >
                         Reset
                     </button>
                 )}
             </div>
 
-            {/* Tabel Data */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
                 <table className="w-full text-left border-collapse whitespace-nowrap">
                     <thead>
@@ -354,7 +358,6 @@ export default function DestinasiPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {/* Menggunakan filteredDestinasiList, bukan destinasiList */}
                         {currentData.map((d, index) => (
                             <tr key={d.id} className="border-b border-gray-100 hover:bg-gray-50">
                                 <td className="p-4 text-center text-gray-700">
@@ -377,11 +380,14 @@ export default function DestinasiPage() {
                                     <span className="bg-indigo-50 text-indigo-600 px-2 py-1 rounded text-sm">{d.kategori}</span>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <button onClick={() => handleOpenViewModal(d)} className="text-emerald-600 hover:text-emerald-800 mx-2 font-bold transition-colors">
+                                    <button onClick={() => handleOpenViewModal(d)} className="text-emerald-600 
+                                    hover:text-emerald-800 mx-2 font-bold transition-colors">
                                         Lihat
                                     </button>
-                                    <button onClick={() => handleOpenEditModal(d)} className="text-blue-500 hover:text-blue-700 mx-2 font-medium">Edit</button>
-                                    <button onClick={() => handleDelete(d.id)} className="text-red-500 hover:text-red-700 mx-2 font-medium">Hapus</button>
+                                    <button onClick={() => handleOpenEditModal(d)} className="text-blue-500 
+                                    hover:text-blue-700 mx-2 font-medium">Edit</button>
+                                    <button onClick={() => setDeleteId(d.id)} className="text-red-500 
+                                    hover:text-red-700 mx-2 font-medium">Hapus</button>
                                 </td>
                             </tr>
                         ))}
@@ -398,7 +404,6 @@ export default function DestinasiPage() {
                 </table>
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-5 py-4 border-t border-gray-200">
 
-                    {/* Info */}
                     <p className="text-sm text-gray-500">
                         Menampilkan{" "}
                         <span className="font-semibold text-gray-700">
@@ -415,18 +420,17 @@ export default function DestinasiPage() {
                         data
                     </p>
 
-                    {/* Pagination */}
                     <div className="flex items-center gap-1">
 
-                        {/* Previous */}
                         <button
                             onClick={() =>
                                 setCurrentPage((p) => Math.max(p - 1, 1))
                             }
                             disabled={currentPage === 1}
-                            className="h-10 px-4 border rounded-lg bg-white hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            className="h-10 px-4 border rounded-lg bg-white hover:bg-gray-100 disabled:opacity-40 
+                            disabled:cursor-not-allowed transition"
                         >
-                            ←
+                            <MoveLeft className="text-slate-800" />
                         </button>
 
                         {getPageNumbers().map((page, index) =>
@@ -460,23 +464,25 @@ export default function DestinasiPage() {
                                 )
                             }
                             disabled={currentPage === totalPages}
-                            className="h-10 px-4 border rounded-lg bg-white hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            className="h-10 px-4 border rounded-lg bg-white hover:bg-gray-100 disabled:opacity-40 
+                            disabled:cursor-not-allowed transition"
                         >
-                            →
+                            <MoveRight className="text-slate-800" />
                         </button>
 
                     </div>
                 </div>
             </div>
 
-            {/* Modal Import CSV */}
             {isImportModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl">
                         <h2 className="text-xl font-bold text-gray-800 mb-2">Import Destinasi via CSV</h2>
                         <p className="text-sm text-gray-500 mb-4">
                             Unggah file CSV dengan format kolom: <br />
-                            <code className="text-xs bg-slate-100 px-1 py-0.5 rounded text-blue-600">nama, deskripsi, alamat, kota, kategori, latitude, longitude</code>
+                            <code className="text-xs bg-slate-100 px-1 py-0.5 rounded text-blue-600">
+                                nama, deskripsi, aktivitas, alamat, kota, kategori, latitude, longitude
+                            </code>
                         </p>
 
                         {errorMsg && (
@@ -486,19 +492,24 @@ export default function DestinasiPage() {
                         )}
 
                         <form onSubmit={handleImportSubmit} className="space-y-4">
-                            <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 transition-colors">
+                            <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 
+                            transition-colors">
                                 <input
                                     type="file"
                                     accept=".csv"
                                     onChange={(e) => setCsvFile(e.target.files ? e.target.files[0] : null)}
-                                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+                                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full 
+                                    file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 
+                                    hover:file:bg-blue-100 cursor-pointer"
                                     required
                                 />
                             </div>
 
                             <div className="flex justify-end gap-3 pt-2">
-                                <button type="button" onClick={() => setIsImportModalOpen(false)} className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">Batal</button>
-                                <button type="submit" disabled={isImporting} className={`px-4 py-2 text-white rounded-lg font-medium ${isImporting ? "bg-emerald-400" : "bg-emerald-600 hover:bg-emerald-700"}`}>
+                                <button type="button" onClick={() => setIsImportModalOpen(false)} className="px-4 py-2 
+                                text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">Batal</button>
+                                <button type="submit" disabled={isImporting} className={`px-4 py-2 text-white rounded-lg 
+                                    font-medium ${isImporting ? "bg-emerald-400" : "bg-emerald-600 hover:bg-emerald-700"}`}>
                                     {isImporting ? "Memproses..." : "Upload & Import"}
                                 </button>
                             </div>
@@ -507,7 +518,6 @@ export default function DestinasiPage() {
                 </div>
             )}
 
-            {/* Modal Form Tambah/Edit */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white p-6 rounded-xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -559,36 +569,79 @@ export default function DestinasiPage() {
                                     placeholder="Deskripsi..."></textarea>
                             </div>
 
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Aktivitas
+                                </label>
+
+                                <textarea
+                                    value={aktivitas}
+                                    onChange={(e) => setAktivitas(e.target.value)}
+                                    rows={3}
+                                    required
+                                    placeholder="Pisahkan setiap aktivitas dengan tanda koma.
+                                        Contoh: jogging, berjalan kaki, fotografi, piknik"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        focus:ring-2 focus:ring-blue-500 outline-none resize-none
+                                        text-slate-800 placeholder:text-slate-400"
+                                />
+                            </div>
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap</label>
-                                    <textarea value={alamat} onChange={(e) => setAlamat(e.target.value)} rows={2} placeholder="Alamat..." className="w-full px-3 py-2 border text-slate-800 placeholder:text-slate-400 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none" required></textarea>
+                                    <textarea value={alamat} onChange={(e) => setAlamat(e.target.value)} rows={2}
+                                        placeholder="Alamat..."
+                                        className="w-full px-3 py-2 border text-slate-800 placeholder:text-slate-400 
+                                    border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                                        required></textarea>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Kota</label>
-                                    <input type="text" value={kota} onChange={(e) => setKota(e.target.value)} placeholder="kota" className="w-full px-3 py-2 border  text-slate-800 placeholder:text-slate-400 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required />
+                                    <input type="text" value={kota} onChange={(e) => setKota(e.target.value)}
+                                        placeholder="kota"
+                                        className="w-full px-3 py-2 border  text-slate-800 
+                                    placeholder:text-slate-400 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
+                                    outline-none" required />
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
-                                    <input type="number" step="any" value={latitude} onChange={(e) => setLatitude(e.target.value)} placeholder="-6.200000" className="w-full px-3 py-2 border text-slate-800 placeholder:text-slate-400 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required />
+                                    <input type="number" step="any" value={latitude}
+                                        onChange={(e) => setLatitude(e.target.value)}
+                                        placeholder="-6.200000"
+                                        className="w-full px-3 py-2 border text-slate-800 placeholder:text-slate-400 
+                                    border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
-                                    <input type="number" step="any" value={longitude} onChange={(e) => setLongitude(e.target.value)} placeholder="106.816666" className="w-full px-3 py-2 border text-slate-800 placeholder:text-slate-400 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required />
+                                    <input type="number" step="any" value={longitude}
+                                        onChange={(e) => setLongitude(e.target.value)}
+                                        placeholder="106.816666"
+                                        className="w-full px-3 py-2 border text-slate-800 placeholder:text-slate-400 
+                                    border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required />
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Gambar {editingId && <span className="text-gray-400 font-normal ">(Opsional)</span>}
                                 </label>
-                                <input type="file" accept="image/*" onChange={(e) => setGambar(e.target.files ? e.target.files[0] : null)} className="w-full px-3 py-1.5 text-slate-800 placeholder:text-slate-400 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700" required={!editingId} />
+                                <input type="file" accept="image/*"
+                                    onChange={(e) => setGambar(e.target.files ? e.target.files[0] : null)}
+                                    className="w-full px-3 py-1.5 text-slate-800 placeholder:text-slate-400 border 
+                                border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none file:mr-4 
+                                file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700"
+                                    required={!editingId} />
                             </div>
                             <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">Batal</button>
-                                <button type="submit" disabled={isLoading} className={`px-4 py-2 text-white rounded-lg font-medium ${isLoading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"}`}>
+                                <button type="button" onClick={() => setIsModalOpen(false)}
+                                    className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 
+                                rounded-lg font-medium">Batal</button>
+                                <button type="submit" disabled={isLoading}
+                                    className={`px-4 py-2 text-white rounded-lg font-medium ${isLoading ? "bg-blue-400"
+                                        : "bg-blue-600 hover:bg-blue-700"}`}>
                                     {isLoading ? "Menyimpan..." : "Simpan"}
                                 </button>
                             </div>
@@ -597,21 +650,21 @@ export default function DestinasiPage() {
                 </div>
             )}
 
-            {/* MODAL VIEW / DETAIL DESTINASI */}
             {isViewModalOpen && viewingDestinasi && (
                 <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-60 p-4 backdrop-blur-sm">
                     <div className="bg-white rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                         {/* Header */}
                         <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                             <h2 className="text-xl font-bold text-slate-800">Detail Informasi Destinasi</h2>
-                            <button onClick={() => setIsViewModalOpen(false)} className="text-slate-400 hover:text-red-500 text-2xl font-bold leading-none transition-colors">&times;</button>
+                            <button onClick={() => setIsViewModalOpen(false)}
+                                className="text-slate-400 hover:text-red-500 text-2xl font-bold leading-none 
+                                transition-colors">&times;</button>
                         </div>
 
-                        {/* Konten (Scrollable) */}
                         <div className="p-6 overflow-y-auto flex flex-col md:flex-row gap-8">
-                            {/* Panel Kiri: Gambar & Label Cepat */}
                             <div className="w-full md:w-1/3 flex flex-col gap-4">
-                                <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-100 relative aspect-square">
+                                <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-100 
+                                relative aspect-square">
                                     <Image
                                         src={viewingDestinasi.gambar || "https://placehold.co/100x100/png?text=No+Image"}
                                         alt={viewingDestinasi.nama}
@@ -620,7 +673,8 @@ export default function DestinasiPage() {
                                     />
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                    <span className="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                                    <span className="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1.5 
+                                    rounded-full uppercase tracking-wider">
                                         {viewingDestinasi.kategori}
                                     </span>
                                     <span className="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-full">
@@ -634,13 +688,16 @@ export default function DestinasiPage() {
                                 <div>
                                     <h3 className="text-3xl font-bold text-slate-800 mb-1">{viewingDestinasi.nama}</h3>
                                     <p className="text-sm text-slate-500 font-medium">
-                                        Dikelola oleh: <span className="text-slate-700">{viewingDestinasi.petugas?.username || "Admin (Pusat)"}</span>
+                                        Dikelola oleh: <span className="text-slate-700">
+                                            {viewingDestinasi.petugas?.username || "Admin (Pusat)"}
+                                        </span>
                                     </p>
                                 </div>
 
                                 <div>
                                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Deskripsi</h4>
-                                    <p className="text-slate-700 text-sm leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <p className="text-slate-700 text-sm leading-relaxed bg-slate-50 p-4 rounded-xl border 
+                                    border-slate-100">
                                         {viewingDestinasi.deskripsi}
                                     </p>
                                 </div>
@@ -654,21 +711,71 @@ export default function DestinasiPage() {
 
                                 <div className="grid grid-cols-2 gap-4 pt-2">
                                     <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-                                        <span className="block text-xs font-bold text-blue-600 mb-1 uppercase tracking-wider">Latitude</span>
-                                        <span className="font-mono text-sm text-slate-800 font-medium">{viewingDestinasi.latitude}</span>
+                                        <span className="block text-xs font-bold text-blue-600 mb-1 uppercase tracking-wider">
+                                            Latitude</span>
+                                        <span className="font-mono text-sm text-slate-800 font-medium">
+                                            {viewingDestinasi.latitude}</span>
                                     </div>
                                     <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-                                        <span className="block text-xs font-bold text-blue-600 mb-1 uppercase tracking-wider">Longitude</span>
-                                        <span className="font-mono text-sm text-slate-800 font-medium">{viewingDestinasi.longitude}</span>
+                                        <span className="block text-xs font-bold text-blue-600 mb-1 uppercase tracking-wider">
+                                            Longitude</span>
+                                        <span className="font-mono text-sm text-slate-800 font-medium">
+                                            {viewingDestinasi.longitude}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Footer */}
                         <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
-                            <button onClick={() => setIsViewModalOpen(false)} className="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold transition-colors shadow-sm">
+                            <button onClick={() => setIsViewModalOpen(false)} className="px-6 py-2.5 bg-slate-800 
+                            hover:bg-slate-900 text-white rounded-xl font-bold transition-colors shadow-sm">
                                 Tutup Panel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {deleteId && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                                <TriangleAlert className="text-red-600" />
+                            </div>
+
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-900">
+                                    Hapus Data Destinasi
+                                </h2>
+
+                                <p className="mt-1 text-sm text-gray-600">
+                                    Apakah Anda yakin ingin menghapus data destinasi ini?
+                                </p>
+
+                                <p className="mt-1 text-sm text-red-500">
+                                    Tindakan ini tidak dapat dibatalkan.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 flex justify-end gap-3">
+
+                            <button
+                                onClick={() => setDeleteId(null)}
+                                disabled={isDeleting}
+                                className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
+                            >
+                                Batal
+                            </button>
+
+                            <button
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                                className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                            >
+                                {isDeleting ? "Menghapus..." : "Hapus"}
                             </button>
                         </div>
                     </div>

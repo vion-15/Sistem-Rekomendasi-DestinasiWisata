@@ -87,7 +87,7 @@ export default function DestinasiPage() {
         setEditingId(null);
         setNama("");
         setDeskripsi("");
-        setAktivitas("")
+        setAktivitas("");
         setAlamat("");
         setKota("");
         setKategori("");
