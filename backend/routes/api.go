@@ -114,7 +114,7 @@ func SetupRouter() *gin.Engine {
 			wisatawan_aktivitas.GET("/riwayat-destinasi/:id_wisatawan", controllers.GetRiwayatDestinasiByWisatawan)
 			wisatawan_aktivitas.DELETE("/riwayat-destinasi/:id", controllers.DeleteRiwayatDestinasi)
 			wisatawan_aktivitas.GET("/riwayat-pencarian/:id_wisatawan", controllers.GetRiwayatPencarianByWisatawan)
-			wisatawan_aktivitas.DELETE("/riwayat-pencarian/:id", controllers.DeleteRiwayatPencarian)
+			wisatawan_aktivitas.DELETE("/pencarian/:id", controllers.DeleteRiwayatPencarian)
 			wisatawan_aktivitas.POST("/ulasan", controllers.CreateUlasan)
 			wisatawan_aktivitas.GET("/ulasan/:id_wisatawan", controllers.GetUlasanByWisatawan)
 			wisatawan_aktivitas.DELETE("/ulasan/:id", controllers.DeleteUlasan)

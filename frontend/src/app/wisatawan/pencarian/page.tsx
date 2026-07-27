@@ -19,18 +19,13 @@ type UserData = {
 export default function PencarianWisatawanPage() {
 
     const router = useRouter();
-
     const [searchQuery, setSearchQuery] = useState("");
-
-    const [riwayatList, setRiwayatList] = useState<Pencarian[]>([]);
-
+    const [pencarianList, setPencarianList] = useState<Pencarian[]>([]);
     const [userData, setUserData] = useState<UserData | null>(null);
-
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const user = localStorage.getItem("user_data");
-
         if (user) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setUserData(JSON.parse(user));
@@ -40,6 +35,7 @@ export default function PencarianWisatawanPage() {
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        setIsLoading(true);
         try {
             const res = await fetch(
                 "http://localhost:8080/api/wisatawan-aktivitas/cari",
@@ -57,54 +53,64 @@ export default function PencarianWisatawanPage() {
 
             const data = await res.json();
 
-            console.log("Response Backend:", data);
-
             if (!res.ok) {
                 alert(data.error || "Gagal mencari destinasi.");
                 return;
             }
-
-            // Kosongkan input pencarian (opsional)
             setSearchQuery("");
-
-            // Pindah ke halaman hasil rekomendasi
             router.push("/wisatawan/hasil-rekomendasi");
-
-
         } catch (error) {
             console.error(error);
             alert("Terjadi kesalahan.");
         }
     };
 
-    const handleDelete = (id: string) => {
-        console.log(id);
+    const handleDelete = async (id: string) => {
+        const confirmDelete = window.confirm("Apakah anda yakin ingin menghapus data ini ?");
+
+        if (!confirmDelete) return;
+
+        try {
+            const res = await fetch(`http://localhost:8080/api/wisatawan-aktivitas/pencarian/${id}`, {
+                method: "DELETE",
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || "Gagal menghapus data");
+            }
+
+            fetchPencarian();
+            alert("Data berhasil dihapus.");
+
+        } catch (error) {
+            console.error(error);
+
+            if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                alert("Terjadi kesalahan.");
+            }
+        }
     };
 
     const fetchPencarian = async () => {
 
         try {
-
             const userData = JSON.parse(
                 localStorage.getItem("user_data") || "{}"
             );
-
             const res = await fetch(
                 `http://localhost:8080/api/wisatawan-aktivitas/pencarian/${userData.id}`
             );
-
             const data = await res.json();
-
             if (res.ok) {
-                setRiwayatList(data.data || []);
+                setPencarianList(data.data || []);
             }
-
         } catch (err) {
-
             console.error(err);
-
         }
-
     };
 
     useEffect(() => {
@@ -114,20 +120,17 @@ export default function PencarianWisatawanPage() {
 
     return (
         <div className="animate-in fade-in duration-300">
-
-            {/* 1. BANNER PENCARIAN (Gaya Modern & Berwarna) */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 sm:p-12 mb-10 shadow-lg relative overflow-hidden">
-                {/* Efek dekorasi latar (opsional agar tidak terlalu polos) */}
-                <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl pointer-events-none"></div>
-
+            <div className="bg-linear-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 sm:p-12 mb-10 shadow-lg 
+            relative overflow-hidden">
+                <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white/10 
+                rounded-full blur-2xl pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl 
+                pointer-events-none"></div>
                 <div className="relative z-10">
                     <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-8 tracking-tight">
                         Ayo Kita Mau Cari Apa?
                     </h1>
-
                     <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4 items-center">
-                        {/* Input Pencarian */}
                         <div className="relative flex-1 w-full">
                             <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
                                 <Search className="text-slate-400" size={20} />
@@ -137,16 +140,17 @@ export default function PencarianWisatawanPage() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Cari Destinasi Yang Sesuai dengan Mu....."
-                                className="w-full pl-14 pr-6 py-4 rounded-2xl border-0 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-400/30 bg-white shadow-inner transition-all"
+                                className="w-full pl-14 pr-6 py-4 rounded-2xl border-0 text-slate-800 placeholder:text-slate-400 
+                                focus:outline-none focus:ring-4 focus:ring-blue-400/30 bg-white shadow-inner transition-all"
                                 required
                             />
                         </div>
 
-                        {/* Tombol Cari */}
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full sm:w-auto px-10 py-4 bg-white text-blue-700 font-bold text-lg rounded-2xl hover:bg-slate-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 disabled:opacity-60"
+                            className="w-full sm:w-auto px-10 py-4 bg-white text-blue-700 font-bold text-lg rounded-2xl 
+                            hover:bg-slate-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 disabled:opacity-60"
                         >
                             {isLoading ? "Mencari..." : "Cari"}
                         </button>
@@ -154,7 +158,6 @@ export default function PencarianWisatawanPage() {
                 </div>
             </div>
 
-            {/* 2. TABEL RIWAYAT PENCARIAN (Bersih & Elegan) */}
             <div>
                 <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
                     Pencarian
@@ -170,7 +173,7 @@ export default function PencarianWisatawanPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {riwayatList.length === 0 ? (
+                            {pencarianList.length === 0 ? (
                                 <tr>
                                     <td colSpan={3} className="p-10 text-center text-slate-500 font-medium">
                                         <div className="flex flex-col items-center gap-2">
@@ -180,7 +183,7 @@ export default function PencarianWisatawanPage() {
                                     </td>
                                 </tr>
                             ) : (
-                                riwayatList.map((item, index) => (
+                                pencarianList.map((item, index) => (
                                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
                                         <td className="p-5 text-slate-500 text-center font-medium">
                                             {index + 1}
@@ -191,7 +194,9 @@ export default function PencarianWisatawanPage() {
                                         <td className="p-5 text-center">
                                             <button
                                                 onClick={() => handleDelete(item.id)}
-                                                className="flex items-center justify-center gap-1.5 w-full bg-red-50 text-red-600 hover:bg-red-500 hover:text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300"
+                                                className="flex items-center justify-center gap-1.5 w-full bg-red-50 text-red-600 
+                                                hover:bg-red-500 hover:text-white px-4 py-2 rounded-xl text-sm font-semibold 
+                                                transition-all duration-300"
                                             >
                                                 <Trash2 size={16} />
                                                 Delete
@@ -204,7 +209,6 @@ export default function PencarianWisatawanPage() {
                     </table>
                 </div>
             </div>
-
         </div>
     );
 }

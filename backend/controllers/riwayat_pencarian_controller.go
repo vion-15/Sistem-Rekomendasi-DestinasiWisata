@@ -45,9 +45,6 @@ func GetRiwayatPencarianByWisatawan(c *gin.Context) {
 	})
 }
 
-// ============================
-// DELETE RIWAYAT PENCARIAN
-// ============================
 func DeleteRiwayatPencarian(c *gin.Context) {
 	riwayatID := c.Param("id")
 
