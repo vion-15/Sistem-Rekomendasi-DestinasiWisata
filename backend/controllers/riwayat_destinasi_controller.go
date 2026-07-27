@@ -112,10 +112,42 @@ func GetRiwayatDestinasiByWisatawan(c *gin.Context) {
 		return
 	}
 
+	var result []gin.H
+
+	for _, item := range riwayatList {
+
+		var ulasan models.Ulasan
+
+		err := config.DB.
+			Where(
+				"wisatawan_id = ? AND destinasi_id = ?",
+				parsedID,
+				item.DestinasiID,
+			).
+			First(&ulasan).
+			Error
+
+		data := gin.H{
+			"id":        item.ID,
+			"destinasi": item.Destinasi,
+		}
+
+		if err == nil {
+
+			data["rating"] = ulasan.Rating
+			data["ulasan"] = ulasan.Komentar
+			data["tanggal_ulasan"] = ulasan.CreatedAt
+
+		}
+
+		result = append(result, data)
+
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "riwayat destinasi berhasil diambil",
-		"total":   len(riwayatList),
-		"data":    riwayatList,
+		"total":   len(result),
+		"data":    result,
 	})
 }
 
