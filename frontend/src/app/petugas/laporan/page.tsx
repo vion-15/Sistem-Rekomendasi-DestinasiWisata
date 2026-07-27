@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { TriangleAlert } from "lucide-react";
+import toast from "react-hot-toast";
 
-// Struktur data sesuai dengan model di Golang
 interface Laporan {
     id: string;
     jenis_laporan: string;
@@ -13,8 +14,9 @@ interface Laporan {
 export default function LaporanPage() {
     const [laporanList, setLaporanList] = useState<Laporan[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-    // Fungsi untuk mengambil data dari backend
     const fetchLaporan = async () => {
         setIsLoading(true);
         try {
@@ -35,25 +37,26 @@ export default function LaporanPage() {
         fetchLaporan();
     }, []);
 
-    // Fungsi untuk menghapus laporan
-    const handleDelete = async (id: string) => {
-        const confirmDelete = window.confirm("Apakah Anda yakin ingin menghapus laporan ini?");
-        if (!confirmDelete) return;
+    const handleDelete = async () => {
+        if (!deleteId) return;
+
+        setIsDeleting(true);
 
         try {
-            const res = await fetch(`http://localhost:8080/api/petugas-laporan/${id}`, {
+            const res = await fetch(`http://localhost:8080/api/petugas-laporan/${deleteId}`, {
                 method: "DELETE",
             });
 
             if (res.ok) {
-                alert("Laporan berhasil dihapus");
+                toast.success("Laporan berhasil dihapus");
+                setDeleteId(null)
                 fetchLaporan(); // Refresh tabel setelah menghapus
             } else {
-                alert("Gagal menghapus laporan");
+                toast.error("Gagal menghapus laporan");
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("Terjadi kesalahan pada server");
+            toast.error("Terjadi kesalahan pada server");
         }
     };
 
@@ -64,7 +67,6 @@ export default function LaporanPage() {
             });
 
             if (res.ok) {
-                // Konversi response menjadi Blob (objek file)
                 const blob = await res.blob();
                 
                 // Buat URL sementara untuk file tersebut
@@ -83,11 +85,11 @@ export default function LaporanPage() {
                 window.URL.revokeObjectURL(url); 
             } else {
                 const data = await res.json();
-                alert("Gagal mengunduh: " + data.error);
+                toast.error("Gagal mengunduh: " + data.error);
             }
         } catch (error) {
             console.error("Error downloading file:", error);
-            alert("Terjadi kesalahan koneksi saat mencoba mengunduh file.");
+            toast.error("Terjadi kesalahan koneksi saat mencoba mengunduh file.");
         }
     };
 
@@ -100,7 +102,6 @@ export default function LaporanPage() {
     return (
         <div className="p-4 max-w-6xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Laporan</h1>
-
             <div className="bg-white border border-gray-200 overflow-hidden rounded shadow-sm">
                 <table className="w-full border-collapse text-left">
                     <thead>
@@ -128,7 +129,6 @@ export default function LaporanPage() {
                             laporanList.map((item, index) => (
                                 <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50">
                                     <td className="p-4 text-center text-gray-700">{index + 1}</td>
-                                    {/* Menggabungkan Jenis Laporan dan Periode sesuai desain */}
                                     <td className="p-4 text-gray-700">
                                         {item.jenis_laporan} - {item.periode}
                                     </td>
@@ -143,7 +143,7 @@ export default function LaporanPage() {
                                             Download
                                         </button>
                                         <button 
-                                            onClick={() => handleDelete(item.id)}
+                                            onClick={() => setDeleteId(item.id)}
                                             className="border border-gray-400 bg-white hover:bg-red-50 text-red-600 px-3 py-1 rounded text-sm transition-colors"
                                         >
                                             Hapus
@@ -155,6 +155,53 @@ export default function LaporanPage() {
                     </tbody>
                 </table>
             </div>
+            {deleteId && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                                <TriangleAlert className="text-red-600" />
+                            </div>
+
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-900">
+                                    Hapus Data Laporan
+                                </h2>
+
+                                <p className="mt-1 text-sm text-gray-600">
+                                    Apakah Anda yakin ingin menghapus data laporan ini?
+                                </p>
+
+                                <p className="mt-1 text-sm text-red-500">
+                                    Tindakan ini tidak dapat dibatalkan.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 flex justify-end gap-3">
+
+                            <button
+                                onClick={() => setDeleteId(null)}
+                                disabled={isDeleting}
+                                className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
+                            >
+                                Batal
+                            </button>
+
+                            <button
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                                className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                            >
+                                {isDeleting ? "Menghapus..." : "Hapus"}
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -685,3 +685,22 @@ func BuatLaporanUlasan(c *gin.Context) {
 		"data":    laporanBaru,
 	})
 }
+
+func GetDaftarLaporanPetugas(c *gin.Context) {
+	var laporanList []models.Laporan
+
+	if err := config.DB.
+		Where("jenis_laporan = ?", "Data Ulasan dan Rating").
+		Order("created_at desc").
+		Find(&laporanList).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Gagal mengambil data laporan",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": laporanList,
+	})
+}

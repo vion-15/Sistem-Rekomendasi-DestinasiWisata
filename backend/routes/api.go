@@ -70,7 +70,7 @@ func SetupRouter() *gin.Engine {
 
 		petugas_laporan := api.Group("/petugas-laporan")
 		{
-			petugas_laporan.GET("", controllers.GetDaftarLaporan)
+			petugas_laporan.GET("", controllers.GetDaftarLaporanPetugas)
 			petugas_laporan.DELETE("/:id", controllers.DeleteLaporan)
 			petugas_laporan.GET("/:id/download", controllers.DownloadLaporan)
 		}
