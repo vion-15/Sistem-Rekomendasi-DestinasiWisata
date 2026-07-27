@@ -704,3 +704,172 @@ func GetDaftarLaporanPetugas(c *gin.Context) {
 		"data": laporanList,
 	})
 }
+
+func DownloadRiwayatPencarianWisatawan(c *gin.Context) {
+
+	idWisatawan := c.Param("id_wisatawan")
+
+	parsedID, err := uuid.Parse(idWisatawan)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID wisatawan tidak valid",
+		})
+		return
+	}
+
+	var riwayat []models.RiwayatPencarian
+
+	if err := config.DB.
+		Where("wisatawan_id = ?", parsedID).
+		Order("created_at DESC").
+		Find(&riwayat).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Gagal mengambil data riwayat pencarian",
+		})
+		return
+	}
+
+	c.Header("Content-Type", "text/csv")
+	c.Header(
+		"Content-Disposition",
+		`attachment; filename="riwayat_pencarian.csv"`,
+	)
+
+	writer := csv.NewWriter(c.Writer)
+	defer writer.Flush()
+
+	// Header CSV
+	writer.Write([]string{
+		"No",
+		"Keyword",
+		"Tanggal Pencarian",
+	})
+
+	// Isi Data
+	for i, item := range riwayat {
+
+		writer.Write([]string{
+			strconv.Itoa(i + 1),
+			item.Keyword,
+			item.CreatedAt.Format("02-01-2006 15:04"),
+		})
+
+	}
+}
+
+func DownloadRiwayatDestinasiWisatawan(c *gin.Context) {
+
+	idWisatawan := c.Param("id_wisatawan")
+
+	parsedID, err := uuid.Parse(idWisatawan)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID wisatawan tidak valid",
+		})
+		return
+	}
+
+	var riwayat []models.RiwayatDestinasi
+
+	if err := config.DB.
+		Preload("Destinasi").
+		Where("wisatawan_id = ?", parsedID).
+		Order("created_at DESC").
+		Find(&riwayat).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Gagal mengambil data riwayat destinasi",
+		})
+		return
+	}
+
+	c.Header("Content-Type", "text/csv")
+	c.Header(
+		"Content-Disposition",
+		`attachment; filename="riwayat_destinasi.csv"`,
+	)
+
+	writer := csv.NewWriter(c.Writer)
+	defer writer.Flush()
+
+	// Header
+	writer.Write([]string{
+		"No",
+		"Nama Destinasi",
+		"Kategori",
+		"Kota",
+		"Tanggal Dikunjungi",
+	})
+
+	// Isi data
+	for i, item := range riwayat {
+
+		writer.Write([]string{
+			strconv.Itoa(i + 1),
+			item.Destinasi.Nama,
+			item.Destinasi.Kategori,
+			item.Destinasi.Kota,
+			item.CreatedAt.Format("02-01-2006 15:04"),
+		})
+
+	}
+}
+
+func DownloadUlasanWisatawan(c *gin.Context) {
+
+	idWisatawan := c.Param("id_wisatawan")
+
+	parsedID, err := uuid.Parse(idWisatawan)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID wisatawan tidak valid",
+		})
+		return
+	}
+
+	var ulasan []models.Ulasan
+
+	if err := config.DB.
+		Preload("Destinasi").
+		Where("wisatawan_id = ?", parsedID).
+		Order("created_at DESC").
+		Find(&ulasan).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Gagal mengambil data ulasan",
+		})
+		return
+	}
+
+	c.Header("Content-Type", "text/csv")
+	c.Header(
+		"Content-Disposition",
+		`attachment; filename="ulasan_rating.csv"`,
+	)
+
+	writer := csv.NewWriter(c.Writer)
+	defer writer.Flush()
+
+	// Header CSV
+	writer.Write([]string{
+		"No",
+		"Destinasi",
+		"Rating",
+		"Ulasan",
+		"Tanggal Ulasan",
+	})
+
+	// Isi Data
+	for i, item := range ulasan {
+
+		writer.Write([]string{
+			strconv.Itoa(i + 1),
+			item.Destinasi.Nama,
+			strconv.Itoa(item.Rating),
+			item.Komentar,
+			item.CreatedAt.Format("02-01-2006 15:04"),
+		})
+
+	}
+}

@@ -125,6 +125,13 @@ func SetupRouter() *gin.Engine {
 			wisatawan_aktivitas.GET("/hasil-rekomendasi/:id", controllers.GetHasilRekomendasi)
 			wisatawan_aktivitas.GET("/pencarian/:id", controllers.GetPencarian)
 		}
+
+		wisatawan_laporan := api.Group("/wisatawan-laporan")
+		{
+			wisatawan_laporan.GET("/pencarian/:id_wisatawan", controllers.DownloadRiwayatPencarianWisatawan)
+			wisatawan_laporan.GET("/destinasi/:id_wisatawan", controllers.DownloadRiwayatDestinasiWisatawan)
+			wisatawan_laporan.GET("/ulasan/:id_wisatawan", controllers.DownloadUlasanWisatawan)
+		}
 	}
 
 	return r
