@@ -86,7 +86,7 @@ export default function WisatawanDashboard() {
 
                     <div className="shrink-0 mt-2 md:mt-0">
                         <Link
-                            href="/wisatawan/cari-destinasi"
+                            href="/wisatawan/pencarian"
                             className="inline-flex items-center rounded-2xl justify-center bg-white text-blue-700 border-2 
                             border-white px-8 py-3.5 font-bold text-base hover:bg-transparent hover:text-white transition-all 
                             duration-300 shadow-md"
