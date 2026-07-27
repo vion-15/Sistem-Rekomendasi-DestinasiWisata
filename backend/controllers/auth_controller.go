@@ -156,6 +156,7 @@ func LoginUniversal(c *gin.Context) {
 				"data": gin.H{
 					"id":       wisatawan.ID,
 					"username": wisatawan.Username,
+					"alamat":   wisatawan.Alamat,
 					"email":    wisatawan.Email,
 					"foto":     wisatawan.Foto,
 				},

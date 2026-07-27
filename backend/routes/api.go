@@ -95,6 +95,8 @@ func SetupRouter() *gin.Engine {
 		{
 			wisatawan.GET("/", controllers.GetWisatawan)
 			wisatawan.DELETE("/:id", controllers.DeleteWisatawan)
+			wisatawan.GET("/:id", controllers.GetWisatawanByID)
+			wisatawan.PUT("/:id", controllers.UpdateWisatawan)
 		}
 
 		ulasan := api.Group("/ulasan")
