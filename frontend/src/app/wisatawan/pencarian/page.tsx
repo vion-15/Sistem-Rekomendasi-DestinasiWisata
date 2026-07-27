@@ -114,7 +114,6 @@ export default function PencarianWisatawanPage() {
     };
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchPencarian();
     }, []);
 
