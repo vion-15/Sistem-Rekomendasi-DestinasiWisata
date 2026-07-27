@@ -227,13 +227,8 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 		return
 	}
 
-	// ============================
-	// BANGUN USER PROFILE
-	// ============================
-
 	var profileBuilder strings.Builder
 
-	// Riwayat pencarian terbaru
 	var riwayatPencarian []models.RiwayatPencarian
 
 	config.DB.
@@ -247,7 +242,6 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 		profileBuilder.WriteString(" ")
 	}
 
-	// Riwayat destinasi terbaru
 	var riwayatDestinasi []models.RiwayatDestinasi
 
 	config.DB.
@@ -276,10 +270,6 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 	userHistoryText := strings.TrimSpace(
 		profileBuilder.String(),
 	)
-
-	// ============================
-	// COLD START
-	// ============================
 
 	if userHistoryText == "" {
 
@@ -322,13 +312,9 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 		return
 	}
 
-	// ============================
-	// REQUEST KE FASTAPI
-	// ============================
-
 	pythonReqData := PythonRequest{
 		UserHistoryText: userHistoryText,
-		TopN:            6,
+		TopN:            20,
 	}
 
 	jsonData, err := json.Marshal(
@@ -379,10 +365,6 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 		return
 	}
 
-	// ============================
-	// AMBIL HASIL DARI FASTAPI
-	// ============================
-
 	var pythonResponse struct {
 		Recommendations []struct {
 			ID              string  `json:"id"`
@@ -398,10 +380,6 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 		})
 		return
 	}
-
-	// ============================
-	// GABUNGKAN DENGAN DATABASE
-	// ============================
 
 	var recommendations []map[string]interface{}
 
@@ -441,10 +419,6 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 		)
 
 	}
-
-	// ============================
-	// RESPONSE KE FRONTEND
-	// ============================
 
 	c.JSON(http.StatusOK, gin.H{
 		"recommendations": recommendations,
