@@ -26,8 +26,6 @@ interface DestinasiMap {
 type RouteInfo = { distanceKm: string; durationMin: string } | null;
 
 export default function LokasiDestinasiPage() {
-
-    const [activeTab, setActiveTab] = useState<"aktivitas" | "monitoring">("aktivitas");
     const [isCardOpen, setIsCardOpen] = useState(true);
     const [selectedDest, setSelectedDest] = useState<DestinasiMap | null>(null);
     const [userLoc, setUserLoc] = useState<{ lat: number, lng: number } | null>(null);
@@ -93,7 +91,7 @@ export default function LokasiDestinasiPage() {
     const handleCloseCard = () => setIsCardOpen(false);
 
     return (
-        <div 
+        <div
             className="relative w-[calc(100%+3rem)] h-[calc(100vh-72px)] -m-6 overflow-hidden bg-slate-100 z-0 flex flex-col 
             [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
 
@@ -106,21 +104,20 @@ export default function LokasiDestinasiPage() {
                 routePath={routePath}
             />
 
-            {!isCardOpen && activeTab === "aktivitas" && (
-                <button
-                    onClick={() => setIsCardOpen(true)}
-                    className="absolute top-4 left-6 z-10 flex items-center gap-2 bg-white/95 backdrop-blur-md px-4 py-3 
+            <button
+                onClick={() => setIsCardOpen(true)}
+                className="absolute top-4 left-14 z-10 flex items-center gap-2 bg-white/95 backdrop-blur-md px-4 py-3 
                     rounded-xl shadow-lg border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all"
-                >
-                    <Info size={20} />
-                    Lihat Info Destinasi
-                </button>
-            )}
+            >
+                <Info size={20} />
+                Lihat Info Destinasi
+            </button>
 
-            {isCardOpen && activeTab === "aktivitas" && (
-                <div className="absolute top-4 left-6 bottom-4 z-10 w-80 md:w-104 flex flex-col 
+
+            {isCardOpen && (
+                <div className="absolute top-4 left-14 bottom-4 z-10 w-80 md:w-104 flex flex-col 
                 animate-in slide-in-from-left-8 duration-300">
-                    <div 
+                    <div
                         className="bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-slate-200 
                         flex flex-col h-full overflow-hidden">
 
@@ -151,9 +148,9 @@ export default function LokasiDestinasiPage() {
                                     {selectedDest.deskripsi}
                                 </p>
 
-                                <h3 
+                                <h3
                                     className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-                                        Estimasi Perjalanan OSRM</h3>
+                                    Estimasi Perjalanan OSRM</h3>
 
                                 {!userLoc ? (
                                     <div className="text-sm text-amber-700 bg-amber-50 p-4 rounded-xl border border-amber-200">
@@ -169,14 +166,14 @@ export default function LokasiDestinasiPage() {
                                         <div className="bg-blue-50/80 rounded-xl border border-blue-100 p-4 text-center shadow-sm">
                                             <div className="text-[10px] uppercase font-bold text-blue-500 mb-1 tracking-widest">
                                                 Jarak Jauh</div>
-                                            <div className="text-2xl font-black text-blue-800">{routeInfo.distanceKm} 
+                                            <div className="text-2xl font-black text-blue-800">{routeInfo.distanceKm}
                                                 <span className="text-sm text-blue-600 font-semibold">km</span>
                                             </div>
                                         </div>
                                         <div className="bg-blue-50/80 rounded-xl border border-blue-100 p-4 text-center shadow-sm">
                                             <div className="text-[10px] uppercase font-bold text-blue-500 mb-1 tracking-widest">
                                                 Waktu Tempuh</div>
-                                            <div className="text-2xl font-black text-blue-800">{routeInfo.durationMin} 
+                                            <div className="text-2xl font-black text-blue-800">{routeInfo.durationMin}
                                                 <span className="text-sm text-blue-600 font-semibold">min</span></div>
                                         </div>
                                     </div>
@@ -190,7 +187,7 @@ export default function LokasiDestinasiPage() {
                             <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-500">
                                 <span className="text-5xl mb-4 opacity-50">📍</span>
                                 <p className="text-sm font-medium">Belum ada destinasi yang dipilih.<br />
-                                Silakan pilih dari Hasil Rekomendasi.</p>
+                                    Silakan pilih dari Hasil Rekomendasi.</p>
                             </div>
                         )}
                     </div>
