@@ -35,7 +35,6 @@ export default function WisatawanPage() {
         fetchWisatawan();
     }, []);
 
-    // Fungsi untuk memformat tanggal (Opsional, agar tampilan tanggal lebih rapi)
     const formatDate = (dateString: string) => {
         const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
         return new Date(dateString).toLocaleDateString('id-ID', options);
@@ -43,14 +42,12 @@ export default function WisatawanPage() {
 
     return (
         <div>
-            {/* Header Area */}
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Wisatawan</h1>
                 </div>
             </div>
 
-            {/* Tabel Data Wisatawan */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead>
@@ -77,9 +74,9 @@ export default function WisatawanPage() {
                             wisatawanList.map((w, index) => (
                                 <tr key={w.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                     <td className="p-4 text-gray-600">{index + 1}</td>
-                                    <td>
+                                    <td className="p-4">
                                         <Image
-                                            src={w.foto || "https://ui-avatars.com/api/?name=User"}
+                                            src={w.foto || "image/default-avatar.png"}
                                             alt={`Foto ${w.username}`}
                                             height={40}
                                             width={40}
