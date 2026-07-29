@@ -4,14 +4,30 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Loader, MapPin } from "lucide-react";
 import { useRouter } from "next/navigation";
+import {
+    getLanguage,
+    Language,
+} from "@/helpers/language";
+
+import { t } from "@/helpers/translate";
 
 type Destinasi = {
     id: string;
+
     nama: string;
+    nama_en: string;
+
     deskripsi: string;
+    deskripsi_en: string;
+
     kategori: string;
-    gambar: string;
+    kategori_en: string;
+
     kota: string;
+    kota_en: string;
+
+    gambar: string;
+
     latitude: number;
     longitude: number;
 };
@@ -28,6 +44,31 @@ export default function HasilRekomendasiPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
     const router = useRouter();
+    const [language, setCurrentLanguage] =
+        useState<Language>("id");
+
+    const lang = t(language);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentLanguage(getLanguage());
+
+        const handleLanguageChange = () => {
+            setCurrentLanguage(getLanguage());
+        };
+
+        window.addEventListener(
+            "languageChanged",
+            handleLanguageChange
+        );
+
+        return () => {
+            window.removeEventListener(
+                "languageChanged",
+                handleLanguageChange
+            );
+        };
+    }, []);
 
     const fetchHasil = async () => {
         try {
@@ -78,40 +119,51 @@ export default function HasilRekomendasiPage() {
             );
             const data = await res.json();
             if (!res.ok) {
-                alert(data.error || "Gagal menyimpan riwayat destinasi.");
+                alert(data.error || lang.saveHistoryFailed);
                 return;
             }
             localStorage.setItem(
                 "route_destination",
                 JSON.stringify({
                     id: item.Destinasi.id,
+
                     nama: item.Destinasi.nama,
+                    nama_en: item.Destinasi.nama_en,
+
                     kategori: item.Destinasi.kategori,
+                    kategori_en: item.Destinasi.kategori_en,
+
                     deskripsi: item.Destinasi.deskripsi,
+                    deskripsi_en: item.Destinasi.deskripsi_en,
+
+                    kota: item.Destinasi.kota,
+                    kota_en: item.Destinasi.kota_en,
+
                     latitude: item.Destinasi.latitude,
                     longitude: item.Destinasi.longitude,
-                    kota: item.Destinasi.kota,
+
                     gambar: item.Destinasi.gambar,
+
                     similarity_score: item.SimilarityScore,
                 })
             );
             router.push("/wisatawan/lokasi-destinasi");
         } catch (err) {
             console.error(err);
-            alert("Terjadi kesalahan.");
+            alert(lang.generalError);
         }
     };
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-300">
             <h2 className="text-2xl font-bold text-slate-800 mb-8">
-                Hasil Rekomendasi Destinasi
+                {lang.recommendationTitle}
             </h2>
 
             {isLoading && (
                 <div className="flex flex-col items-center justify-center py-20 text-slate-500">
                     <Loader />
-                    <p>Memuat hasil rekomendasi...</p>
+                    <p>{lang.recommendationLoading}</p>
                 </div>
             )}
 
@@ -127,7 +179,7 @@ export default function HasilRekomendasiPage() {
                     <div className="text-center py-20 bg-slate-50 rounded-2xl border">
                         <MapPin className="mx-auto h-12 w-12 text-slate-300 mb-4" />
                         <p className="text-slate-500">
-                            Belum ada hasil rekomendasi.
+                            {lang.recommendationEmpty}
                         </p>
                     </div>
                 )}
@@ -153,7 +205,9 @@ export default function HasilRekomendasiPage() {
                                     />
                                     <div className="absolute top-3 left-3 flex gap-2 flex-wrap">
                                         <span className="bg-white/90 px-3 text-black py-1 rounded-full text-xs font-semibold">
-                                            {item.Destinasi.kategori}
+                                            {language === "id"
+                                                ? item.Destinasi.kategori
+                                                : item.Destinasi.kategori_en}
                                         </span>
                                         <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">
                                             {(item.SimilarityScore * 100).toFixed(2)}%
@@ -163,20 +217,28 @@ export default function HasilRekomendasiPage() {
 
                                 <div className="p-5 flex flex-col">
                                     <div className="text-blue-600 text-sm font-semibold mb-2">
-                                        📍 {item.Destinasi.kota}
+                                        📍 {
+                                            language === "id"
+                                                ? item.Destinasi.kota || lang.recommendationLocationAvailable
+                                                : item.Destinasi.kota_en || lang.recommendationLocationAvailable
+                                        }
                                     </div>
                                     <h3 className="font-bold text-lg text-black mb-2">
-                                        {item.Destinasi.nama}
+                                        {language === "id"
+                                            ? item.Destinasi.nama
+                                            : item.Destinasi.nama_en}
                                     </h3>
                                     <p className="text-slate-500 text-sm line-clamp-3 flex-1">
-                                        {item.Destinasi.deskripsi}
+                                        {language === "id"
+                                            ? item.Destinasi.deskripsi
+                                            : item.Destinasi.deskripsi_en}
                                     </p>
 
                                     <button
                                         onClick={() => handleCekRute(item)}
                                         className="mt-5 w-full py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
                                     >
-                                        Rute
+                                        {lang.recommendationRoute}
                                     </button>
                                 </div>
                             </div>

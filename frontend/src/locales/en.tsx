@@ -159,6 +159,22 @@ const en = {
 
     generalError:
         "An unexpected error occurred.",
+
+    // ======================
+    // Recommendation Result
+    // ======================
+
+    recommendationTitle: "Recommended Destinations",
+
+    recommendationLoading: "Loading recommendations...",
+
+    recommendationEmpty: "No recommendations available yet.",
+
+    recommendationRoute: "Route",
+
+    recommendationLocationAvailable: "Location Available",
+
+    saveHistoryFailed: "Failed to save destination history.",
 };
 
 export default en;

@@ -154,6 +154,22 @@ const id = {
 
     generalError:
         "Terjadi kesalahan.",
+
+    // ======================
+    // Recommendation Result
+    // ======================
+
+    recommendationTitle: "Hasil Rekomendasi Destinasi",
+
+    recommendationLoading: "Memuat hasil rekomendasi...",
+
+    recommendationEmpty: "Belum ada hasil rekomendasi.",
+
+    recommendationRoute: "Rute",
+
+    recommendationLocationAvailable: "Lokasi Tersedia",
+
+    saveHistoryFailed: "Gagal menyimpan riwayat destinasi.",
 };
 
 export default id;
