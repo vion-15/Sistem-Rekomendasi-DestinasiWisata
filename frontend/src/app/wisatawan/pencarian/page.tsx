@@ -3,6 +3,12 @@
 import { useEffect, useState } from "react";
 import { Search, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import {
+    getLanguage,
+    Language,
+    setLanguage as saveLanguage,
+} from "@/helpers/language";
+import { t } from "@/helpers/translate";
 
 type Pencarian = {
     id: string;
@@ -23,6 +29,12 @@ export default function PencarianWisatawanPage() {
     const [pencarianList, setPencarianList] = useState<Pencarian[]>([]);
     const [userData, setUserData] = useState<UserData | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [language, setCurrentLanguage] =
+        useState<Language>("id");
+
+    const lang = t(language);
+
 
     useEffect(() => {
         const user = localStorage.getItem("user_data");
@@ -64,6 +76,27 @@ export default function PencarianWisatawanPage() {
             alert("Terjadi kesalahan.");
         }
     };
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentLanguage(getLanguage());
+
+        const handleLanguageChange = () => {
+            setCurrentLanguage(getLanguage());
+        };
+
+        window.addEventListener(
+            "languageChanged",
+            handleLanguageChange
+        );
+
+        return () => {
+            window.removeEventListener(
+                "languageChanged",
+                handleLanguageChange
+            );
+        };
+    }, []);
 
     const handleDelete = async (id: string) => {
         const confirmDelete = window.confirm("Apakah anda yakin ingin menghapus data ini ?");
@@ -127,7 +160,7 @@ export default function PencarianWisatawanPage() {
                 pointer-events-none"></div>
                 <div className="relative z-10">
                     <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-8 tracking-tight">
-                        Ayo Kita Mau Cari Apa?
+                        {lang.searchTitle}
                     </h1>
                     <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4 items-center">
                         <div className="relative flex-1 w-full">
@@ -138,7 +171,7 @@ export default function PencarianWisatawanPage() {
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Cari Destinasi Yang Sesuai dengan Mu....."
+                                placeholder={lang.searchPlaceholder}
                                 className="w-full pl-14 pr-6 py-4 rounded-2xl border-0 text-slate-800 placeholder:text-slate-400 
                                 focus:outline-none focus:ring-4 focus:ring-blue-400/30 bg-white shadow-inner transition-all"
                                 required
@@ -151,7 +184,9 @@ export default function PencarianWisatawanPage() {
                             className="w-full sm:w-auto px-10 py-4 bg-white text-blue-700 font-bold text-lg rounded-2xl 
                             hover:bg-slate-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 disabled:opacity-60"
                         >
-                            {isLoading ? "Mencari..." : "Cari"}
+                            {isLoading
+                                ? lang.searchLoading
+                                : lang.searchButton}
                         </button>
                     </form>
                 </div>
@@ -159,16 +194,16 @@ export default function PencarianWisatawanPage() {
 
             <div>
                 <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                    Pencarian
+                    {lang.historyTitle}
                 </h2>
 
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <table className="w-full text-left border-collapse">
                         <thead className="bg-slate-50 border-b border-slate-200">
                             <tr>
-                                <th className="p-5 font-semibold text-slate-600 w-16 text-center">No</th>
-                                <th className="p-5 font-semibold text-slate-600">Keyword</th>
-                                <th className="p-5 font-semibold text-slate-600 w-32 text-center">Action</th>
+                                <th className="p-5 font-semibold text-slate-600 w-16 text-center">{lang.tableNo}</th>
+                                <th className="p-5 font-semibold text-slate-600">{lang.tableKeyword}</th>
+                                <th className="p-5 font-semibold text-slate-600 w-32 text-center">{lang.tableAction}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -177,7 +212,7 @@ export default function PencarianWisatawanPage() {
                                     <td colSpan={3} className="p-10 text-center text-slate-500 font-medium">
                                         <div className="flex flex-col items-center gap-2">
                                             <Search size={32} className="text-slate-300" />
-                                            Belum ada riwayat pencarian.
+                                            {lang.historyEmpty}
                                         </div>
                                     </td>
                                 </tr>
@@ -198,7 +233,7 @@ export default function PencarianWisatawanPage() {
                                                 transition-all duration-300"
                                             >
                                                 <Trash2 size={16} />
-                                                Delete
+                                                {lang.delete}
                                             </button>
                                         </td>
                                     </tr>

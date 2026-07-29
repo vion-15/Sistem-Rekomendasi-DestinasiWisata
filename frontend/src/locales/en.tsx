@@ -125,6 +125,40 @@ const en = {
     destinationNext: "Next",
 
     destinationPopular: "Popular",
+
+    searchTitle: "What Would You Like to Search?",
+
+    searchPlaceholder:
+        "Search for destinations that match your preferences...",
+
+    searchButton: "Search",
+
+    searchLoading: "Searching...",
+
+    historyTitle: "Search",
+
+    tableNo: "No",
+
+    tableKeyword: "Keyword",
+
+    tableAction: "Action",
+
+    historyEmpty:
+        "No search history available.",
+
+    delete: "Delete",
+
+    deleteConfirm:
+        "Are you sure you want to delete this record?",
+
+    deleteSuccess:
+        "Record deleted successfully.",
+
+    searchFailed:
+        "Failed to search destinations.",
+
+    generalError:
+        "An unexpected error occurred.",
 };
 
 export default en;

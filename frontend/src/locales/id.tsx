@@ -126,6 +126,34 @@ const id = {
     destinationNext: "Berikutnya",
 
     destinationPopular: "Populer",
+    searchTitle: "Ayo Kita Mau Cari Apa?",
+    searchPlaceholder:
+        "Cari destinasi yang sesuai denganmu.....",
+
+    searchButton: "Cari",
+    searchLoading: "Mencari...",
+
+    historyTitle: "Pencarian",
+
+    tableNo: "No",
+    tableKeyword: "Keyword",
+    tableAction: "Aksi",
+
+    historyEmpty: "Belum ada riwayat pencarian.",
+
+    delete: "Hapus",
+
+    deleteConfirm:
+        "Apakah Anda yakin ingin menghapus data ini?",
+
+    deleteSuccess:
+        "Data berhasil dihapus.",
+
+    searchFailed:
+        "Gagal mencari destinasi.",
+
+    generalError:
+        "Terjadi kesalahan.",
 };
 
 export default id;
