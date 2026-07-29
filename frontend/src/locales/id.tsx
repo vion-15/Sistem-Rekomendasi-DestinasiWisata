@@ -108,6 +108,24 @@ const id = {
 
     dashboardRoute:
         "Rute",
+
+    locationAvailable: "Lokasi Tersedia",
+
+    destinationWisatawanTitle: "Destinasi Wisata",
+
+    destinationSearchPlaceholder: "Cari destinasi wisata...",
+
+    destinationLoading: "Memuat daftar destinasi...",
+
+    destinationEmpty: "Belum ada data destinasi wisata yang tersedia.",
+
+    destinationRoute: "Rute",
+
+    destinationPrevious: "Sebelumnya",
+
+    destinationNext: "Berikutnya",
+
+    destinationPopular: "Populer",
 };
 
 export default id;

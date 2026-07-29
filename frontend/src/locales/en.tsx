@@ -107,6 +107,24 @@ const en = {
 
     dashboardRoute:
         "Route",
+
+    locationAvailable: "Location Available",
+
+    destinationWisatawanTitle: "Tourist Destinations",
+
+    destinationSearchPlaceholder: "Search tourist destinations...",
+
+    destinationLoading: "Loading destinations...",
+
+    destinationEmpty: "No tourist destinations are available.",
+
+    destinationRoute: "Route",
+
+    destinationPrevious: "Previous",
+
+    destinationNext: "Next",
+
+    destinationPopular: "Popular",
 };
 
 export default en;

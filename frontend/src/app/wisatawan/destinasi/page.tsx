@@ -4,16 +4,34 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Loader, MapPin, Search } from "lucide-react";
+import {
+    getLanguage,
+    setLanguage as saveLanguage,
+    Language,
+} from "@/helpers/language";
+
+import { t } from "@/helpers/translate";
 
 interface Destinasi {
     id: string;
+
     nama: string;
+    nama_en: string;
+
     kategori: string;
+    kategori_en: string;
+
     deskripsi: string;
+    deskripsi_en: string;
+
+    kota?: string;
+    kota_en?: string;
+
     latitude: number;
     longitude: number;
-    kota?: string;
+
     gambar?: string;
+
     similarity_score?: number;
 }
 
@@ -25,6 +43,31 @@ export default function DestinasiWisataPage() {
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const PER_PAGE = 9;
+
+    const [language, setCurrentLanguage] = useState<Language>("id");
+
+    const lang = t(language);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentLanguage(getLanguage());
+
+        const handleLanguageChange = () => {
+            setCurrentLanguage(getLanguage());
+        };
+
+        window.addEventListener(
+            "languageChanged",
+            handleLanguageChange
+        );
+
+        return () => {
+            window.removeEventListener(
+                "languageChanged",
+                handleLanguageChange
+            );
+        };
+    }, []);
 
     const fetchDestinasi = async () => {
         setIsLoading(true);
@@ -47,6 +90,8 @@ export default function DestinasiWisataPage() {
         }
     };
 
+    console.log(destinasiList)
+
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchDestinasi();
@@ -57,9 +102,14 @@ export default function DestinasiWisataPage() {
         setCurrentPage(1);
     }, [search]);
 
-    const filteredDestinasi = destinasiList.filter((d) =>
-        d.nama.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredDestinasi = destinasiList.filter((d) => {
+        const nama =
+            language === "id"
+                ? d.nama
+                : d.nama_en;
+
+        return nama.toLowerCase().includes(search.toLowerCase());
+    });
 
     const totalPages = Math.ceil(filteredDestinasi.length / PER_PAGE);
 
@@ -95,7 +145,7 @@ export default function DestinasiWisataPage() {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-300">
             <h2 className="text-xl md:text-2xl font-semibold text-slate-900 mb-8">
-                Destinasi Wisata:
+                {lang.destinationWisatawanTitle}
             </h2>
 
             <div className="mb-8 w-full">
@@ -107,7 +157,7 @@ export default function DestinasiWisataPage() {
 
                     <input
                         type="text"
-                        placeholder="Cari destinasi wisata..."
+                        placeholder={lang.destinationSearchPlaceholder}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="w-full rounded-2xl border border-slate-200 bg-white
@@ -122,7 +172,7 @@ export default function DestinasiWisataPage() {
             {isLoading && (
                 <div className="flex flex-col items-center justify-center py-20 text-slate-500">
                     <Loader />
-                    <p className="font-medium text-sm">Memuat daftar destinasi...</p>
+                    <p className="font-medium text-sm">{lang.destinationLoading}</p>
                 </div>
             )}
 
@@ -135,7 +185,7 @@ export default function DestinasiWisataPage() {
             {!isLoading && !errorMsg && destinasiList.length === 0 && (
                 <div className="text-center py-20 bg-slate-50 rounded-2xl border border-slate-200">
                     <MapPin className="mx-auto h-12 w-12 text-slate-300 mb-3" />
-                    <p className="text-slate-500 font-medium">Belum ada data destinasi wisata yang tersedia.</p>
+                    <p className="text-slate-500 font-medium">{lang.destinationEmpty}</p>
                 </div>
             )}
 
@@ -148,20 +198,28 @@ export default function DestinasiWisataPage() {
                                 <div className="h-48 relative overflow-hidden bg-slate-200">
                                     <Image
                                         src={d.gambar || "https://placehold.co/600x400/png?text=No+Image"}
-                                        alt={d.nama}
+                                        alt={
+                                            language === "id"
+                                                ? d.nama
+                                                : d.nama_en
+                                        }
                                         fill
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
                                     <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                                         <span className="bg-white/90 backdrop-blur text-slate-800 text-xs 
                                     font-bold px-3 py-1.5 rounded-full shadow-sm">
-                                            {d.kategori}
+                                            {
+                                                language === "id"
+                                                    ? d.kategori
+                                                    : d.kategori_en
+                                            }
                                         </span>
                                         {/* Label Dinamis AI (Opsional jika ada data skor) */}
                                         {d.similarity_score === 1.0 ? (
                                             <span className="bg-amber-100/90 backdrop-blur text-amber-700 text-xs font-bold 
                                         px-3 py-1.5 rounded-full shadow-sm">
-                                                🔥 Populer
+                                                🔥 {lang.destinationPopular}
                                             </span>
                                         ) : d.similarity_score !== undefined ? (
                                             <span className="bg-emerald-100/90 backdrop-blur text-emerald-700 text-xs font-bold px-3 
@@ -174,11 +232,23 @@ export default function DestinasiWisataPage() {
 
                                 <div className="p-5 flex-1 flex flex-col">
                                     <div className="text-xs font-semibold text-blue-600 mb-2 uppercase tracking-wider">
-                                        📍 {d.kota || "Lokasi Tersedia"}
+                                        📍 {
+                                            language === "id"
+                                                ? d.kota || lang.locationAvailable
+                                                : d.kota_en || lang.locationAvailable
+                                        }
                                     </div>
-                                    <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-1">{d.nama}</h3>
+                                    <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-1">{
+                                        language === "id"
+                                            ? d.nama
+                                            : d.nama_en
+                                    }</h3>
                                     <p className="text-slate-500 text-sm line-clamp-3 mb-4 flex-1">
-                                        {d.deskripsi}
+                                        {
+                                            language === "id"
+                                                ? d.deskripsi
+                                                : d.deskripsi_en
+                                        }
                                     </p>
 
                                     <button
@@ -187,7 +257,7 @@ export default function DestinasiWisataPage() {
                                     text-slate-700 hover:text-blue-700 font-semibold rounded-xl transition-colors border 
                                     border-slate-200 hover:border-blue-200"
                                     >
-                                        Rute
+                                        {lang.destinationRoute}
                                     </button>
                                 </div>
 
@@ -202,7 +272,7 @@ export default function DestinasiWisataPage() {
                                 onClick={() => setCurrentPage((prev) => prev - 1)}
                                 className="px-4 py-2 rounded-lg border disabled:opacity-50 text-slate-800"
                             >
-                                Sebelumnya
+                                {lang.destinationPrevious}
                             </button>
 
                             {visiblePages.map((page) => (
@@ -210,8 +280,8 @@ export default function DestinasiWisataPage() {
                                     key={page}
                                     onClick={() => setCurrentPage(page)}
                                     className={`px-4 py-2 rounded-lg border transition-colors ${currentPage === page
-                                            ? "bg-blue-600 text-white border-blue-600"
-                                            : "bg-white hover:bg-slate-100 text-gray-600"
+                                        ? "bg-blue-600 text-white border-blue-600"
+                                        : "bg-white hover:bg-slate-100 text-gray-600"
                                         }`}
                                 >
                                     {page}
@@ -223,7 +293,7 @@ export default function DestinasiWisataPage() {
                                 onClick={() => setCurrentPage((prev) => prev + 1)}
                                 className="px-4 py-2 rounded-lg border disabled:opacity-50 text-slate-800"
                             >
-                                Berikutnya
+                                {lang.destinationNext}
                             </button>
                         </div>
                     )}
