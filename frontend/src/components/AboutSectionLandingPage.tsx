@@ -1,6 +1,25 @@
 import { MapPinned, Sparkles, Target } from "lucide-react";
 
-export default function AboutSection() {
+type AboutSectionProps = {
+    lang: {
+        aboutBadge: string;
+        aboutTitle: string;
+        aboutDescription: string;
+
+        feature1Title: string;
+        feature1Description: string;
+
+        feature2Title: string;
+        feature2Description: string;
+
+        feature3Title: string;
+        feature3Description: string;
+    };
+};
+
+export default function AboutSection({
+    lang,
+}: AboutSectionProps) {
     return (
         <section
             id="about"
@@ -19,7 +38,7 @@ export default function AboutSection() {
                             text-sm font-semibold text-blue-700
                         "
                     >
-                        Tentang Aplikasi
+                        {lang.aboutBadge}
                     </div>
 
                     <h2
@@ -28,7 +47,7 @@ export default function AboutSection() {
                             md:text-4xl
                         "
                     >
-                        Mengenal Sistem Rekomendasi Disparekraf
+                        {lang.aboutTitle}
                     </h2>
 
                     <p
@@ -36,15 +55,7 @@ export default function AboutSection() {
                             mt-6 text-lg leading-relaxed text-slate-600
                         "
                     >
-                        Disparekraf merupakan sistem rekomendasi destinasi wisata
-                        yang membantu wisatawan menemukan tempat wisata sesuai
-                        minat dan preferensi. Dengan memanfaatkan metode{" "}
-                        <span className="font-semibold text-slate-800">
-                            Content-Based Filtering
-                        </span>
-                        , sistem memberikan rekomendasi yang lebih relevan sehingga
-                        proses mencari destinasi menjadi lebih cepat, mudah, dan
-                        sesuai kebutuhan pengguna.
+                        {lang.aboutDescription}
                     </p>
 
                 </div>
@@ -81,7 +92,7 @@ export default function AboutSection() {
                                 mt-6 text-xl font-bold text-slate-900
                             "
                         >
-                            Rekomendasi Personal
+                            {lang.feature1Title}
                         </h3>
 
                         <p
@@ -89,10 +100,7 @@ export default function AboutSection() {
                                 mt-3 leading-relaxed text-slate-600
                             "
                         >
-                            Sistem memberikan rekomendasi berdasarkan
-                            karakteristik destinasi dan preferensi pengguna
-                            sehingga hasil yang ditampilkan menjadi lebih
-                            relevan.
+                            {lang.feature1Description}
                         </p>
                     </div>
 
@@ -119,7 +127,7 @@ export default function AboutSection() {
                                 mt-6 text-xl font-bold text-slate-900
                             "
                         >
-                            Destinasi Beragam
+                            {lang.feature2Title}
                         </h3>
 
                         <p
@@ -127,9 +135,7 @@ export default function AboutSection() {
                                 mt-3 leading-relaxed text-slate-600
                             "
                         >
-                            Menyediakan berbagai pilihan destinasi wisata dari
-                            berbagai kategori sehingga pengguna memiliki lebih
-                            banyak alternatif tempat yang dapat dikunjungi.
+                            {lang.feature2Description}
                         </p>
                     </div>
 
@@ -156,7 +162,7 @@ export default function AboutSection() {
                                 mt-6 text-xl font-bold text-slate-900
                             "
                         >
-                            Cepat dan Mudah
+                            {lang.feature3Title}
                         </h3>
 
                         <p
@@ -164,9 +170,7 @@ export default function AboutSection() {
                                 mt-3 leading-relaxed text-slate-600
                             "
                         >
-                            Antarmuka yang sederhana membuat proses memperoleh
-                            rekomendasi menjadi lebih cepat tanpa langkah yang
-                            rumit sehingga nyaman digunakan oleh semua pengguna.
+                            {lang.feature3Description}
                         </p>
                     </div>
 

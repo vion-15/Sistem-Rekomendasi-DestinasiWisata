@@ -2,31 +2,72 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
 
+type DestinationSectionProps = {
+    lang: {
+        destinationBadge: string;
+        destinationTitle: string;
+        destinationDescription: string;
+        destinationButton: string;
+    };
+    language: "id" | "en";
+};
+
 const featuredDestinations = [
     {
         id: 1,
-        name: "Taman Margasatwa Ragunan",
-        category: "Taman Wisata",
-        city: "Jakarta Selatan",
+        name: {
+            id: "Taman Margasatwa Ragunan",
+            en: "Ragunan Wildlife Park",
+        },
+        category: {
+            id: "Taman Wisata",
+            en: "Nature Park",
+        },
+        city: {
+            id: "Jakarta Selatan",
+            en: "South Jakarta",
+        },
         image: "/image/Ragunan.jpg",
     },
     {
         id: 2,
-        name: "Monumen Nasional",
-        category: "Wisata Sejarah",
-        city: "Jakarta Pusat",
+        name: {
+            id: "Monumen Nasional",
+            en: "National Monument",
+        },
+        category: {
+            id: "Wisata Sejarah",
+            en: "Historical Site",
+        },
+        city: {
+            id: "Jakarta Pusat",
+            en: "Central Jakarta",
+        },
         image: "/image/Monas.jpg",
     },
     {
         id: 3,
-        name: "Kota Tua Jakarta",
-        category: "Wisata Sejarah",
-        city: "Jakarta Barat",
+        name: {
+            id: "Kota Tua Jakarta",
+            en: "Jakarta Old Town",
+        },
+        category: {
+            id: "Wisata Sejarah",
+            en: "Historical Site",
+        },
+        city: {
+            id: "Jakarta Barat",
+            en: "West Jakarta",
+        },
         image: "/image/Kota-Tua.jpg",
     },
 ];
 
-export default function DestinationSection() {
+export default function DestinationSection({
+    lang,
+    language,
+}: DestinationSectionProps) {
+
     return (
         <section
             id="destinasi"
@@ -46,7 +87,7 @@ export default function DestinationSection() {
                             text-sm font-semibold text-blue-700
                         "
                     >
-                        Destinasi Pilihan
+                        {lang.destinationBadge}
                     </div>
 
                     <h2
@@ -56,7 +97,7 @@ export default function DestinationSection() {
                             md:text-4xl
                         "
                     >
-                        Jelajahi Destinasi Wisata Unggulan
+                        {lang.destinationTitle}
                     </h2>
 
                     <p
@@ -65,13 +106,11 @@ export default function DestinationSection() {
                             text-slate-600
                         "
                     >
-                        Temukan beberapa destinasi wisata pilihan yang tersedia
-                        di dalam sistem. Login untuk melihat lebih banyak
-                        destinasi serta memperoleh rekomendasi sesuai
-                        preferensi Anda.
+                        {lang.destinationDescription}
                     </p>
 
                 </div>
+
 
                 {/* Cards */}
 
@@ -92,10 +131,12 @@ export default function DestinationSection() {
                                 hover:-translate-y-1 hover:shadow-xl
                             "
                         >
+
                             <div className="overflow-hidden">
+
                                 <Image
                                     src={destination.image}
-                                    alt={destination.name}
+                                    alt={destination.name[language]}
                                     width={600}
                                     height={400}
                                     quality={100}
@@ -105,7 +146,9 @@ export default function DestinationSection() {
                                         group-hover:scale-105
                                     "
                                 />
+
                             </div>
+
 
                             <div className="p-6">
 
@@ -117,8 +160,9 @@ export default function DestinationSection() {
                                         text-blue-700
                                     "
                                 >
-                                    {destination.category}
+                                    {destination.category[language]}
                                 </span>
+
 
                                 <h3
                                     className="
@@ -126,8 +170,9 @@ export default function DestinationSection() {
                                         text-slate-900
                                     "
                                 >
-                                    {destination.name}
+                                    {destination.name[language]}
                                 </h3>
+
 
                                 <div
                                     className="
@@ -135,15 +180,21 @@ export default function DestinationSection() {
                                         gap-2 text-slate-500
                                     "
                                 >
+
                                     <MapPin size={18} />
 
-                                    <span>{destination.city}</span>
+                                    <span>
+                                        {destination.city[language]}
+                                    </span>
+
                                 </div>
 
                             </div>
+
                         </article>
                     ))}
                 </div>
+
 
                 {/* CTA */}
 
@@ -163,7 +214,8 @@ export default function DestinationSection() {
                             hover:text-white
                         "
                     >
-                        Lihat Semua Destinasi
+
+                        {lang.destinationButton}
 
                         <ArrowRight
                             size={20}
@@ -172,6 +224,7 @@ export default function DestinationSection() {
                                 group-hover:translate-x-1
                             "
                         />
+
                     </Link>
 
                 </div>

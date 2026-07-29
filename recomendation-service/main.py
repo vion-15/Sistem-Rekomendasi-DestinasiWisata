@@ -35,7 +35,6 @@ class RecommendationRequest(BaseModel):
 class CleanRequest(BaseModel):
     text: str
 
-
 # =========================
 # ENDPOINT ROOT
 # =========================

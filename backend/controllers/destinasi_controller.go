@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"backend-wisata/config"
+	"backend-wisata/helpers"
 	"backend-wisata/models"
 	"backend-wisata/utils"
 
@@ -81,6 +82,11 @@ func CreateDestinasi(c *gin.Context) {
 	idPetugasStr := strings.TrimSpace(c.PostForm("id_petugas"))
 	latStr := strings.TrimSpace(c.PostForm("latitude"))
 	lonStr := strings.TrimSpace(c.PostForm("longitude"))
+	namaEn := strings.TrimSpace(c.PostForm("nama_en"))
+	deskripsiEn := strings.TrimSpace(c.PostForm("deskripsi_en"))
+	aktivitasEn := strings.TrimSpace(c.PostForm("aktivitas_en"))
+	kotaEn := strings.TrimSpace(c.PostForm("kota_en"))
+	kategoriEn := strings.TrimSpace(c.PostForm("kategori_en"))
 
 	if nama == "" || deskripsi == "" || aktivitas == "" || alamat == "" || kota == "" || kategori == "" || latStr == "" || lonStr == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "semua field wajib diisi"})
@@ -160,19 +166,23 @@ func CreateDestinasi(c *gin.Context) {
 	deskripsiClean := getCleanTextFromPython(deskripsi)
 	aktivitasClean := getCleanTextFromPython(aktivitas)
 
-	// 6. Simpan ke Database
 	destinasi := models.Destinasi{
 		Nama:           nama,
+		NamaEn:         namaEn,
 		Deskripsi:      deskripsi,
+		DeskripsiEn:    deskripsiEn,
 		DeskripsiClean: deskripsiClean,
 		Aktivitas:      aktivitas,
+		AktivitasEn:    aktivitasEn,
 		AktivitasClean: aktivitasClean,
 		Alamat:         alamat,
 		Latitude:       lat,
 		Longitude:      lon,
 		Gambar:         gambarURL,
 		Kota:           kota,
+		KotaEn:         kotaEn,
 		Kategori:       kategori,
+		KategoriEn:     kategoriEn,
 		PetugasID:      petugasID,
 	}
 
@@ -203,10 +213,16 @@ func CreateDestinasi(c *gin.Context) {
 
 func GetDestinasi(c *gin.Context) {
 	var destinasiList []models.Destinasi
+
+	lang := c.DefaultQuery("lang", "id")
+
 	if err := config.DB.Preload("Petugas").Find(&destinasiList).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "gagal mengambil data destinasi"})
 		return
 	}
+
+	helpers.ApplyLanguageList(destinasiList, lang)
+
 	c.JSON(http.StatusOK, gin.H{
 		"data": destinasiList,
 	})
@@ -240,12 +256,18 @@ func UpdateDestinasi(c *gin.Context) {
 	// Ambil data form
 	nama := strings.TrimSpace(c.PostForm("nama"))
 	deskripsi := strings.TrimSpace(c.PostForm("deskripsi"))
+	aktivitas := strings.TrimSpace(c.PostForm("aktivitas"))
 	alamat := strings.TrimSpace(c.PostForm("alamat"))
 	kota := strings.TrimSpace(c.PostForm("kota"))
 	kategori := strings.TrimSpace(c.PostForm("kategori"))
 	idPetugasStr := strings.TrimSpace(c.PostForm("id_petugas"))
 	latStr := strings.TrimSpace(c.PostForm("latitude"))
 	lonStr := strings.TrimSpace(c.PostForm("longitude"))
+	namaEn := strings.TrimSpace(c.PostForm("nama_en"))
+	deskripsiEn := strings.TrimSpace(c.PostForm("deskripsi_en"))
+	aktivitasEn := strings.TrimSpace(c.PostForm("aktivitas_en"))
+	kotaEn := strings.TrimSpace(c.PostForm("kota_en"))
+	kategoriEn := strings.TrimSpace(c.PostForm("kategori_en"))
 
 	// Menyimpan gambar lama jika ada upload gambar baru
 	var oldGambar string
@@ -272,7 +294,12 @@ func UpdateDestinasi(c *gin.Context) {
 	// Update deskripsi & deskripsi clean
 	if deskripsi != "" {
 		destinasi.Deskripsi = deskripsi
-		destinasi.DeskripsiClean = getCleanTextFromPython(deskripsi) // 👈 Update clean text
+		destinasi.DeskripsiClean = getCleanTextFromPython(deskripsi)
+	}
+
+	if aktivitas != "" {
+		destinasi.Aktivitas = aktivitas
+		destinasi.AktivitasClean = getCleanTextFromPython(aktivitas)
 	}
 
 	// Update alamat
@@ -283,6 +310,26 @@ func UpdateDestinasi(c *gin.Context) {
 	// Update kota
 	if kota != "" {
 		destinasi.Kota = kota
+	}
+
+	if namaEn != "" {
+		destinasi.NamaEn = namaEn
+	}
+
+	if deskripsiEn != "" {
+		destinasi.DeskripsiEn = deskripsiEn
+	}
+
+	if aktivitasEn != "" {
+		destinasi.AktivitasEn = aktivitasEn
+	}
+
+	if kotaEn != "" {
+		destinasi.KotaEn = kotaEn
+	}
+
+	if kategoriEn != "" {
+		destinasi.KategoriEn = kategoriEn
 	}
 
 	// Update kategori

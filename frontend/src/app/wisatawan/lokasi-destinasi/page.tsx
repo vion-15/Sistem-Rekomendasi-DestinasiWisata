@@ -46,32 +46,39 @@ export default function LokasiDestinasiPage() {
         useState(true);
 
     useEffect(() => {
-        if ("geolocation" in navigator) {
+        const getLocation = async () => {
+            if (!("geolocation" in navigator)) {
+                // eslint-disable-next-line react-hooks/immutability
+                loadProfileAddress();
+                return;
+            }
             navigator.geolocation.getCurrentPosition(
-                (position) => {
+                (pos) => {
                     setUserLoc({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
                     });
                 },
-                (err) => {
-                    console.warn("Lokasi ditolak:", err.message);
+                async () => {
+                    await loadProfileAddress();
                 }
             );
-        }
-        const saved = localStorage.getItem("route_destination");
-        if (saved) {
-            const raw = JSON.parse(saved);
+        };
+        getLocation();
+        const savedDest = localStorage.getItem("route_destination");
+        if (savedDest) {
+            const rawData = JSON.parse(savedDest);
+            const strictDest: DestinasiMap = {
+                id: rawData.id || "0",
+                nama: rawData.nama || "Destinasi Wisata",
+                kategori: rawData.kategori || "-",
+                deskripsi: rawData.deskripsi || "-",
+                latitude: Number(rawData.latitude) || 0,
+                longitude: Number(rawData.longitude) || 0,
+                similarity_score: Number(rawData.similarity_score) || 0,
+            };
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setSelectedDest({
-                id: raw.id,
-                nama: raw.nama,
-                kategori: raw.kategori,
-                deskripsi: raw.deskripsi,
-                latitude: Number(raw.latitude),
-                longitude: Number(raw.longitude),
-                similarity_score: Number(raw.similarity_score),
-            });
+            setSelectedDest(strictDest);
         }
     }, []);
 
@@ -111,6 +118,35 @@ export default function LokasiDestinasiPage() {
 
     const handleCloseCard = () => {
         setIsCardOpen(false);
+    };
+
+    const loadProfileAddress = async () => {
+        try {
+            const raw = localStorage.getItem("user_data");
+            if (!raw) return;
+            const user = JSON.parse(raw);
+            if (!user.alamat) {
+                console.warn("Alamat profile belum diisi.");
+                return;
+            }
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(
+                    user.alamat
+                )}`
+            );
+
+            const result = await response.json();
+            if (!result.length) {
+                console.warn("Alamat tidak ditemukan.");
+                return;
+            }
+            setUserLoc({
+                lat: parseFloat(result[0].lat),
+                lng: parseFloat(result[0].lon),
+            });
+        } catch (err) {
+            console.error("Gagal menggunakan alamat profile", err);
+        }
     };
 
     const handleOpenCard = () => {
@@ -209,7 +245,7 @@ export default function LokasiDestinasiPage() {
 
                                     {!userLoc ? (
                                         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-700">
-                                            Menunggu izin lokasi Anda...
+                                            Menentukan lokasi Anda...
                                         </div>
                                     ) : isLoadingRoute ? (
                                         <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 

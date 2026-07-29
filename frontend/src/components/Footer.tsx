@@ -2,26 +2,53 @@ import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 
-const navigationLinks = [
-    {
-        label: "Home",
-        href: "/",
-    },
-    {
-        label: "About",
-        href: "#about",
-    },
-    {
-        label: "Destinasi Wisata",
-        href: "#destinasi",
-    },
-    {
-        label: "Login",
-        href: "/login",
-    },
-];
+const navigationLinks = (
+    lang: FooterProps["lang"]
+) => [
+        {
+            label: lang.footerHome,
+            href: "/",
+        },
+        {
+            label: lang.footerAbout,
+            href: "#about",
+        },
+        {
+            label: lang.footerDestination,
+            href: "#destinasi",
+        },
+        {
+            label: lang.footerLogin,
+            href: "/login",
+        },
+    ];
 
-export default function Footer() {
+type FooterProps = {
+    lang: {
+        footerDescription: string;
+
+        footerNavigation: string;
+        footerHome: string;
+        footerAbout: string;
+        footerDestination: string;
+        footerLogin: string;
+
+        footerContact: string;
+
+        footerAddress: string;
+        footerEmail: string;
+        footerPhone: string;
+
+        footerCopyright: string;
+    };
+};
+
+export default function Footer({
+    lang,
+}: FooterProps) {
+
+    const links = navigationLinks(lang);
+
     return (
         <footer className="bg-slate-900 text-slate-300">
             <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -48,10 +75,7 @@ export default function Footer() {
                         </Link>
 
                         <p className="mt-5 max-w-sm leading-relaxed text-slate-400">
-                            Disparekraf merupakan sistem rekomendasi destinasi
-                            wisata berbasis <strong>Content-Based Filtering</strong>{" "}
-                            yang membantu wisatawan menemukan destinasi sesuai
-                            minat dan preferensi.
+                            {lang.footerDescription}
                         </p>
 
                     </div>
@@ -60,11 +84,11 @@ export default function Footer() {
                     <div>
 
                         <h3 className="text-lg font-semibold text-white">
-                            Navigasi
+                            {lang.footerNavigation}
                         </h3>
 
                         <nav className="mt-5 flex flex-col gap-4">
-                            {navigationLinks.map((link) => (
+                            {links.map((link) => (
                                 <Link
                                     key={link.label}
                                     href={link.href}
@@ -85,7 +109,7 @@ export default function Footer() {
                     <div>
 
                         <h3 className="text-lg font-semibold text-white">
-                            Kontak
+                            {lang.footerContact}
                         </h3>
 
                         <div className="mt-5 space-y-4">
@@ -97,7 +121,7 @@ export default function Footer() {
                                 />
 
                                 <span>
-                                    Jakarta, Indonesia
+                                    {lang.footerAddress}
                                 </span>
                             </div>
 
@@ -108,7 +132,7 @@ export default function Footer() {
                                 />
 
                                 <span>
-                                    disparekraf@example.com
+                                    {lang.footerEmail}
                                 </span>
                             </div>
 
@@ -119,7 +143,7 @@ export default function Footer() {
                                 />
 
                                 <span>
-                                    (021) 1234 5678
+                                    {lang.footerPhone}
                                 </span>
                             </div>
 
@@ -130,7 +154,7 @@ export default function Footer() {
                 </div>
 
                 <div className="mt-12 border-t border-slate-800 pt-8 text-center text-sm text-slate-500">
-                    © {new Date().getFullYear()} Disparekraf. All rights reserved.
+                    © {new Date().getFullYear()} Disparekraf. {lang.footerCopyright}
                 </div>
 
             </div>

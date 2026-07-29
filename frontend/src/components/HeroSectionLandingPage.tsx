@@ -2,7 +2,19 @@ import { ArrowRight, Plane } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function HeroSection() {
+type HeroSectionProps = {
+    lang: {
+        heroBadge: string;
+        heroTitle: string;
+        heroDescription: string;
+        heroButton: string;
+        heroImageAlt: string;
+    };
+};
+
+export default function HeroSection({
+    lang,
+}: HeroSectionProps) {
     return (
         <section
             className="
@@ -14,24 +26,21 @@ export default function HeroSection() {
                         border-blue-100 bg-blue-50 px-4 py-1.5   
                         text-sm font-semibold text-blue-700 tracking-wide">
                     <Plane size={16} />
-                    Eksplorasi Tanpa Batas
+                    {lang.heroBadge}
                 </div>
 
                 <h1
                     className="
                         max-w-2xl text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold 
                         leading-[1.15] tracking-tight text-slate-900">
-                    Temukan Destinasi Wisata yang Sesuai dengan Preferensi Anda
+                    {lang.heroTitle}
                 </h1>
 
                 <p
                     className="
                         mt-6 max-w-lg text-lg md:text-xl leading-relaxed 
                         text-slate-600">
-                    Sistem rekomendasi destinasi wisata yang membantu Anda menemukan
-                    destinasi sesuai minat dan preferensi menggunakan
-                    metode <span className="font-semibold text-slate-800">Content-Based
-                        Filtering</span>.
+                    {lang.heroDescription}
                 </p>
 
                 <div className="mt-10">
@@ -44,7 +53,7 @@ export default function HeroSection() {
                             duration-300 hover:-translate-y-1 hover:bg-blue-600 
                             hover:shadow-blue-600/30"
                     >
-                        Ayo Jalan - Jalan !
+                        {lang.heroButton}
                         <ArrowRight
                             size={20}
                             className="
@@ -70,7 +79,7 @@ export default function HeroSection() {
                         border border-slate-200 select-none">
                     <Image
                         src="/image/foto-herosection-landingpage.jpg"
-                        alt="Pemandangan Gunung Megah"
+                        alt={lang.heroImageAlt}
                         width={1200}
                         height={800}
                         quality={100}
