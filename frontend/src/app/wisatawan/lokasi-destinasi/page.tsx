@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Info } from "lucide-react";
+import {
+    getLanguage,
+    Language,
+} from "@/helpers/language";
+
+import { t } from "@/helpers/translate";
 
 const MapGIS = dynamic(() => import("@/components/MapGIS"), {
     ssr: false,
@@ -16,11 +22,19 @@ const MapGIS = dynamic(() => import("@/components/MapGIS"), {
 
 interface DestinasiMap {
     id: string;
+
     nama: string;
+    nama_en: string;
+
     kategori: string;
+    kategori_en: string;
+
     deskripsi: string;
+    deskripsi_en: string;
+
     latitude: number;
     longitude: number;
+
     similarity_score: number;
 }
 
@@ -44,40 +58,78 @@ export default function LokasiDestinasiPage() {
         useState(false);
     const [isCardOpen, setIsCardOpen] =
         useState(true);
+    const [showLocationModal, setShowLocationModal] = useState(false);
+    const [language, setCurrentLanguage] =
+        useState<Language>("id");
+
+    const lang = t(language);
 
     useEffect(() => {
-        const getLocation = async () => {
-            if (!("geolocation" in navigator)) {
-                // eslint-disable-next-line react-hooks/immutability
-                loadProfileAddress();
-                return;
-            }
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    setUserLoc({
-                        lat: pos.coords.latitude,
-                        lng: pos.coords.longitude,
-                    });
-                },
-                async () => {
-                    await loadProfileAddress();
-                }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentLanguage(getLanguage());
+
+        const handleLanguageChange = () => {
+            setCurrentLanguage(getLanguage());
+        };
+
+        window.addEventListener(
+            "languageChanged",
+            handleLanguageChange
+        );
+
+        return () => {
+            window.removeEventListener(
+                "languageChanged",
+                handleLanguageChange
             );
         };
+    }, []);
+
+    const getLocation = () => {
+        if (!("geolocation" in navigator)) {
+            setShowLocationModal(true);
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                setUserLoc({
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude,
+                });
+
+                setShowLocationModal(false);
+            },
+            () => {
+                setShowLocationModal(true);
+            }
+        );
+    };
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         getLocation();
         const savedDest = localStorage.getItem("route_destination");
         if (savedDest) {
             const rawData = JSON.parse(savedDest);
             const strictDest: DestinasiMap = {
                 id: rawData.id || "0",
+
                 nama: rawData.nama || "Destinasi Wisata",
+                nama_en: rawData.nama_en || rawData.nama || "Destination",
+
                 kategori: rawData.kategori || "-",
+                kategori_en: rawData.kategori_en || rawData.kategori || "-",
+
                 deskripsi: rawData.deskripsi || "-",
+                deskripsi_en: rawData.deskripsi_en || rawData.deskripsi || "-",
+
                 latitude: Number(rawData.latitude) || 0,
                 longitude: Number(rawData.longitude) || 0,
+
                 similarity_score: Number(rawData.similarity_score) || 0,
             };
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+
             setSelectedDest(strictDest);
         }
     }, []);
@@ -120,35 +172,6 @@ export default function LokasiDestinasiPage() {
         setIsCardOpen(false);
     };
 
-    const loadProfileAddress = async () => {
-        try {
-            const raw = localStorage.getItem("user_data");
-            if (!raw) return;
-            const user = JSON.parse(raw);
-            if (!user.alamat) {
-                console.warn("Alamat profile belum diisi.");
-                return;
-            }
-            const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(
-                    user.alamat
-                )}`
-            );
-
-            const result = await response.json();
-            if (!result.length) {
-                console.warn("Alamat tidak ditemukan.");
-                return;
-            }
-            setUserLoc({
-                lat: parseFloat(result[0].lat),
-                lng: parseFloat(result[0].lon),
-            });
-        } catch (err) {
-            console.error("Gagal menggunakan alamat profile", err);
-        }
-    };
-
     const handleOpenCard = () => {
         setIsCardOpen(true);
     };
@@ -172,7 +195,7 @@ export default function LokasiDestinasiPage() {
                     flex items-center gap-2"
                 >
                     <Info size={18} />
-                    Informasi Destinasi
+                    {lang.destinationInfo}
                 </button>
             )}
 
@@ -189,7 +212,7 @@ export default function LokasiDestinasiPage() {
                             </button>
 
                             <h2 className="text-xl font-bold text-slate-800">
-                                Informasi Destinasi
+                                {lang.destinationInfo}
                             </h2>
                             <button
                                 onClick={handleCloseCard}
@@ -202,16 +225,20 @@ export default function LokasiDestinasiPage() {
                         {selectedDest ? (
                             <div className="flex-1 overflow-y-auto px-6 py-6">
                                 <h1 className="text-3xl font-black text-blue-700 mb-3">
-                                    {selectedDest.nama}
+                                    {language === "id"
+                                        ? selectedDest.nama
+                                        : selectedDest.nama_en}
                                 </h1>
                                 <span className="inline-block bg-blue-100 text-blue-700 rounded-full px-4 py-1 text-sm font-bold">
-                                    {selectedDest.kategori}
+                                    {language === "id"
+                                        ? selectedDest.kategori
+                                        : selectedDest.kategori_en}
                                 </span>
 
                                 <div className="mt-8">
                                     <div className="flex justify-between mb-2">
                                         <span className="font-semibold text-slate-600">
-                                            Tingkat Kecocokan
+                                            {lang.matchLevel}
                                         </span>
                                         <span className="font-bold text-emerald-600">
                                             {(selectedDest.similarity_score * 100).toFixed(2)}%
@@ -230,57 +257,59 @@ export default function LokasiDestinasiPage() {
 
                                 <div className="mt-8">
                                     <h3 className="uppercase tracking-widest text-xs text-slate-400 font-bold mb-3">
-                                        Deskripsi
+                                        {lang.descriptionTitle}
                                     </h3>
                                     <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 
                                     text-sm leading-7 text-slate-700">
-                                        {selectedDest.deskripsi}
+                                        {language === "id"
+                                            ? selectedDest.deskripsi
+                                            : selectedDest.deskripsi_en}
                                     </div>
                                 </div>
 
                                 <div className="mt-8">
                                     <h3 className="uppercase tracking-widest text-xs text-slate-400 font-bold mb-4">
-                                        Estimasi Perjalanan
+                                        {lang.travelEstimate}
                                     </h3>
 
                                     {!userLoc ? (
                                         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-700">
-                                            Menentukan lokasi Anda...
+                                            {lang.detectingLocation}
                                         </div>
                                     ) : isLoadingRoute ? (
                                         <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 
                                         text-blue-700 animate-pulse">
-                                            Menghitung rute terbaik...
+                                            {lang.calculatingRoute}
                                         </div>
                                     ) : routeInfo ? (
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="bg-blue-50 rounded-2xl border border-blue-100 p-5 text-center">
                                                 <div className="text-xs uppercase text-blue-500 font-bold mb-2">
-                                                    Jarak
+                                                    {lang.distance}
                                                 </div>
                                                 <div className="text-3xl font-black text-blue-700">
                                                     {routeInfo.distanceKm}
                                                 </div>
                                                 <div className="text-sm text-blue-500">
-                                                    Kilometer
+                                                    {lang.kilometer}
                                                 </div>
                                             </div>
 
                                             <div className="bg-blue-50 rounded-2xl border border-blue-100 p-5 text-center">
                                                 <div className="text-xs uppercase text-blue-500 font-bold mb-2">
-                                                    Waktu
+                                                    {lang.time}
                                                 </div>
                                                 <div className="text-3xl font-black text-blue-700">
                                                     {routeInfo.durationMin}
                                                 </div>
                                                 <div className="text-sm text-blue-500">
-                                                    Menit
+                                                    {lang.minute}
                                                 </div>
                                             </div>
                                         </div>
                                     ) : (
                                         <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600">
-                                            Rute tidak dapat dihitung.
+                                            {lang.routeUnavailable}
                                         </div>
                                     )}
                                 </div>
@@ -292,11 +321,45 @@ export default function LokasiDestinasiPage() {
                                         📍
                                     </div>
                                     <p>
-                                        Belum ada destinasi yang dipilih.
+                                        {lang.noDestinationSelected}
                                     </p>
                                 </div>
                             </div>
                         )}
+                    </div>
+                </div>
+            )}
+
+            {showLocationModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                    <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
+                        <div className="text-5xl text-center mb-4">
+                            📍
+                        </div>
+
+                        <h2 className="text-xl font-bold text-center text-slate-800">
+                            {lang.locationAccessRequired}
+                        </h2>
+
+                        <p className="mt-4 text-center text-slate-600 leading-relaxed">
+                            {lang.locationAccessDescription}
+                        </p>
+
+                        <div className="mt-8 flex gap-3">
+                            <button
+                                onClick={getLocation}
+                                className="flex-1 rounded-xl bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700"
+                            >
+                                {lang.tryAgain}
+                            </button>
+
+                            <button
+                                onClick={() => router.back()}
+                                className="flex-1 rounded-xl border py-3 font-semibold text-slate-800"
+                            >
+                                {lang.back}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

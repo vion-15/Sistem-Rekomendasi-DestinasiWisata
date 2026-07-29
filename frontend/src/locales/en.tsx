@@ -175,6 +175,43 @@ const en = {
     recommendationLocationAvailable: "Location Available",
 
     saveHistoryFailed: "Failed to save destination history.",
+
+    locationMapLoading: "Loading Map...",
+
+    destinationInfo: "Destination Information",
+
+    matchLevel: "Match Score",
+
+    descriptionTitle: "Description",
+
+    travelEstimate: "Travel Estimate",
+
+    detectingLocation: "Determining your location...",
+
+    calculatingRoute: "Calculating the best route...",
+
+    distance: "Distance",
+
+    kilometer: "Kilometers",
+
+    time: "Time",
+
+    minute: "Minutes",
+
+    routeUnavailable: "Unable to calculate the route.",
+
+    noDestinationSelected: "No destination selected yet.",
+
+    locationAccessRequired: "Location Access Required",
+
+    locationAccessDescription:
+        "To display the route to the tourist destination, the application requires access to your location. Please enable GPS and allow location access in your browser.",
+
+    tryAgain: "Try Again",
+
+    back: "Back",
+
+    defaultDestinationName: "Tourist Destination",
 };
 
 export default en;

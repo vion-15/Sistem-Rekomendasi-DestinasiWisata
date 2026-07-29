@@ -170,6 +170,43 @@ const id = {
     recommendationLocationAvailable: "Lokasi Tersedia",
 
     saveHistoryFailed: "Gagal menyimpan riwayat destinasi.",
+
+    locationMapLoading: "Memuat Peta...",
+
+    destinationInfo: "Informasi Destinasi",
+
+    matchLevel: "Tingkat Kecocokan",
+
+    descriptionTitle: "Deskripsi",
+
+    travelEstimate: "Estimasi Perjalanan",
+
+    detectingLocation: "Menentukan lokasi Anda...",
+
+    calculatingRoute: "Menghitung rute terbaik...",
+
+    distance: "Jarak",
+
+    kilometer: "Kilometer",
+
+    time: "Waktu",
+
+    minute: "Menit",
+
+    routeUnavailable: "Rute tidak dapat dihitung.",
+
+    noDestinationSelected: "Belum ada destinasi yang dipilih.",
+
+    locationAccessRequired: "Akses Lokasi Diperlukan",
+
+    locationAccessDescription:
+        "Untuk menampilkan rute menuju destinasi wisata, aplikasi memerlukan akses ke lokasi Anda. Silakan aktifkan GPS dan izinkan akses lokasi pada browser Anda.",
+
+    tryAgain: "Coba Lagi",
+
+    back: "Kembali",
+
+    defaultDestinationName: "Destinasi Wisata",
 };
 
 export default id;
