@@ -293,10 +293,20 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 			recommendations = append(
 				recommendations,
 				map[string]interface{}{
-					"id":               dest.ID.String(),
-					"nama":             dest.Nama,
-					"kategori":         dest.Kategori,
-					"deskripsi":        dest.Deskripsi,
+					"id": dest.ID.String(),
+
+					// Indonesia
+					"nama":      dest.Nama,
+					"kategori":  dest.Kategori,
+					"deskripsi": dest.Deskripsi,
+					"kota":      dest.Kota,
+
+					// English
+					"nama_en":      dest.NamaEn,
+					"kategori_en":  dest.KategoriEn,
+					"deskripsi_en": dest.DeskripsiEn,
+					"kota_en":      dest.KotaEn,
+
 					"latitude":         dest.Latitude,
 					"longitude":        dest.Longitude,
 					"gambar":           dest.Gambar,
@@ -405,13 +415,22 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 		recommendations = append(
 			recommendations,
 			map[string]interface{}{
-				"id":               destinasi.ID.String(),
-				"nama":             destinasi.Nama,
-				"kategori":         destinasi.Kategori,
-				"deskripsi":        destinasi.Deskripsi,
+				"id": destinasi.ID.String(),
+
+				// Indonesia
+				"nama":      destinasi.Nama,
+				"kategori":  destinasi.Kategori,
+				"deskripsi": destinasi.Deskripsi,
+				"kota":      destinasi.Kota,
+
+				// English
+				"nama_en":      destinasi.NamaEn,
+				"kategori_en":  destinasi.KategoriEn,
+				"deskripsi_en": destinasi.DeskripsiEn,
+				"kota_en":      destinasi.KotaEn,
+
 				"gambar":           destinasi.Gambar,
 				"alamat":           destinasi.Alamat,
-				"kota":             destinasi.Kota,
 				"latitude":         destinasi.Latitude,
 				"longitude":        destinasi.Longitude,
 				"similarity_score": item.SimilarityScore,

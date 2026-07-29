@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type UserData = {
     id: string;
@@ -173,6 +174,7 @@ export default function WisatawanLayout({
 
                         <div className="flex items-center gap-5">
                             <div className="flex items-center gap-3">
+                                <LanguageSwitcher />
                                 <span className="text-base font-semibold text-slate-800 hidden sm:block">
                                     {userData?.username || "Wisatawan"}
                                 </span>

@@ -78,6 +78,36 @@ const id = {
 
     footerCopyright:
         "All rights reserved.",
+
+    dashboardTitle:
+        "Temukan Destinasi Wisata yang Sesuai dengan Preferensi Anda",
+
+    dashboardStartButton:
+        "Ayo Mulai",
+
+    dashboardRecommendationTitle:
+        "Rekomendasi Untukmu",
+
+    dashboardRecommendationDescription:
+        "Dipilihkan khusus berdasarkan riwayat eksplorasimu.",
+
+    dashboardReload:
+        "Muat Ulang",
+
+    dashboardEmpty:
+        "Belum ada data destinasi tersedia.",
+
+    dashboardPopular:
+        "Populer",
+
+    dashboardMatch:
+        "Match",
+
+    dashboardLocationAvailable:
+        "Lokasi Tersedia",
+
+    dashboardRoute:
+        "Rute",
 };
 
 export default id;

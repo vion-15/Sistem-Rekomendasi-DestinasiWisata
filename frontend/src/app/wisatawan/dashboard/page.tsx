@@ -3,14 +3,30 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import {
+    getLanguage,
+    Language,
+} from "@/helpers/language";
+
+import { t } from "@/helpers/translate";
 
 type Destinasi = {
     id: string;
+
     nama: string;
+    nama_en: string;
+
     deskripsi: string;
+    deskripsi_en: string;
+
     kota: string;
+    kota_en: string;
+
     kategori: string;
+    kategori_en: string;
+
     gambar: string;
+
     similarity_score?: number;
 };
 
@@ -51,6 +67,33 @@ export default function WisatawanDashboard() {
         }
     };
 
+    const [language, setLanguage] = useState<Language>("id");
+
+    const lang = t(language);
+
+    useEffect(() => {
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setLanguage(getLanguage());
+
+        const handleLanguageChange = () => {
+            setLanguage(getLanguage());
+        };
+
+        window.addEventListener(
+            "languageChanged",
+            handleLanguageChange
+        );
+
+        return () => {
+            window.removeEventListener(
+                "languageChanged",
+                handleLanguageChange
+            );
+        };
+
+    }, []);
+
     useEffect(() => {
         const rawData = localStorage.getItem("user_data");
         if (rawData) {
@@ -73,6 +116,8 @@ export default function WisatawanDashboard() {
         currentIndex + PER_PAGE
     );
 
+    console.log(displayedRekomendasi);
+
     return (
         <div className="space-y-8">
             <div className="bg-linear-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 
@@ -80,7 +125,7 @@ export default function WisatawanDashboard() {
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div className="max-w-xl">
                         <h1 className="text-lg sm:text-4xl lg:text-4xl font-extrabold tracking-tight leading-tight">
-                            Temukan Destinasi Wisata yang Sesuai dengan Preferensi Anda
+                            {lang.dashboardTitle}
                         </h1>
                     </div>
 
@@ -91,7 +136,7 @@ export default function WisatawanDashboard() {
                             border-white px-8 py-3.5 font-bold text-base hover:bg-transparent hover:text-white transition-all 
                             duration-300 shadow-md"
                         >
-                            Ayo Mulai
+                            {lang.dashboardStartButton}
                         </Link>
                     </div>
 
@@ -101,8 +146,10 @@ export default function WisatawanDashboard() {
             <div>
                 <div className="flex justify-between items-end mb-6">
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-800">Rekomendasi Untukmu {userName}</h2>
-                        <p className="text-slate-500 text-sm mt-1">Dipilihkan khusus berdasarkan riwayat eksplorasimu.</p>
+                        <h2 className="text-2xl font-bold text-slate-800">
+                            {lang.dashboardRecommendationTitle} {userName}
+                        </h2>
+                        <p className="text-slate-500 text-sm mt-1">{lang.dashboardRecommendationDescription}</p>
                     </div>
                     <button
                         disabled={rekomendasi.length <= PER_PAGE}
@@ -114,11 +161,11 @@ export default function WisatawanDashboard() {
                             }
                         }}
                         className={`text-sm font-medium ${rekomendasi.length <= PER_PAGE
-                                ? "text-gray-400 cursor-not-allowed"
-                                : "text-blue-600 hover:underline"
+                            ? "text-gray-400 cursor-not-allowed"
+                            : "text-blue-600 hover:underline"
                             }`}
                     >
-                        Muat Ulang
+                        {lang.dashboardReload}
                     </button>
                 </div>
 
@@ -140,35 +187,51 @@ export default function WisatawanDashboard() {
                                 <div className="h-48 relative overflow-hidden bg-slate-200">
                                     <Image
                                         src={d.gambar || "https://placehold.co/600x400/png?text=No+Image"}
-                                        alt={d.nama}
+                                        alt={language === "id"
+                                            ? d.nama
+                                            : d.nama_en}
                                         fill
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
                                     <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                                         <span className="bg-white/90 backdrop-blur text-slate-800 text-xs font-bold px-3 py-1.5 
                                         rounded-full shadow-sm">
-                                            {d.kategori}
+                                            {
+                                                language === "id"
+                                                    ? d.kategori
+                                                    : d.kategori_en
+                                            }
                                         </span>
                                         {d.similarity_score === 1.0 ? (
                                             <span className="bg-amber-100/90 backdrop-blur text-amber-700 text-xs 
                                             font-bold px-3 py-1.5 rounded-full shadow-sm">
-                                                🔥 Populer
+                                                🔥 {lang.dashboardPopular}
                                             </span>
                                         ) : d.similarity_score !== undefined ? (
                                             <span className="bg-emerald-100/90 backdrop-blur text-emerald-700 text-xs 
                                             font-bold px-3 py-1.5 rounded-full shadow-sm">
-                                                ✨ {(d.similarity_score * 100).toFixed(0)}% Match
+                                                ✨ {(d.similarity_score * 100).toFixed(0)}% {lang.dashboardMatch}
                                             </span>
                                         ) : null}
                                     </div>
                                 </div>
                                 <div className="p-5 flex-1 flex flex-col">
                                     <div className="text-xs font-semibold text-blue-600 mb-2 uppercase tracking-wider">
-                                        📍 {d.kota || "Lokasi Tersedia"}
+                                        📍 {language === "id"
+                                            ? d.kota
+                                            : d.kota_en || lang.dashboardLocationAvailable}
                                     </div>
-                                    <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-1">{d.nama}</h3>
+                                    <h3 className="text-lg font-bold text-slate-800 mb-2 line-clamp-1"> {
+                                        language === "id"
+                                            ? d.nama
+                                            : d.nama_en
+                                    }</h3>
                                     <p className="text-slate-500 text-sm line-clamp-3 mb-4 flex-1">
-                                        {d.deskripsi}
+                                        {
+                                            language === "id"
+                                                ? d.deskripsi
+                                                : d.deskripsi_en
+                                        }
                                     </p>
                                     <Link
                                         href={`/wisatawan/cari-destinasi?dest=${d.id}`}
@@ -176,7 +239,7 @@ export default function WisatawanDashboard() {
                                         text-slate-700 hover:text-blue-700 font-semibold rounded-xl transition-colors border 
                                         border-slate-200 hover:border-blue-200"
                                     >
-                                        Rute
+                                        {lang.dashboardRoute}
                                     </Link>
                                 </div>
                             </div>

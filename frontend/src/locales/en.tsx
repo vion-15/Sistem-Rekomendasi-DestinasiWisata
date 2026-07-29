@@ -77,6 +77,36 @@ const en = {
 
     footerCopyright:
         "All rights reserved.",
+
+    dashboardTitle:
+        "Find Tourist Destinations That Match Your Preferences",
+
+    dashboardStartButton:
+        "Start Exploring",
+
+    dashboardRecommendationTitle:
+        "Recommendations For You",
+
+    dashboardRecommendationDescription:
+        "Selected based on your exploration history.",
+
+    dashboardReload:
+        "Reload",
+
+    dashboardEmpty:
+        "No destination data available.",
+
+    dashboardPopular:
+        "Popular",
+
+    dashboardMatch:
+        "Match",
+
+    dashboardLocationAvailable:
+        "Location Available",
+
+    dashboardRoute:
+        "Route",
 };
 
 export default en;
