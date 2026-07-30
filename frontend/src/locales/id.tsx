@@ -317,6 +317,28 @@ const id = {
     emailPlaceholder: "nama@email.com",
 
     passwordLogin: "Password",
+
+    registerTitle: "Daftar Akun",
+    registerSubtitle: "Mulai jelajahi destinasi terbaik pilihan Anda",
+
+    registerNow: "Daftar Sekarang",
+    processing: "Memproses...",
+
+    registerFailed: "Gagal melakukan registrasi",
+    registerSuccess: "Registrasi berhasil!",
+
+    usernameRegister: "Username",
+    usernamePlaceholderRegister: "Masukkan username",
+
+    passwordPlaceholder: "Minimal 8 karakter",
+
+    currentAddress: "Alamat Sekarang",
+    currentAddressPlaceholder: "Masukkan alamat lengkap",
+
+    alreadyHaveAccount: "Sudah punya akun?",
+    loginHere: "Login di sini",
+
+    systemError: "Terjadi kesalahan sistem",
 };
 
 export default id;

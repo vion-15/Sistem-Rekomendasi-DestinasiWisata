@@ -322,6 +322,28 @@ const en = {
     emailPlaceholder: "name@email.com",
 
     passwordLogin: "Password",
+
+    registerTitle: "Create Account",
+    registerSubtitle: "Start exploring the best tourist destinations for you",
+
+    registerNow: "Create Account",
+    processing: "Processing...",
+
+    registerFailed: "Registration failed",
+    registerSuccess: "Registration successful!",
+
+    usernameRegister: "Username",
+    usernamePlaceholderRegister: "Enter your username",
+
+    passwordPlaceholder: "Minimum 8 characters",
+
+    currentAddress: "Current Address",
+    currentAddressPlaceholder: "Enter your full address",
+
+    alreadyHaveAccount: "Already have an account?",
+    loginHere: "Sign in here",
+
+    systemError: "A system error occurred",
 };
 
 export default en;
