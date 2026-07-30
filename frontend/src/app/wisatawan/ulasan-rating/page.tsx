@@ -3,13 +3,28 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MapPin, Star } from "lucide-react";
+import {
+    getLanguage,
+    Language,
+} from "@/helpers/language";
+
+import { t } from "@/helpers/translate";
 
 interface Destinasi {
     id: string;
+
     nama: string;
+    nama_en: string;
+
     kategori: string;
+    kategori_en: string;
+
     deskripsi: string;
+    deskripsi_en: string;
+
     kota?: string;
+    kota_en?: string;
+
     gambar?: string;
 }
 
@@ -31,6 +46,10 @@ export default function UlasanRatingPage() {
         useState<UlasanRating | null>(null);
     const [rating, setRating] = useState(0);
     const [ulasan, setUlasan] = useState("");
+    const [language, setCurrentLanguage] =
+        useState<Language>("id");
+
+    const lang = t(language);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/immutability
@@ -47,7 +66,7 @@ export default function UlasanRatingPage() {
             );
             const data = await res.json();
             if (!res.ok) {
-                throw new Error(data.error || "Gagal mengambil riwayat destinasi.");
+                throw new Error(data.error || lang.reviewFetchFailed);
             }
             setRiwayatList(data.data || []);
         } catch (err: unknown) {
@@ -60,6 +79,27 @@ export default function UlasanRatingPage() {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentLanguage(getLanguage());
+
+        const handleLanguageChange = () => {
+            setCurrentLanguage(getLanguage());
+        };
+
+        window.addEventListener(
+            "languageChanged",
+            handleLanguageChange
+        );
+
+        return () => {
+            window.removeEventListener(
+                "languageChanged",
+                handleLanguageChange
+            );
+        };
+    }, []);
 
     const handleReview = (item: UlasanRating) => {
         setSelectedItem(item);
@@ -93,11 +133,11 @@ export default function UlasanRatingPage() {
             const data = await res.json();
 
             if (!res.ok) {
-                alert(data.error || "Gagal menyimpan ulasan");
+                alert(data.error || lang.reviewSaveFailed);
                 return;
             }
 
-            alert("Ulasan berhasil disimpan");
+            alert(lang.reviewSaveSuccess);
             setIsModalOpen(false);
             setRating(0);
             setUlasan("");
@@ -109,7 +149,7 @@ export default function UlasanRatingPage() {
     };
 
     const handleDelete = async (riwayatID: string) => {
-        if (!confirm("Yakin ingin menghapus riwayat ini?")) return;
+        if (!confirm(lang.reviewDeleteConfirm)) return;
         try {
             const res = await fetch(
                 `http://localhost:8080/api/wisatawan-aktivitas/riwayat-destinasi/${riwayatID}`,
@@ -122,7 +162,7 @@ export default function UlasanRatingPage() {
                 alert(data.error);
                 return;
             }
-            alert("Riwayat berhasil dihapus");
+            alert(lang.reviewDeleteSuccess);
             fetchRiwayat();
         } catch (err) {
             console.error(err);
@@ -133,15 +173,15 @@ export default function UlasanRatingPage() {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 className="text-3xl font-bold text-slate-800">
-                Ulasan & Rating
+                {lang.reviewTitle}
             </h1>
             <p className="text-slate-500 mt-2 mb-8">
-                Berikan penilaian terhadap destinasi wisata yang pernah Anda kunjungi.
+                {lang.reviewDescription}
             </p>
 
             {isLoading && (
                 <div className="text-center py-20 text-slate-500">
-                    Memuat data...
+                    {lang.reviewLoading}
                 </div>
             )}
 
@@ -160,7 +200,7 @@ export default function UlasanRatingPage() {
                             size={52}
                         />
                         <p className="text-slate-500">
-                            Belum ada riwayat destinasi.
+                            {lang.reviewEmpty}
                         </p>
                     </div>
                 )}
@@ -181,25 +221,41 @@ export default function UlasanRatingPage() {
                                             item.destinasi.gambar ||
                                             "https://placehold.co/600x400/png?text=No+Image"
                                         }
-                                        alt={item.destinasi.nama}
+                                        alt={
+                                            language === "id"
+                                                ? item.destinasi.nama
+                                                : item.destinasi.nama_en
+                                        }
                                         fill
                                         className="object-cover group-hover:scale-105 transition duration-500"
                                     />
                                     <div className="absolute top-4 left-4">
                                         <span className="bg-white/90 text-black backdrop-blur px-3 py-1 rounded-full 
                                         text-xs font-semibold">
-                                            {item.destinasi.kategori}
+                                            {
+                                                language === "id"
+                                                    ? item.destinasi.kategori
+                                                    : item.destinasi.kategori_en
+                                            }
                                         </span>
                                     </div>
                                 </div>
 
                                 <div className="p-5 flex flex-col">
                                     <div className="text-blue-600 text-sm font-semibold mb-2">
-                                        📍 {item.destinasi.kota}
+                                        📍 {
+                                            language === "id"
+                                                ? item.destinasi.kota
+                                                : item.destinasi.kota_en
+                                        }
                                     </div>
 
                                     <h2 className="text-xl font-bold text-slate-800 mb-4">
-                                        {item.destinasi.nama}
+                                        {
+                                            language === "id"
+                                                ? item.destinasi.nama
+                                                : item.destinasi.nama_en
+                                        }
                                     </h2>
 
                                     <div className="mt-4 space-y-3">
@@ -227,7 +283,7 @@ export default function UlasanRatingPage() {
 
                                                 <div>
                                                     <p className="text-xs font-semibold uppercase text-slate-400 mb-1">
-                                                        Ulasan Anda
+                                                        {lang.reviewYourReview}
                                                     </p>
 
                                                     <p className="text-sm italic text-slate-600 line-clamp-2">
@@ -237,7 +293,7 @@ export default function UlasanRatingPage() {
 
                                                 {item.tanggal_ulasan && (
                                                     <p className="text-xs text-slate-400">
-                                                        Diulas pada{" "}
+                                                        {lang.reviewReviewedOn}
                                                         {new Date(
                                                             item.tanggal_ulasan
                                                         ).toLocaleDateString("id-ID")}
@@ -265,7 +321,7 @@ export default function UlasanRatingPage() {
                                                     text-sm
                                                     font-medium"
                                                 >
-                                                    ⭐ Belum diulas
+                                                    ⭐ {lang.reviewNotReviewed}
                                                 </span>
                                             </div>
                                         )}
@@ -285,8 +341,8 @@ export default function UlasanRatingPage() {
                                             transition"
                                         >
                                             {item.rating !== undefined
-                                                ? "Edit Ulasan"
-                                                : "Beri Ulasan"}
+                                                ? lang.reviewEdit
+                                                : lang.reviewGive}
                                         </button>
 
                                         <button
@@ -299,7 +355,7 @@ export default function UlasanRatingPage() {
                                             hover:bg-red-600
                                             transition"
                                         >
-                                            Hapus
+                                            {lang.reviewDelete}
                                         </button>
 
                                     </div>
@@ -313,15 +369,19 @@ export default function UlasanRatingPage() {
                 <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
                     <div className="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl">
                         <h2 className="text-2xl font-bold text-slate-800 mb-2 text-center">
-                            Ulasan Destinasi
+                            {lang.reviewModalTitle}
                         </h2>
                         <p className="text-slate-500 mb-6 text-center">
-                            {selectedItem.destinasi.nama}
+                            {
+                                language === "id"
+                                    ? selectedItem.destinasi.nama
+                                    : selectedItem.destinasi.nama_en
+                            }
                         </p>
 
                         {/* Rating */}
                         <div className="flex justify-center gap-2 mb-6 items-center">
-                            <h1 className="text-black">Rating:</h1>
+                            <h1 className="text-black">{lang.reviewRating}</h1>
                             {Array.from({ length: 5 }).map((_, index) => (
                                 <button
                                     key={index}
@@ -344,12 +404,12 @@ export default function UlasanRatingPage() {
                             ))}
                         </div>
 
-                        <h1 className="text-black">Ulasan:</h1>
+                        <h1 className="text-black">{lang.reviewComment}</h1>
                         <textarea
                             rows={5}
                             value={ulasan}
                             onChange={(e) => setUlasan(e.target.value)}
-                            placeholder="Bagaimana pengalaman Anda?"
+                            placeholder={lang.reviewPlaceholder}
                             className="w-full border rounded-xl text-slate-800  p-4 resize-none outline-none focus:ring-2 focus:ring-blue-500"
                         />
 
@@ -358,13 +418,13 @@ export default function UlasanRatingPage() {
                                 onClick={() => setIsModalOpen(false)}
                                 className="px-5 py-2 rounded-xl border border-red-500 text-red-500"
                             >
-                                Batal
+                                {lang.reviewCancel}
                             </button>
                             <button
                                 onClick={handleSubmitReview}
                                 className="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
                             >
-                                Simpan
+                                {lang.reviewSave}
                             </button>
                         </div>
                     </div>

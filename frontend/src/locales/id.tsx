@@ -207,6 +207,38 @@ const id = {
     back: "Kembali",
 
     defaultDestinationName: "Destinasi Wisata",
+
+    reviewTitle: "Ulasan & Rating",
+    reviewDescription:
+        "Berikan penilaian terhadap destinasi wisata yang pernah Anda kunjungi.",
+
+    reviewLoading: "Memuat data...",
+    reviewEmpty: "Belum ada riwayat destinasi.",
+
+    reviewYourReview: "Ulasan Anda",
+    reviewReviewedOn: "Diulas pada",
+    reviewNotReviewed: "Belum diulas",
+
+    reviewEdit: "Edit Ulasan",
+    reviewGive: "Beri Ulasan",
+
+    reviewDelete: "Hapus",
+
+    reviewModalTitle: "Ulasan Destinasi",
+    reviewRating: "Rating:",
+    reviewComment: "Ulasan:",
+    reviewPlaceholder: "Bagaimana pengalaman Anda?",
+
+    reviewCancel: "Batal",
+    reviewSave: "Simpan",
+
+    reviewDeleteConfirm: "Yakin ingin menghapus riwayat ini?",
+    reviewDeleteSuccess: "Riwayat berhasil dihapus",
+
+    reviewSaveSuccess: "Ulasan berhasil disimpan",
+    reviewSaveFailed: "Gagal menyimpan ulasan",
+
+    reviewFetchFailed: "Gagal mengambil riwayat destinasi.",
 };
 
 export default id;

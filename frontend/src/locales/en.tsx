@@ -212,6 +212,38 @@ const en = {
     back: "Back",
 
     defaultDestinationName: "Tourist Destination",
+
+    reviewTitle: "Reviews & Ratings",
+    reviewDescription:
+        "Share your experience by rating the tourist destinations you have visited.",
+
+    reviewLoading: "Loading data...",
+    reviewEmpty: "No destination history yet.",
+
+    reviewYourReview: "Your Review",
+    reviewReviewedOn: "Reviewed on",
+    reviewNotReviewed: "Not Reviewed",
+
+    reviewEdit: "Edit Review",
+    reviewGive: "Write Review",
+
+    reviewDelete: "Delete",
+
+    reviewModalTitle: "Destination Review",
+    reviewRating: "Rating:",
+    reviewComment: "Review:",
+    reviewPlaceholder: "How was your experience?",
+
+    reviewCancel: "Cancel",
+    reviewSave: "Save",
+
+    reviewDeleteConfirm: "Are you sure you want to delete this history?",
+    reviewDeleteSuccess: "History deleted successfully.",
+
+    reviewSaveSuccess: "Review saved successfully.",
+    reviewSaveFailed: "Failed to save review.",
+
+    reviewFetchFailed: "Failed to retrieve destination history.",
 };
 
 export default en;
