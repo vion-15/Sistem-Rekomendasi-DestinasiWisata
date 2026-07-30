@@ -26,13 +26,22 @@ MIN_SIMILARITY = 0.35
 # KAMUS FILTER
 # =========================
 
-KOTA_TERSEDIA = [
-    "jakarta selatan",
-    "jakarta pusat",
-    "jakarta utara",
-    "jakarta timur",
-    "jakarta barat"
-]
+KOTA_MAPPING = {
+    "jakarta selatan": "jakarta selatan",
+    "south jakarta": "jakarta selatan",
+
+    "jakarta pusat": "jakarta pusat",
+    "central jakarta": "jakarta pusat",
+
+    "jakarta utara": "jakarta utara",
+    "north jakarta": "jakarta utara",
+
+    "jakarta timur": "jakarta timur",
+    "east jakarta": "jakarta timur",
+
+    "jakarta barat": "jakarta barat",
+    "west jakarta": "jakarta barat",
+}
 
 KATEGORI_MAPPING = {
     "jogging": ["olahraga", "alam", "arsitektur"],
@@ -60,7 +69,59 @@ KATEGORI_MAPPING = {
     "estetik": ["arsitektur", "alam", "pameran", "budaya"],
     "foto": ["alam", "arsitektur", "sejarah", "budaya", "pameran", "hiburan"],
 
-    "staycation": ["akomodasi", "hiburan"]
+    "staycation": ["akomodasi", "hiburan"],
+    
+    # olahraga
+    "jogging": ["olahraga", "alam", "arsitektur"],
+    "running": ["olahraga", "alam", "arsitektur"],
+    "run": ["olahraga", "alam", "arsitektur"],
+    "sports": ["olahraga", "alam", "arsitektur"],
+    "sport": ["olahraga", "alam", "arsitektur"],
+    "cycling": ["olahraga", "alam", "arsitektur"],
+    "bike": ["olahraga", "alam", "arsitektur"],
+
+    # taman
+    "park": ["alam", "olahraga", "arsitektur", "hiburan"],
+    "garden": ["alam", "olahraga", "arsitektur", "hiburan"],
+
+    # kuliner
+    "food": ["kuliner", "perbelanjaan", "hiburan", "akomodasi"],
+    "eat": ["kuliner", "perbelanjaan", "hiburan", "akomodasi"],
+    "drink": ["kuliner", "perbelanjaan", "hiburan", "akomodasi"],
+    "restaurant": ["kuliner", "akomodasi"],
+    "coffee": ["kuliner", "perbelanjaan", "hiburan"],
+    "cafe": ["kuliner", "perbelanjaan", "hiburan"],
+
+    # belanja
+    "shopping": ["perbelanjaan", "hiburan", "budaya"],
+    "shop": ["perbelanjaan", "hiburan", "budaya"],
+    "mall": ["perbelanjaan", "hiburan", "kuliner"],
+
+    # sejarah
+    "history": ["sejarah", "budaya", "arsitektur", "religi"],
+    "historical": ["sejarah", "budaya", "arsitektur", "religi"],
+    "museum": ["sejarah", "arsitektur", "budaya", "pameran"],
+
+    # seni
+    "art": ["pameran", "budaya", "arsitektur"],
+    "gallery": ["pameran", "budaya", "arsitektur"],
+    "exhibition": ["pameran", "budaya", "arsitektur"],
+
+    # religi
+    "worship": ["religi", "sejarah", "arsitektur"],
+    "mosque": ["religi", "sejarah", "arsitektur"],
+    "church": ["religi", "sejarah", "arsitektur"],
+    "temple": ["religi", "sejarah", "arsitektur"],
+
+    # foto
+    "photo": ["alam", "arsitektur", "sejarah", "budaya", "pameran", "hiburan"],
+    "photography": ["alam", "arsitektur", "sejarah", "budaya", "pameran", "hiburan"],
+    "instagrammable": ["arsitektur", "alam", "pameran", "budaya"],
+    "scenic": ["arsitektur", "alam", "pameran", "budaya"],
+
+    # staycation
+    "staycation": ["akomodasi", "hiburan"],
+    "hotel": ["akomodasi", "hiburan"],
 }
 
 # =========================
@@ -146,9 +207,9 @@ def get_cbf_recommendations(
     
     kota_ditemukan = None
 
-    for kota in KOTA_TERSEDIA:
-        if kota in query_lower:
-            kota_ditemukan = kota
+    for keyword, kota_asli in KOTA_MAPPING.items():
+        if keyword in query_lower:
+            kota_ditemukan = kota_asli
             break
         
     kategori_ditemukan = []
