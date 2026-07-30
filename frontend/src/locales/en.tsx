@@ -244,6 +244,29 @@ const en = {
     reviewSaveFailed: "Failed to save review.",
 
     reviewFetchFailed: "Failed to retrieve destination history.",
+
+    reportTitle: "Reports",
+
+    reportUserNotFound:
+        "User data not found.",
+
+    reportDownloadFailed:
+        "Failed to download the report.",
+
+    reportSearchData:
+        "Your Search History",
+
+    reportDestinationData:
+        "Your Destination History",
+
+    reportReviewData:
+        "Your Reviews",
+
+    reportTableNo: "No",
+    reportTableName: "Report Name",
+    reportTableAction: "Action",
+
+    reportDownload: "Download",
 };
 
 export default en;

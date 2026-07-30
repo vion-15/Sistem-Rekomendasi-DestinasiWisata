@@ -1,6 +1,39 @@
 "use client"
 
+import { useEffect, useState } from "react";
+import {
+    getLanguage,
+    Language,
+} from "@/helpers/language";
+import { t } from "@/helpers/translate";
+
 export default function LaporanPage() {
+
+    const [language, setCurrentLanguage] =
+        useState<Language>("id");
+
+    const lang = t(language);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentLanguage(getLanguage());
+
+        const handleLanguageChange = () => {
+            setCurrentLanguage(getLanguage());
+        };
+
+        window.addEventListener(
+            "languageChanged",
+            handleLanguageChange
+        );
+
+        return () => {
+            window.removeEventListener(
+                "languageChanged",
+                handleLanguageChange
+            );
+        };
+    }, []);
 
     const handleDownload = async (jenis: string) => {
         try {
@@ -8,7 +41,7 @@ export default function LaporanPage() {
                 localStorage.getItem("user_data") || "{}"
             );
             if (!userData.id) {
-                alert("Data pengguna tidak ditemukan.");
+                alert(lang.reportUserNotFound);
                 return;
             }
             let endpoint = "";
@@ -27,7 +60,7 @@ export default function LaporanPage() {
             }
             const response = await fetch(endpoint);
             if (!response.ok) {
-                throw new Error("Gagal mengunduh laporan");
+                throw new Error(lang.reportDownloadFailed);
             }
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
@@ -53,14 +86,14 @@ export default function LaporanPage() {
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error(error);
-            alert("Gagal mengunduh laporan.");
+            alert(lang.reportDownloadFailed);
         }
     };
 
     return (
         <div className="px-10 py-8">
             <h2 className="text-3xl font-semibold text-gray-800 mb-8">
-                Laporan
+                {lang.reportTitle}
             </h2>
 
             <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
@@ -68,13 +101,13 @@ export default function LaporanPage() {
                     <thead>
                         <tr className="bg-gray-100 text-gray-700 text-lg">
                             <th className="py-4 w-20 text-center font-semibold">
-                                No
+                                {lang.reportTableNo}
                             </th>
                             <th className="py-4 px-6 text-left font-semibold">
-                                Nama Laporan
+                                {lang.reportTableName}
                             </th>
                             <th className="py-4 text-center font-semibold">
-                                Action
+                                {lang.reportTableAction}
                             </th>
                         </tr>
                     </thead>
@@ -84,17 +117,26 @@ export default function LaporanPage() {
                             [
                                 {
                                     id: 1,
-                                    nama: "Data Pencarian Kamu",
+                                    nama:
+                                        language === "id"
+                                            ? lang.reportSearchData
+                                            : lang.reportSearchData,
                                     jenis: "pencarian",
                                 },
                                 {
                                     id: 2,
-                                    nama: "Data Lokasi Destinasi Kamu",
+                                    nama:
+                                        language === "id"
+                                            ? lang.reportDestinationData
+                                            : lang.reportDestinationData,
                                     jenis: "lokasi",
                                 },
                                 {
                                     id: 3,
-                                    nama: "Data Ulasan Kamu",
+                                    nama:
+                                        language === "id"
+                                            ? lang.reportReviewData
+                                            : lang.reportReviewData,
                                     jenis: "ulasan",
                                 },
                             ].map((item, index) => (
@@ -115,7 +157,7 @@ export default function LaporanPage() {
                                                 className="bg-blue-600 text-white px-8 py-2.5 rounded-lg hover:bg-blue-700 
                                                 transition shadow-sm"
                                             >
-                                                Download
+                                                {lang.reportDownload}
                                             </button>
                                         </div>
                                     </td>

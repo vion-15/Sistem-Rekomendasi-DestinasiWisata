@@ -239,6 +239,29 @@ const id = {
     reviewSaveFailed: "Gagal menyimpan ulasan",
 
     reviewFetchFailed: "Gagal mengambil riwayat destinasi.",
+
+    reportTitle: "Laporan",
+
+    reportUserNotFound:
+        "Data pengguna tidak ditemukan.",
+
+    reportDownloadFailed:
+        "Gagal mengunduh laporan.",
+
+    reportSearchData:
+        "Data Pencarian Kamu",
+
+    reportDestinationData:
+        "Data Lokasi Destinasi Kamu",
+
+    reportReviewData:
+        "Data Ulasan Kamu",
+
+    reportTableNo: "No",
+    reportTableName: "Nama Laporan",
+    reportTableAction: "Action",
+
+    reportDownload: "Download",
 };
 
 export default id;
