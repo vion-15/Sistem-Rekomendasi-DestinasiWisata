@@ -1,84 +1,38 @@
-# ==================================================
-# Frontend (Next.js)
-# ==================================================
+# ==========================
+# Go
+# ==========================
+backend/*.exe
+backend/*.out
+backend/backend
 
-# dependencies
+# ==========================
+# Node.js
+# ==========================
 frontend/node_modules/
-frontend/.pnp
-frontend/.pnp.*
-frontend/.yarn/*
-!frontend/.yarn/patches
-!frontend/.yarn/plugins
-!frontend/.yarn/releases
-!frontend/.yarn/versions
-
-# testing
-frontend/coverage/
-
-# next.js
 frontend/.next/
-frontend/out/
 
-# production
-frontend/build/
-
-# typescript
-frontend/*.tsbuildinfo
-frontend/next-env.d.ts
-
-# debug
-frontend/npm-debug.log*
-frontend/yarn-debug.log*
-frontend/yarn-error.log*
-frontend/.pnpm-debug.log*
-
-# vercel
-frontend/.vercel/
-
-# ==================================================
-# Backend (Go)
-# ==================================================
-
-backend/bin/
-backend/tmp/
-backend/vendor/
-
-# ==================================================
-# Recommendation Service (Python)
-# ==================================================
-
+# ==========================
+# Python
+# ==========================
 recomendation-service/venv/
 recomendation-service/__pycache__/
-recomendation-service/**/*.pyc
-recomendation-service/**/*.pyo
-recomendation-service/**/*.pyd
+recomendation-service/*.pyc
 
-# ==================================================
-# Environment Files
-# ==================================================
+# ==========================
+# Environment
+# ==========================
+backend/.env
+frontend/.env.local
+recomendation-service/.env
 
-**/.env
-**/.env.local
-**/.env.development.local
-**/.env.test.local
-**/.env.production.local
-
-# ==================================================
-# IDE
-# ==================================================
-
-.vscode/
-.idea/
-
-# ==================================================
-# OS Files
-# ==================================================
-
+# ==========================
+# OS
+# ==========================
 .DS_Store
 Thumbs.db
 
-# ==================================================
-# Certificates
-# ==================================================
-
-*.pem
+# ==========================
+# IDE
+# ==========================
+.vscode/
+.idea/
