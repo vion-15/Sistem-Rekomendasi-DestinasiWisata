@@ -300,6 +300,23 @@ const id = {
     unknownError: "Terjadi kesalahan tidak diketahui.",
     profileLoadFailed: "Gagal mengambil profil.",
     invalidUserData: "Data pengguna tidak valid.",
+
+    loginTitle: "Login",
+    loginSubtitle: "Sistem Rekomendasi Destinasi Wisata",
+
+    loginButton: "Masuk ke Sistem",
+    authenticating: "Mengautentikasi...",
+
+    loginFailed: "Gagal masuk",
+    serverConnectionFailed: "Gagal terhubung ke server",
+
+    newTourist: "Wisatawan baru?",
+    createAccount: "Buat Akun Mandiri",
+
+    emailLogin: "Email",
+    emailPlaceholder: "nama@email.com",
+
+    passwordLogin: "Password",
 };
 
 export default id;

@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
+import { getLanguage, Language } from "@/helpers/language";
+import { t } from "@/helpers/translate";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function UniversalLoginPage() {
     const router = useRouter();
@@ -12,6 +15,25 @@ export default function UniversalLoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [language, setCurrentLanguage] =
+        useState<Language>("id");
+
+    const lang = t(language);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentLanguage(getLanguage());
+
+        const handleLanguageChange = () => {
+            setCurrentLanguage(getLanguage());
+        };
+
+        window.addEventListener("languageChanged", handleLanguageChange);
+
+        return () => {
+            window.removeEventListener("languageChanged", handleLanguageChange);
+        };
+    }, []);
 
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
@@ -31,7 +53,7 @@ export default function UniversalLoginPage() {
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data.error || "Gagal masuk");
+                throw new Error(data.error || lang.loginFailed);
             }
 
             localStorage.setItem("token", data.token);
@@ -50,7 +72,7 @@ export default function UniversalLoginPage() {
             if (err instanceof Error) {
                 setErrorMsg(err.message);
             } else {
-                setErrorMsg("Gagal terhubung ke server");
+                setErrorMsg(lang.serverConnectionFailed);
             }
         } finally {
             setIsLoading(false);
@@ -58,16 +80,25 @@ export default function UniversalLoginPage() {
     };
 
     return (
-        <div 
+        <div
             className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
             style={{ backgroundImage: "url('/image/foto-bg-login-register.jpg')" }}
         >
             <div className="absolute inset-0 bg-slate-900/40 z-0"></div>
 
+            <div className="absolute top-5 right-5">
+                <LanguageSwitcher />
+            </div>
+
             <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100 relative z-10">
+
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Login</h1>
-                    <p className="text-slate-500 text-sm mt-2">Sistem Rekomendasi Destinasi Wisata</p>
+                    <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">
+                        {lang.loginTitle}
+                    </h1>
+                    <p className="text-slate-500 text-sm mt-2">
+                        {lang.loginSubtitle}
+                    </p>
                 </div>
 
                 {errorMsg && (
@@ -78,7 +109,7 @@ export default function UniversalLoginPage() {
 
                 <form onSubmit={handleLogin} className="space-y-5">
                     <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email</label>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">{lang.emailLogin}</label>
                         <input
                             type="email"
                             value={email}
@@ -86,13 +117,13 @@ export default function UniversalLoginPage() {
                             className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 
                             rounded-xl text-slate-900 placeholder:text-slate-400 focus:ring-2 
                             focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                            placeholder="nama@email.com"
+                            placeholder={lang.emailPlaceholder}
                             required
                         />
                     </div>
 
                     <div className="relative">
-                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Password</label>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">{lang.passwordLogin}</label>
                         <input
                             type={showPassword ? "text" : "password"}
                             value={password}
@@ -120,22 +151,24 @@ export default function UniversalLoginPage() {
                         type="submit"
                         disabled={isLoading}
                         className={`w-full py-3 text-white rounded-xl font-bold tracking-wide transition-all 
-                                    shadow-md ${isLoading ? "bg-blue-400 cursor-not-allowed" 
-                                        : "bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5"
-                                }`}
+                                    shadow-md ${isLoading ? "bg-blue-400 cursor-not-allowed"
+                                : "bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5"
+                            }`}
                     >
-                        {isLoading ? "Mengautentikasi..." : "Masuk ke Sistem"}
+                        {isLoading
+                            ? lang.authenticating
+                            : lang.loginButton}
                     </button>
                 </form>
 
-                <div 
+                <div
                     className="mt-8 pt-6 border-t border-slate-100 text-center text-sm text-slate-600">
-                        Wisatawan baru?{" "}
-                        <Link 
-                            href="/register" 
-                            className="text-blue-600 hover:text-blue-700 hover:underline font-bold transition-colors">
-                            Buat Akun Mandiri
-                        </Link>
+                    {lang.newTourist}{" "}
+                    <Link
+                        href="/register"
+                        className="text-blue-600 hover:text-blue-700 hover:underline font-bold transition-colors">
+                        {lang.createAccount}
+                    </Link>
                 </div>
             </div>
         </div>

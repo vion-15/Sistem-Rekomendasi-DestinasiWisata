@@ -305,6 +305,23 @@ const en = {
     unknownError: "An unknown error occurred.",
     profileLoadFailed: "Failed to load profile.",
     invalidUserData: "Invalid user data.",
+
+    loginTitle: "Login",
+    loginSubtitle: "Tourist Destination Recommendation System",
+
+    loginButton: "Sign In",
+    authenticating: "Authenticating...",
+
+    loginFailed: "Login failed",
+    serverConnectionFailed: "Failed to connect to the server",
+
+    newTourist: "New tourist?",
+    createAccount: "Create an Account",
+
+    emailLogin: "Email",
+    emailPlaceholder: "name@email.com",
+
+    passwordLogin: "Password",
 };
 
 export default en;
