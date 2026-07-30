@@ -267,6 +267,44 @@ const en = {
     reportTableAction: "Action",
 
     reportDownload: "Download",
+
+    dashboard: "Dashboard",
+    destination: "Destinations",
+    search: "Search",
+    recommendation: "Result Recommendations",
+    location: "Destination Location",
+    review: "Reviews & Ratings",
+    report: "Reports",
+
+    logout: "Logout",
+    logoutConfirmTitle: "Are you sure you want to log out?",
+
+    editProfile: "Edit Profile",
+
+    username: "Username",
+    usernamePlaceholder: "Enter username",
+
+    email: "Email",
+
+    address: "Address",
+
+    password: "Password",
+    passwordOptional: "Fill in only if you want to change it",
+
+    profilePhoto: "Profile Photo",
+
+    optional: "Optional",
+
+    deleteAccount: "Delete Account",
+
+    cancel: "Cancel",
+    save: "Save",
+    saving: "Saving...",
+
+    saveFailed: "Failed to save data.",
+    unknownError: "An unknown error occurred.",
+    profileLoadFailed: "Failed to load profile.",
+    invalidUserData: "Invalid user data.",
 };
 
 export default en;

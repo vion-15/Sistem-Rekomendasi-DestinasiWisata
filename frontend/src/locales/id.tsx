@@ -262,6 +262,44 @@ const id = {
     reportTableAction: "Action",
 
     reportDownload: "Download",
+
+    dashboard: "Dashboard",
+    destination: "Destinasi Wisata",
+    search: "Pencarian",
+    recommendation: "Hasil Rekomendasi",
+    location: "Lokasi Destinasi",
+    review: "Ulasan & Rating",
+    report: "Laporan",
+
+    logout: "Logout",
+    logoutConfirmTitle: "Yakin ingin keluar?",
+
+    editProfile: "Edit Profile",
+
+    username: "Username",
+    usernamePlaceholder: "Masukkan username",
+
+    email: "Email",
+
+    address: "Alamat",
+
+    password: "Password",
+    passwordOptional: "Isi jika ingin diganti",
+
+    profilePhoto: "Foto Profile",
+
+    optional: "Opsional",
+
+    deleteAccount: "Hapus Akun",
+
+    cancel: "Batal",
+    save: "Simpan",
+    saving: "Menyimpan...",
+
+    saveFailed: "Gagal menyimpan data.",
+    unknownError: "Terjadi kesalahan tidak diketahui.",
+    profileLoadFailed: "Gagal mengambil profil.",
+    invalidUserData: "Data pengguna tidak valid.",
 };
 
 export default id;

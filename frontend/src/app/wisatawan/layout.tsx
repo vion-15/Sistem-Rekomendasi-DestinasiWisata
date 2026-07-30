@@ -6,6 +6,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import {
+    getLanguage,
+    Language,
+} from "@/helpers/language";
+import { t } from "@/helpers/translate";
 
 type UserData = {
     id: string;
@@ -33,6 +38,10 @@ export default function WisatawanLayout({
     const [foto, setFoto] = useState<File | null>(null);
     const [errorMsg, setErrorMsg] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [language, setCurrentLanguage] =
+        useState<Language>("id");
+
+    const lang = t(language);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -49,7 +58,7 @@ export default function WisatawanLayout({
             setUserData(JSON.parse(rawData));
             setIsLoaded(true);
         } catch (error) {
-            console.error("Invalid user data", error);
+            console.error(lang.invalidUserData, error);
             router.replace("/login");
         }
     }, [router]);
@@ -63,7 +72,7 @@ export default function WisatawanLayout({
             const result = await response.json();
             return result.data;
         } catch (error) {
-            console.error("Gagal mengambil profile:", error);
+            console.error(lang.profileLoadFailed, error);
             return null;
         }
     };
@@ -84,7 +93,7 @@ export default function WisatawanLayout({
                 body: formData,
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Gagal menyimpan data");
+            if (!res.ok) throw new Error(data.error || lang.saveFailed);
             setIsProfileModalOpen(false);
             const updatedProfile = await getProfile();
             if (updatedProfile) {
@@ -100,12 +109,33 @@ export default function WisatawanLayout({
             if (err instanceof Error) {
                 setErrorMsg(err.message);
             } else {
-                setErrorMsg("Terjadi kesalahan tidak diketahui");
+                setErrorMsg(lang.unknownError);
             }
         } finally {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentLanguage(getLanguage());
+
+        const handleLanguageChange = () => {
+            setCurrentLanguage(getLanguage());
+        };
+
+        window.addEventListener(
+            "languageChanged",
+            handleLanguageChange
+        );
+
+        return () => {
+            window.removeEventListener(
+                "languageChanged",
+                handleLanguageChange
+            );
+        };
+    }, []);
 
     const handleDeleteAccount = async () => {
         const confirmDelete = confirm(
@@ -208,7 +238,7 @@ export default function WisatawanLayout({
                                 onClick={() => setIsLogoutModalOpen(true)}
                                 className="text-base font-medium text-red-600 hover:text-red-700 transition-colors"
                             >
-                                Logout
+                                {lang.logout}
                             </button>
                         </div>
                     </div>
@@ -217,43 +247,43 @@ export default function WisatawanLayout({
                             href="/wisatawan/dashboard"
                             className={pathname.includes("/wisatawan/dashboard") ? activeClass : inactiveClass}
                         >
-                            Dashboard
+                            {lang.dashboard}
                         </Link>
                         <Link
                             href="/wisatawan/destinasi"
                             className={pathname.includes("/wisatawan/destinasi") ? activeClass : inactiveClass}
                         >
-                            Destinasi Wisata
+                            {lang.destination}
                         </Link>
                         <Link
                             href="/wisatawan/pencarian"
                             className={pathname.includes("/wisatawan/pencarian") ? activeClass : inactiveClass}
                         >
-                            Pencarian
+                            {lang.search}
                         </Link>
                         <Link
                             href="/wisatawan/hasil-rekomendasi"
                             className={pathname.includes("/wisatawan/hasil-rekomendasi") ? activeClass : inactiveClass}
                         >
-                            Hasil Rekomendasi
+                            {lang.recommendation}
                         </Link>
                         <Link
                             href="/wisatawan/lokasi-destinasi"
                             className={pathname.includes("/wisatawan/lokasi-destinasi") ? activeClass : inactiveClass}
                         >
-                            Lokasi Destinasi
+                            {lang.location}
                         </Link>
                         <Link
                             href="/wisatawan/ulasan-rating"
                             className={pathname.includes("/wisatawan/ulasan-rating") ? activeClass : inactiveClass}
                         >
-                            Ulasan & Rating
+                            {lang.review}
                         </Link>
                         <Link
                             href="/wisatawan/laporan"
                             className={pathname.includes("/wisatawan/laporan") ? activeClass : inactiveClass}
                         >
-                            Laporan
+                            {lang.report}
                         </Link>
                     </nav>
                 </div>
@@ -271,14 +301,14 @@ export default function WisatawanLayout({
                             <LogOut />
                         </div>
 
-                        <h2 className="text-xl font-bold text-gray-800 mb-10">Yakin ingin keluar?</h2>
+                        <h2 className="text-xl font-bold text-gray-800 mb-10">{lang.logoutConfirmTitle}</h2>
                         <div className="flex justify-center gap-3">
                             <button
                                 onClick={executeLogout}
                                 className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold 
                                 transition-colors"
                             >
-                                Logout
+                                {lang.logout}
                             </button>
 
                             <button
@@ -286,7 +316,7 @@ export default function WisatawanLayout({
                                 className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl 
                                 font-semibold transition-colors"
                             >
-                                Batal
+                                {lang.cancel}
                             </button>
                         </div>
                     </div>
@@ -297,7 +327,7 @@ export default function WisatawanLayout({
                 <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl">
                         <h2 className="text-xl font-bold text-gray-800 mb-4">
-                            Edit Profile
+                            {lang.editProfile}
                         </h2>
 
                         {errorMsg && (
@@ -309,7 +339,7 @@ export default function WisatawanLayout({
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Username
+                                    {lang.username}
                                 </label>
                                 <input
                                     type="text"
@@ -317,13 +347,13 @@ export default function WisatawanLayout({
                                     onChange={(e) => setUsername(e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 
                                     focus:ring-blue-500 outline-none text-slate-800 placeholder:text-slate-400"
-                                    placeholder="Masukkan username"
+                                    placeholder={lang.usernamePlaceholder}
                                     required
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Email
+                                    {lang.email}
                                 </label>
                                 <input
                                     type="email"
@@ -337,7 +367,7 @@ export default function WisatawanLayout({
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Alamat
+                                    {lang.address}
                                 </label>
 
                                 <textarea
@@ -349,10 +379,10 @@ export default function WisatawanLayout({
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Password
+                                    {lang.password}
                                     <span className="text-gray-400 font-normal">
                                         {" "}
-                                        (Isi jika ingin diganti)
+                                        ({lang.passwordOptional})
                                     </span>
                                 </label>
                                 <input
@@ -367,10 +397,10 @@ export default function WisatawanLayout({
                             </div>
                             <div>
                                 <label className="text-slate-800">
-                                    Foto Profile
+                                    {lang.profilePhoto}
                                     <span className="text-gray-400 font-normal">
                                         {" "}
-                                        (Opsional)
+                                        ({lang.optional})
                                     </span>
                                 </label>
                                 <input
@@ -392,7 +422,7 @@ export default function WisatawanLayout({
                                     className="px-4 py-2 bg-red-100 text-red-600 rounded-lg
                                     hover:bg-red-600 hover:text-white transition"
                                 >
-                                    Hapus Akun
+                                    {lang.deleteAccount}
                                 </button>
                                 <div className="flex gap-2">
                                     <button
@@ -401,7 +431,7 @@ export default function WisatawanLayout({
                                         className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg 
                                     font-medium transition-colors"
                                     >
-                                        Batal
+                                        {lang.cancel}
                                     </button>
                                     <button
                                         type="submit"
@@ -410,7 +440,9 @@ export default function WisatawanLayout({
                                         ${isLoading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                                             }`}
                                     >
-                                        {isLoading ? "Menyimpan..." : "Simpan"}
+                                        {isLoading
+                                            ? lang.saving
+                                            : lang.save}
                                     </button>
                                 </div>
                             </div>
