@@ -88,7 +88,8 @@ func CreateDestinasi(c *gin.Context) {
 	kotaEn := strings.TrimSpace(c.PostForm("kota_en"))
 	kategoriEn := strings.TrimSpace(c.PostForm("kategori_en"))
 
-	if nama == "" || deskripsi == "" || aktivitas == "" || alamat == "" || kota == "" || kategori == "" || latStr == "" || lonStr == "" {
+	if nama == "" || deskripsi == "" || aktivitas == "" || alamat == "" || kota == "" || kategori == "" || latStr == "" ||
+		lonStr == "" || namaEn == "" || deskripsiEn == "" || aktivitasEn == "" || kotaEn == "" || kategoriEn == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "semua field wajib diisi"})
 		return
 	}
@@ -228,9 +229,6 @@ func GetDestinasi(c *gin.Context) {
 	})
 }
 
-// ============================
-// UPDATE DESTINASI
-// ============================
 func UpdateDestinasi(c *gin.Context) {
 	id := c.Param("id")
 
@@ -291,15 +289,27 @@ func UpdateDestinasi(c *gin.Context) {
 		destinasi.Nama = nama
 	}
 
+	if namaEn != "" {
+		destinasi.NamaEn = namaEn
+	}
+
 	// Update deskripsi & deskripsi clean
 	if deskripsi != "" {
 		destinasi.Deskripsi = deskripsi
 		destinasi.DeskripsiClean = getCleanTextFromPython(deskripsi)
 	}
 
+	if deskripsiEn != "" {
+		destinasi.DeskripsiEn = deskripsiEn
+	}
+
 	if aktivitas != "" {
 		destinasi.Aktivitas = aktivitas
 		destinasi.AktivitasClean = getCleanTextFromPython(aktivitas)
+	}
+
+	if aktivitasEn != "" {
+		destinasi.AktivitasEn = aktivitasEn
 	}
 
 	// Update alamat
@@ -312,29 +322,17 @@ func UpdateDestinasi(c *gin.Context) {
 		destinasi.Kota = kota
 	}
 
-	if namaEn != "" {
-		destinasi.NamaEn = namaEn
-	}
-
-	if deskripsiEn != "" {
-		destinasi.DeskripsiEn = deskripsiEn
-	}
-
-	if aktivitasEn != "" {
-		destinasi.AktivitasEn = aktivitasEn
-	}
-
 	if kotaEn != "" {
 		destinasi.KotaEn = kotaEn
-	}
-
-	if kategoriEn != "" {
-		destinasi.KategoriEn = kategoriEn
 	}
 
 	// Update kategori
 	if kategori != "" {
 		destinasi.Kategori = kategori
+	}
+
+	if kategoriEn != "" {
+		destinasi.KategoriEn = kategoriEn
 	}
 
 	// Update petugas

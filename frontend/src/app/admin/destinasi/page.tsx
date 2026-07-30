@@ -12,11 +12,16 @@ type Petugas = {
 type Destinasi = {
     id: string;
     nama: string;
+    nama_en: string;
     deskripsi: string;
+    deskripsi_en: string;
     aktivitas: string;
+    aktivitas_en: string
     alamat: string;
     kota: string;
+    kota_en: string;
     kategori: string;
+    kategori_en: string;
     latitude: number;
     longitude: number;
     gambar: string;
@@ -59,6 +64,12 @@ export default function DestinasiPage() {
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
+    const [namaEn, setNamaEn] = useState("");
+    const [kategoriEn, setKategoriEn] = useState("");
+    const [deskripsiEn, setDeskripsiEn] = useState("");
+    const [aktivitasEn, setAktivitasEn] = useState("");
+    const [kotaEn, setKotaEn] = useState("");
+
     useEffect(() => {
         const data = JSON.parse(
             localStorage.getItem("user_data") || "{}"
@@ -95,6 +106,11 @@ export default function DestinasiPage() {
         setLongitude("");
         setGambar(null);
         setErrorMsg("");
+        setNamaEn("");
+        setKategoriEn("");
+        setDeskripsiEn("");
+        setAktivitasEn("");
+        setKotaEn("");
     };
 
     const handleOpenAddModal = () => {
@@ -111,11 +127,16 @@ export default function DestinasiPage() {
     const handleOpenEditModal = (d: Destinasi) => {
         setEditingId(d.id);
         setNama(d.nama);
+        setNamaEn(d.nama_en);
         setDeskripsi(d.deskripsi);
+        setDeskripsiEn(d.deskripsi_en)
         setAktivitas(d.aktivitas);
+        setAktivitasEn(d.aktivitas_en)
         setAlamat(d.alamat);
         setKota(d.kota);
+        setKotaEn(d.kota_en)
         setKategori(d.kategori);
+        setKategoriEn(d.kategori_en)
         setLatitude(d.latitude.toString());
         setLongitude(d.longitude.toString());
         setGambar(null);
@@ -159,6 +180,11 @@ export default function DestinasiPage() {
         formData.append("kategori", kategori);
         formData.append("latitude", latitude);
         formData.append("longitude", longitude);
+        formData.append("nama_en", namaEn);
+        formData.append("deskripsi_en", deskripsiEn);
+        formData.append("aktivitas_en", aktivitasEn);
+        formData.append("kota_en", kotaEn);
+        formData.append("kategori_en", kategoriEn);
         if (userData) {
             formData.append("id_petugas", userData.id);
         }
@@ -478,7 +504,7 @@ export default function DestinasiPage() {
                         <h2 className="text-xl font-bold text-gray-800 mb-2">Import Destinasi via CSV</h2>
                         <p className="text-sm text-gray-500 mb-4">
                             Unggah file CSV dengan format kolom: <br />
-                            <code className="text-xs bg-slate-100 px-1 py-0.5 rounded text-blue-600">nama, deskripsi, aktivitas, alamat, 
+                            <code className="text-xs bg-slate-100 px-1 py-0.5 rounded text-blue-600">nama, deskripsi, aktivitas, alamat,
                                 kota, kategori, latitude, longitude</code>
                         </p>
 
@@ -503,8 +529,8 @@ export default function DestinasiPage() {
                             </div>
 
                             <div className="flex justify-end gap-3 pt-2">
-                                <button type="button" onClick={() => setIsImportModalOpen(false)} 
-                                className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+                                <button type="button" onClick={() => setIsImportModalOpen(false)}
+                                    className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
                                     Batal</button>
                                 <button type="submit" disabled={isImporting} className={`px-4 py-2 text-white rounded-lg 
                                     font-medium ${isImporting ? "bg-emerald-400" : "bg-emerald-600 hover:bg-emerald-700"}`}>
@@ -518,7 +544,7 @@ export default function DestinasiPage() {
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white p-6 rounded-xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+                    <div className="bg-white p-8 rounded-2xl w-full max-w-6xl shadow-2xl max-h-[92vh] overflow-y-auto">
                         <h2 className="text-xl font-bold text-gray-800 mb-4">
                             {editingId ? "Edit Destinasi Wisata" : "Tambah Destinasi Baru"}
                         </h2>
@@ -530,106 +556,269 @@ export default function DestinasiPage() {
                         )}
 
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                            <div className="grid grid-cols-2 gap-5">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Nama Destinasi</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Nama Destinasi
+                                    </label>
+
                                     <input
                                         type="text"
                                         value={nama}
                                         onChange={(e) => setNama(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 
-                                        focus:ring-blue-500 outline-none text-slate-800 placeholder:text-slate-400"
+                                        placeholder="Nama Destinasi"
                                         required
-                                        placeholder="Nama Destinasi" />
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"
+                                    />
                                 </div>
+
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Destination Name (English)
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        value={namaEn}
+                                        onChange={(e) => setNamaEn(e.target.value)}
+                                        placeholder="Destination Name"
+                                        required
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Kategori
+                                    </label>
+
                                     <input
                                         type="text"
                                         value={kategori}
                                         onChange={(e) => setKategori(e.target.value)}
-                                        placeholder="Misal: Pantai, Pegunungan"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 
-                                        focus:ring-blue-500 outline-none text-slate-800 placeholder:text-slate-400"
-                                        required />
+                                        placeholder="Misal: Taman Wisata"
+                                        required
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Category (English)
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        value={kategoriEn}
+                                        onChange={(e) => setKategoriEn(e.target.value)}
+                                        placeholder="Example: Tourism Park"
+                                        required
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Deskripsi Wisata
+                                    </label>
+
+                                    <textarea
+                                        value={deskripsi}
+                                        onChange={(e) => setDeskripsi(e.target.value)}
+                                        rows={6}
+                                        required
+                                        placeholder="Deskripsi wisata..."
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        resize-none focus:ring-2 focus:ring-blue-500 outline-none
+                                        text-slate-800"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Description (English)
+                                    </label>
+
+                                    <textarea
+                                        value={deskripsiEn}
+                                        onChange={(e) => setDeskripsiEn(e.target.value)}
+                                        rows={6}
+                                        required
+                                        placeholder="Destination description..."
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        resize-none focus:ring-2 focus:ring-blue-500 outline-none
+                                        text-slate-800"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Aktivitas
+                                    </label>
+
+                                    <textarea
+                                        value={aktivitas}
+                                        onChange={(e) => setAktivitas(e.target.value)}
+                                        rows={4}
+                                        required
+                                        placeholder="Contoh: jogging, piknik, fotografi"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        resize-none focus:ring-2 focus:ring-blue-500 outline-none
+                                        text-slate-800"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Activities (English)
+                                    </label>
+
+                                    <textarea
+                                        value={aktivitasEn}
+                                        onChange={(e) => setAktivitasEn(e.target.value)}
+                                        rows={4}
+                                        required
+                                        placeholder="Example: jogging, picnic, photography"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        resize-none focus:ring-2 focus:ring-blue-500 outline-none
+                                        text-slate-800"
+                                    />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi Wisata</label>
-                                <textarea
-                                    value={deskripsi}
-                                    onChange={(e) => setDeskripsi(e.target.value)}
-                                    rows={4}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 
-                                    focus:ring-blue-500 outline-none resize-none text-slate-800 placeholder:text-slate-400"
-                                    required
-                                    placeholder="Deskripsi..."></textarea>
-                            </div>
-
-                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Aktivitas
+                                    Alamat Lengkap
                                 </label>
 
                                 <textarea
-                                    value={aktivitas}
-                                    onChange={(e) => setAktivitas(e.target.value)}
+                                    value={alamat}
+                                    onChange={(e) => setAlamat(e.target.value)}
                                     rows={3}
+                                    placeholder="Alamat lengkap"
                                     required
-                                    placeholder="Pisahkan setiap aktivitas dengan tanda koma.
-                                        Contoh: jogging, berjalan kaki, fotografi, piknik"
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg
-                                        focus:ring-2 focus:ring-blue-500 outline-none resize-none
-                                        text-slate-800 placeholder:text-slate-400"
+                                    resize-none focus:ring-2 focus:ring-blue-500 outline-none
+                                    text-slate-800"
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-5">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap</label>
-                                    <textarea value={alamat} onChange={(e) => setAlamat(e.target.value)} rows={2} 
-                                    placeholder="Alamat..." 
-                                    className="w-full px-3 py-2 border text-slate-800 placeholder:text-slate-400 
-                                    border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
-                                    outline-none resize-none" required></textarea>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Kota
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        value={kota}
+                                        onChange={(e) => setKota(e.target.value)}
+                                        placeholder="Jakarta Selatan"
+                                        required
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"
+                                    />
                                 </div>
+
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Kota</label>
-                                    <input type="text" value={kota} onChange={(e) => setKota(e.target.value)} 
-                                    placeholder="kota" className="w-full px-3 py-2 border  text-slate-800 
-                                    placeholder:text-slate-400 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 
-                                    outline-none" required />
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        City (English)
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        value={kotaEn}
+                                        onChange={(e) => setKotaEn(e.target.value)}
+                                        placeholder="South Jakarta"
+                                        required
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"
+                                    />
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-5">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
-                                    <input type="number" step="any" value={latitude} onChange={(e) => setLatitude(e.target.value)} 
-                                    placeholder="-6.200000" 
-                                    className="w-full px-3 py-2 border text-slate-800 placeholder:text-slate-400 
-                                    border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required />
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Latitude
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        step="any"
+                                        value={latitude}
+                                        onChange={(e) => setLatitude(e.target.value)}
+                                        placeholder="-6.200000"
+                                        required
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"
+                                    />
                                 </div>
+
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
-                                    <input type="number" step="any" value={longitude} onChange={(e) => setLongitude(e.target.value)} 
-                                    placeholder="106.816666" 
-                                    className="w-full px-3 py-2 border text-slate-800 placeholder:text-slate-400 
-                                    border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required />
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Longitude
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        step="any"
+                                        value={longitude}
+                                        onChange={(e) => setLongitude(e.target.value)}
+                                        placeholder="106.816666"
+                                        required
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                        focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"
+                                    />
                                 </div>
                             </div>
+
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Gambar {editingId && <span className="text-gray-400 font-normal ">(Opsional)</span>}
+                                    Gambar{" "}
+                                    {editingId && (
+                                        <span className="text-gray-400 font-normal">
+                                            (Opsional)
+                                        </span>
+                                    )}
                                 </label>
-                                <input type="file" accept="image/*" onChange={(e) => setGambar(e.target.files ? e.target.files[0] : null)} className="w-full px-3 py-1.5 text-slate-800 placeholder:text-slate-400 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700" required={!editingId} />
+
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        setGambar(e.target.files ? e.target.files[0] : null)
+                                    }
+                                    required={!editingId}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg
+                                    focus:ring-2 focus:ring-blue-500 outline-none
+                                    text-slate-800
+                                    file:mr-4
+                                    file:py-2
+                                    file:px-4
+                                    file:rounded-lg
+                                    file:border-0
+                                    file:bg-blue-50
+                                    file:text-blue-700"
+                                />
                             </div>
+
                             <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
                                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">Batal</button>
-                                <button type="submit" disabled={isLoading} 
-                                className={`px-4 py-2 text-white rounded-lg font-medium ${isLoading ? "bg-blue-400" 
-                                : "bg-blue-600 hover:bg-blue-700"}`}>
+                                <button type="submit" disabled={isLoading}
+                                    className={`px-4 py-2 text-white rounded-lg font-medium ${isLoading ? "bg-blue-400"
+                                        : "bg-blue-600 hover:bg-blue-700"}`}>
                                     {isLoading ? "Menyimpan..." : "Simpan"}
                                 </button>
                             </div>
