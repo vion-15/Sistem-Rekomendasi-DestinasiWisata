@@ -504,8 +504,9 @@ export default function DestinasiPage() {
                         <h2 className="text-xl font-bold text-gray-800 mb-2">Import Destinasi via CSV</h2>
                         <p className="text-sm text-gray-500 mb-4">
                             Unggah file CSV dengan format kolom: <br />
-                            <code className="text-xs bg-slate-100 px-1 py-0.5 rounded text-blue-600">nama, deskripsi, aktivitas, alamat,
-                                kota, kategori, latitude, longitude</code>
+                            <code className="text-xs bg-slate-100 px-1 py-0.5 rounded text-blue-600">
+                                nama, deskripsi, aktivitas, alamat, kota, kategori, latitude, longitude, nama-english, deskripsi-english,
+                                aktivitas-english, kota-english, kategori-english</code>
                         </p>
 
                         {errorMsg && (

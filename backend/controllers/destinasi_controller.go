@@ -600,6 +600,11 @@ func ImportDestinasiCSV(c *gin.Context) {
 			Kategori:       strings.TrimSpace(row[5]),
 			Latitude:       lat,
 			Longitude:      lon,
+			NamaEn:         strings.TrimSpace(row[8]),
+			DeskripsiEn:    strings.TrimSpace(row[9]),
+			AktivitasEn:    strings.TrimSpace(row[10]),
+			KotaEn:         strings.TrimSpace(row[11]),
+			KategoriEn:     strings.TrimSpace(row[12]),
 		}
 
 		if err := config.DB.Create(&destinasi).Error; err != nil {
