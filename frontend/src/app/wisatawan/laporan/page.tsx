@@ -47,13 +47,13 @@ export default function LaporanPage() {
             let endpoint = "";
             switch (jenis) {
                 case "pencarian":
-                    endpoint = `http://localhost:8080/api/wisatawan-laporan/pencarian/${userData.id}`;
+                    endpoint = `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-laporan/pencarian/${userData.id}`;
                     break;
                 case "lokasi":
-                    endpoint = `http://localhost:8080/api/wisatawan-laporan/destinasi/${userData.id}`;
+                    endpoint = `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-laporan/destinasi/${userData.id}`;
                     break;
                 case "ulasan":
-                    endpoint = `http://localhost:8080/api/wisatawan-laporan/ulasan/${userData.id}`;
+                    endpoint = `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-laporan/ulasan/${userData.id}`;
                     break;
                 default:
                     return;

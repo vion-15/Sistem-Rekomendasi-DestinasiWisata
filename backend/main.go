@@ -51,7 +51,7 @@ func main() {
 		port = "8080"
 	}
 
-	fmt.Printf("Server berjalan di http://localhost:%s\n", port)
+	fmt.Printf("Server berjalan di Port:%s\n", port)
 	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("Gagal menjalankan server: %v", err)
 	}

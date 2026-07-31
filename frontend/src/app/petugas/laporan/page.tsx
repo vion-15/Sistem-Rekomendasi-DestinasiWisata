@@ -20,7 +20,7 @@ export default function LaporanPage() {
     const fetchLaporan = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch("http://localhost:8080/api/petugas-laporan");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/petugas-laporan`);
             if (res.ok) {
                 const data = await res.json();
                 setLaporanList(data.data || []);
@@ -43,7 +43,7 @@ export default function LaporanPage() {
         setIsDeleting(true);
 
         try {
-            const res = await fetch(`http://localhost:8080/api/petugas-laporan/${deleteId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/petugas-laporan/${deleteId}`, {
                 method: "DELETE",
             });
 
@@ -57,12 +57,15 @@ export default function LaporanPage() {
         } catch (error) {
             console.error("Error:", error);
             toast.error("Terjadi kesalahan pada server");
+        } finally {
+            // 2. KUNCI UTAMA: Taruh di blok finally agar selalu tereksekusi!
+            setIsDeleting(false);
         }
     };
 
     const handleDownload = async (id: string, jenis: string, periode: string) => {
         try {
-            const res = await fetch(`http://localhost:8080/api/petugas-laporan/${id}/download`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/petugas-laporan/${id}/download`, {
                 method: 'GET',
             });
 

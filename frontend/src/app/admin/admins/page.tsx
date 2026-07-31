@@ -29,7 +29,7 @@ export default function PetugasPage() {
 
     const fetchAdmin = async () => {
         try {
-            const res = await fetch("http://localhost:8080/api/admin/");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/`);
             const data = await res.json();
             if (res.ok) {
                 setAdminList(data.data || []);
@@ -70,7 +70,7 @@ export default function PetugasPage() {
         setIsDeleting(true);
 
         try {
-            const res = await fetch(`http://localhost:8080/api/admin/${deleteId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/${deleteId}`, {
                 method: "DELETE",
             });
             const data = await res.json();
@@ -106,8 +106,8 @@ export default function PetugasPage() {
         }
 
         const url = editingId
-            ? `http://localhost:8080/api/admin/${editingId}`
-            : "http://localhost:8080/api/admin/";
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/admin/${editingId}`
+            : `${process.env.NEXT_PUBLIC_API_URL}/api/admin/`;
         const method = editingId ? "PUT" : "POST";
 
         try {

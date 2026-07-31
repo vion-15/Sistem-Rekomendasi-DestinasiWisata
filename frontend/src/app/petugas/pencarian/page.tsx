@@ -29,7 +29,7 @@ export default function PencarianPage() {
             const rawData = localStorage.getItem("user_data");
             const userData = rawData ? JSON.parse(rawData) : null;
 
-            const res = await fetch("http://localhost:8080/api/petugas-aktivitas/cari", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/petugas-aktivitas/cari`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

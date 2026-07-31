@@ -62,7 +62,7 @@ export default function UlasanRatingPage() {
                 localStorage.getItem("user_data") || "{}"
             );
             const res = await fetch(
-                `http://localhost:8080/api/wisatawan-aktivitas/riwayat-destinasi/${userData.id}`
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-aktivitas/riwayat-destinasi/${userData.id}`
             );
             const data = await res.json();
             if (!res.ok) {
@@ -115,7 +115,7 @@ export default function UlasanRatingPage() {
                 localStorage.getItem("user_data") || "{}"
             );
             const res = await fetch(
-                "http://localhost:8080/api/wisatawan-aktivitas/ulasan",
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-aktivitas/ulasan`,
                 {
                     method: "POST",
                     headers: {
@@ -152,7 +152,7 @@ export default function UlasanRatingPage() {
         if (!confirm(lang.reviewDeleteConfirm)) return;
         try {
             const res = await fetch(
-                `http://localhost:8080/api/wisatawan-aktivitas/riwayat-destinasi/${riwayatID}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-aktivitas/riwayat-destinasi/${riwayatID}`,
                 {
                     method: "DELETE",
                 }

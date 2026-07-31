@@ -21,7 +21,7 @@ export default function WisatawanPage() {
 
     const fetchWisatawan = async () => {
         try {
-            const res = await fetch("http://localhost:8080/api/wisatawan/");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan/`);
             const data = await res.json();
             if (res.ok) {
                 setWisatawanList(data.data || []);
@@ -45,7 +45,7 @@ export default function WisatawanPage() {
 
         try {
             const res = await fetch(
-                `http://localhost:8080/api/wisatawan/${deleteId}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan/${deleteId}`,
                 {
                     method: "DELETE",
                 }

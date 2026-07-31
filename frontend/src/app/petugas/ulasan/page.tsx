@@ -47,7 +47,7 @@ export default function UlasanPage() {
     const fetchUlasan = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch("http://localhost:8080/api/ulasan/");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ulasan/`);
             const data = await res.json();
             if (res.ok) setUlasanList(data.data || []);
         } catch (error) {
@@ -59,7 +59,7 @@ export default function UlasanPage() {
 
     const fetchDestinasi = async () => {
         try {
-            const res = await fetch("http://localhost:8080/api/destinasi/");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/destinasi/`);
             const data = await res.json();
 
             if (res.ok) {
@@ -82,7 +82,7 @@ export default function UlasanPage() {
         setSelectedUlasan(null);
 
         try {
-            const res = await fetch(`http://localhost:8080/api/ulasan/${id}`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ulasan/${id}`);
             const data = await res.json();
             if (res.ok) {
                 setSelectedUlasan(data.data);
@@ -100,7 +100,7 @@ export default function UlasanPage() {
         setIsDeleting(true);
 
         try {
-            const res = await fetch(`http://localhost:8080/api/ulasan/${deleteId}`, { method: "DELETE" });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ulasan/${deleteId}`, { method: "DELETE" });
             const data = await res.json();
 
             if (!res.ok) throw new Error(data.error || "Gagal menghapus ulasan");
@@ -123,7 +123,7 @@ export default function UlasanPage() {
             const userData = rawData ? JSON.parse(rawData) : null;
             const adminId = userData?.id || "00000000-0000-0000-0000-000000000000";
 
-            const res = await fetch("http://localhost:8080/api/ulasan/kirim-laporan", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ulasan/kirim-laporan`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

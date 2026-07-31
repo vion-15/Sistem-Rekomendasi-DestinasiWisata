@@ -29,7 +29,7 @@ export default function PetugasPage() {
 
     const fetchPetugas = async () => {
         try {
-            const res = await fetch("http://localhost:8080/api/petugas/");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/petugas/`);
             const data = await res.json();
             if (res.ok) {
                 setPetugasList(data.data || []);
@@ -70,7 +70,7 @@ export default function PetugasPage() {
         setIsDeleting(true);
 
         try {
-            const res = await fetch(`http://localhost:8080/api/petugas/${deleteId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/petugas/${deleteId}`, {
                 method: "DELETE",
             });
             const data = await res.json();
@@ -104,8 +104,8 @@ export default function PetugasPage() {
         if (foto) formData.append("foto", foto);
 
         const url = editingId
-            ? `http://localhost:8080/api/petugas/${editingId}`
-            : "http://localhost:8080/api/petugas/";
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/petugas/${editingId}`
+            : `${process.env.NEXT_PUBLIC_API_URL}/api/petugas/`;
         const method = editingId ? "PUT" : "POST";
 
         try {

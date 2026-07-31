@@ -1,7 +1,11 @@
 fastapi
 uvicorn
-Sastrawi
 pydantic
 
 torch
 transformers
+sentence-transformers
+
+requests
+
+Sastrawi

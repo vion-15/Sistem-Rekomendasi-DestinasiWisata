@@ -50,7 +50,7 @@ export default function PencarianWisatawanPage() {
         setIsLoading(true);
         try {
             const res = await fetch(
-                "http://localhost:8080/api/wisatawan-aktivitas/cari",
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-aktivitas/cari`,
                 {
                     method: "POST",
                     headers: {
@@ -104,7 +104,7 @@ export default function PencarianWisatawanPage() {
         if (!confirmDelete) return;
 
         try {
-            const res = await fetch(`http://localhost:8080/api/wisatawan-aktivitas/pencarian/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-aktivitas/pencarian/${id}`, {
                 method: "DELETE",
             });
 
@@ -135,7 +135,7 @@ export default function PencarianWisatawanPage() {
                 localStorage.getItem("user_data") || "{}"
             );
             const res = await fetch(
-                `http://localhost:8080/api/wisatawan-aktivitas/pencarian/${userData.id}`
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-aktivitas/pencarian/${userData.id}`
             );
             const data = await res.json();
             if (res.ok) {

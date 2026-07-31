@@ -34,7 +34,7 @@ export default function DashboardPage() {
 
     const getDashboard = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/dashboard");
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/dashboard`);
 
             const result = await response.json();
 
@@ -50,7 +50,7 @@ export default function DashboardPage() {
             const userData = JSON.parse(localStorage.getItem("user_data") || "{}");
 
             const response = await fetch(
-                `http://localhost:8080/api/petugas/${userData.id}`
+                `${process.env.NEXT_PUBLIC_API_URL}/api/petugas/${userData.id}`
             );
 
             const result = await response.json();
@@ -88,7 +88,7 @@ export default function DashboardPage() {
         if (foto) formData.append("foto", foto);
 
         try {
-            const res = await fetch(`http://localhost:8080/api/petugas/${editingId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/petugas/${editingId}`, {
                 method: "PUT",
                 body: formData,
             });

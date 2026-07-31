@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -51,11 +52,18 @@ func getCleanTextFromPython(text string) string {
 		return text
 	}
 
-	resp, err := http.Post("http://localhost:8000/clean-text", "application/json", bytes.NewBuffer(jsonBody))
+	recommendationURL := os.Getenv("RECOMMENDATION_URL")
+
+	resp, err := http.Post(
+		recommendationURL+"/clean-text",
+		"application/json",
+		bytes.NewBuffer(jsonBody))
+
 	if err != nil {
 		log.Printf("Error calling python clean-text: %v", err)
 		return text
 	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
@@ -192,9 +200,11 @@ func CreateDestinasi(c *gin.Context) {
 		return
 	}
 
+	recommendationURL := os.Getenv("RECOMMENDATION_URL")
+
 	go func() {
 		_, err := http.Post(
-			"http://localhost:8000/reload-destinations",
+			recommendationURL+"/reload-destinations",
 			"application/json",
 			nil,
 		)
@@ -438,9 +448,11 @@ func UpdateDestinasi(c *gin.Context) {
 		return
 	}
 
+	recommendationURL := os.Getenv("RECOMMENDATION_URL")
+
 	go func() {
 		_, err := http.Post(
-			"http://localhost:8000/reload-destinations",
+			recommendationURL+"/reload-destinations",
 			"application/json",
 			nil,
 		)
@@ -503,9 +515,11 @@ func DeleteDestinasi(c *gin.Context) {
 		return
 	}
 
+	recommendationURL := os.Getenv("RECOMMENDATION_URL")
+
 	go func() {
 		_, err := http.Post(
-			"http://localhost:8000/reload-destinations",
+			recommendationURL+"/reload-destinations",
 			"application/json",
 			nil,
 		)
@@ -613,9 +627,11 @@ func ImportDestinasiCSV(c *gin.Context) {
 			successCount++
 		}
 
+		recommendationURL := os.Getenv("RECOMMENDATION_URL")
+
 		go func() {
 			_, err := http.Post(
-				"http://localhost:8000/reload-destinations",
+				recommendationURL+"/reload-destinations",
 				"application/json",
 				nil,
 			)

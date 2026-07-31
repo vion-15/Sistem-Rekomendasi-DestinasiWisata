@@ -88,7 +88,7 @@ export default function AdminLayout({
                 <div className="p-5 text-xl font-bold border-b border-slate-700
                 flex flex-row items-end gap-4">
                     <Image
-                        src="/logo.svg"
+                        src="/Logo.svg"
                         width={40}
                         height={40}
                         alt="gambar logo"

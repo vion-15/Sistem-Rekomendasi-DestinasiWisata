@@ -1,18 +1,98 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
     image: postgis/postgis:15-3.4
     container_name: wisata_db
-    restart: always
+    restart: unless-stopped
+
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password123
       POSTGRES_DB: db_wisata
+
     ports:
       - "5433:5432"
+
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d db_wisata"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - wisata-network
+
+  backend:
+    build:
+      context: ./backend
+
+    container_name: backend
+
+    restart: unless-stopped
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    env_file:
+      - ./backend/.env.docker
+
+    ports:
+      - "8080:8080"
+
+    networks:
+      - wisata-network
+
+  recommendation-service:
+    build:
+      context: ./recomendation-service
+
+    container_name: recommendation-service
+
+    restart: unless-stopped
+
+    depends_on:
+      - backend
+
+    environment:
+      BACKEND_URL: http://backend:8080
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+
+    networks:
+      - wisata-network
+
+  frontend:
+    build:
+      context: ./frontend
+
+    container_name: frontend
+
+    restart: unless-stopped
+
+    depends_on:
+      - backend
+
+    env_file:
+      - ./frontend/.env.docker
+
+    ports:
+      - "3000:3000"
+
+    networks:
+      - wisata-network
+
 volumes:
   pgdata:
+  hf_cache:
+
+networks:
+  wisata-network:

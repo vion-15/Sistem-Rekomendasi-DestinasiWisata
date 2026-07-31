@@ -76,7 +76,7 @@ export default function HasilRekomendasiPage() {
                 localStorage.getItem("user_data") || "{}"
             );
             const res = await fetch(
-                `http://localhost:8080/api/wisatawan-aktivitas/hasil-rekomendasi/${userData.id}`
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-aktivitas/hasil-rekomendasi/${userData.id}`
             );
             const data = await res.json();
             if (!res.ok) {
@@ -105,7 +105,7 @@ export default function HasilRekomendasiPage() {
                 localStorage.getItem("user_data") || "{}"
             );
             const res = await fetch(
-                "http://localhost:8080/api/wisatawan-aktivitas/riwayat-destinasi",
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-aktivitas/riwayat-destinasi`,
                 {
                     method: "POST",
                     headers: {

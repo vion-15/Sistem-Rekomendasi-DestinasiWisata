@@ -30,7 +30,7 @@ export default function DashboardPage() {
 
     const getDashboard = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/dashboard");
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/dashboard`);
             const result = await response.json();
             setDashboard(result.data);
         } catch (error) {
@@ -45,7 +45,7 @@ export default function DashboardPage() {
             );
             if (!userData.id) return;
             const response = await fetch(
-                `http://localhost:8080/api/admin/${userData.id}`
+                `${process.env.NEXT_PUBLIC_API_URL}/api/admin/${userData.id}`
             );
             const result = await response.json();
             setProfile(result.data);

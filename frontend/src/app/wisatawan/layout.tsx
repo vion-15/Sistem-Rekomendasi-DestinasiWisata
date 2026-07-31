@@ -67,7 +67,7 @@ export default function WisatawanLayout({
         try {
             const userData = JSON.parse(localStorage.getItem("user_data") || "{}");
             const response = await fetch(
-                `http://localhost:8080/api/wisatawan/${userData?.id}`
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan/${userData?.id}`
             );
             const result = await response.json();
             return result.data;
@@ -88,7 +88,7 @@ export default function WisatawanLayout({
         if (password) formData.append("password", password);
         if (foto) formData.append("foto", foto);
         try {
-            const res = await fetch(`http://localhost:8080/api/wisatawan/${userData?.id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan/${userData?.id}`, {
                 method: "PUT",
                 body: formData,
             });
@@ -146,7 +146,7 @@ export default function WisatawanLayout({
 
         try {
             const res = await fetch(
-                `http://localhost:8080/api/wisatawan/${userData?.id}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan/${userData?.id}`,
                 {
                     method: "DELETE",
                 }
@@ -193,7 +193,7 @@ export default function WisatawanLayout({
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-3">
                             <Image
-                                src="/Logo Vektor.png"
+                                src="/logo-vektor.png"
                                 width={40}
                                 height={40}
                                 alt="gambar logo"

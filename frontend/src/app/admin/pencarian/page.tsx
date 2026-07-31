@@ -58,7 +58,7 @@ export default function PencarianPage() {
             const fetchStatistik = async () => {
                 setIsLoadingStats(true);
                 try {
-                    const res = await fetch("http://localhost:8080/api/admin-aktivitas/statistik");
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin-aktivitas/statistik`);
                     if (res.ok) {
                         const data = await res.json();
                         setMonitoringData(data);
@@ -83,7 +83,7 @@ export default function PencarianPage() {
             const rawData = localStorage.getItem("user_data");
             const userData = rawData ? JSON.parse(rawData) : null;
 
-            const res = await fetch("http://localhost:8080/api/admin-aktivitas/cari", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin-aktivitas/cari`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
@@ -143,7 +143,7 @@ export default function PencarianPage() {
             const userData = rawData ? JSON.parse(rawData) : null;
             const adminId = userData?.id || "00000000-0000-0000-0000-000000000000";
 
-            const res = await fetch("http://localhost:8080/api/admin-aktivitas/kirim-laporan", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin-aktivitas/kirim-laporan`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 

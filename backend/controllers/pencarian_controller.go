@@ -3,9 +3,11 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -134,15 +136,24 @@ func CariDestinasiCBF(c *gin.Context) {
 		Timeout: 60 * time.Second,
 	}
 
+	recommendationURL := "http://recommendation-service:8000"
+
+	fmt.Println("=== MENCOBA MENGHUBUNGI AI ===")
+	fmt.Println("URL:", recommendationURL)
+
 	resp, err := client.Post(
-		"http://localhost:8000/recommend",
+		recommendationURL+"/recommend",
 		"application/json",
 		bytes.NewBuffer(jsonData),
 	)
 
 	if err != nil {
+		fmt.Println("=== ERROR KONEKSI KE AI ===")
+		fmt.Println("Detail Error:", err.Error())
+
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "service rekomendasi sedang tidak tersedia",
+			"error":  "service rekomendasi sedang tidak tersedia",
+			"detail": err.Error(), // <--- INI KUNCI UTAMANYA
 		})
 		return
 	}
@@ -342,15 +353,21 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 		Timeout: 30 * time.Second,
 	}
 
+	recommendationURL := os.Getenv("RECOMMENDATION_URL")
+
 	resp, err := client.Post(
-		"http://localhost:8000/recommend",
+		recommendationURL+"/recommend",
 		"application/json",
 		bytes.NewBuffer(jsonData),
 	)
 
 	if err != nil {
+		// Saya tambahkan log error aslinya agar ke depannya gampang di-debug
+		log.Printf("ERROR CALL FASTAPI: %v\n", err)
+
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "service rekomendasi tidak tersedia",
+			"error":  "service rekomendasi sedang tidak tersedia",
+			"detail": err.Error(),
 		})
 		return
 	}
@@ -497,18 +514,25 @@ func CariDestinasiAdminCBF(c *gin.Context) {
 		Timeout: 60 * time.Second,
 	}
 
+	recommendationURL := os.Getenv("RECOMMENDATION_URL")
+
 	resp, err := client.Post(
-		"http://localhost:8000/recommend",
+		recommendationURL+"/recommend",
 		"application/json",
 		bytes.NewBuffer(jsonData),
 	)
 
 	if err != nil {
+		// Saya tambahkan log error aslinya agar ke depannya gampang di-debug
+		log.Printf("ERROR CALL FASTAPI: %v\n", err)
+
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "service rekomendasi sedang tidak tersedia",
+			"error":  "service rekomendasi sedang tidak tersedia",
+			"detail": err.Error(),
 		})
 		return
 	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
@@ -598,18 +622,25 @@ func CariDestinasiPetugasCBF(c *gin.Context) {
 		Timeout: 60 * time.Second,
 	}
 
+	recommendationURL := os.Getenv("RECOMMENDATION_URL")
+
 	resp, err := client.Post(
-		"http://localhost:8000/recommend",
+		recommendationURL+"/recommend",
 		"application/json",
 		bytes.NewBuffer(jsonData),
 	)
 
 	if err != nil {
+		// Saya tambahkan log error aslinya agar ke depannya gampang di-debug
+		log.Printf("ERROR CALL FASTAPI: %v\n", err)
+
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "service rekomendasi sedang tidak tersedia",
+			"error":  "service rekomendasi sedang tidak tersedia",
+			"detail": err.Error(),
 		})
 		return
 	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {

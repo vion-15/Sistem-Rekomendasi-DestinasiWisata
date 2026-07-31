@@ -81,7 +81,7 @@ export default function DestinasiPage() {
 
     const fetchDestinasi = async () => {
         try {
-            const res = await fetch("http://localhost:8080/api/destinasi/");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/destinasi/`);
             const data = await res.json();
             if (res.ok) setDestinasiList(data.data || []);
         } catch (error) {
@@ -150,7 +150,7 @@ export default function DestinasiPage() {
         setIsDeleting(true);
 
         try {
-            const res = await fetch(`http://localhost:8080/api/destinasi/${deleteId}`, { method: "DELETE" });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/destinasi/${deleteId}`, { method: "DELETE" });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Gagal menghapus destinasi");
             setDeleteId(null);
@@ -191,8 +191,8 @@ export default function DestinasiPage() {
         if (gambar) formData.append("gambar", gambar);
 
         const url = editingId
-            ? `http://localhost:8080/api/destinasi/${editingId}`
-            : "http://localhost:8080/api/destinasi/";
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/destinasi/${editingId}`
+            : `${process.env.NEXT_PUBLIC_API_URL}/api/destinasi/`;
         const method = editingId ? "PUT" : "POST";
 
         try {
@@ -227,7 +227,7 @@ export default function DestinasiPage() {
         formData.append("file", csvFile);
 
         try {
-            const res = await fetch("http://localhost:8080/api/destinasi/import", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/destinasi/import`, {
                 method: "POST",
                 body: formData,
             });

@@ -1,0 +1,15 @@
+.git
+.gitignore
+
+*.exe
+*.out
+
+.env
+
+bin/
+
+tmp/
+
+.vscode/
+
+.idea/

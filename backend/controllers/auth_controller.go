@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/mail"
+	"os"
 	"strings"
 
 	"backend-wisata/config"
@@ -256,7 +257,8 @@ func RegisterWisatawan(c *gin.Context) {
 		return
 	}
 
-	fotoDefault := "http://localhost:8080/images/default-avatar.png"
+	baseURL := os.Getenv("BASE_URL")
+	fotoDefault := baseURL + "/images/default-avatar.png"
 
 	wisatawan := models.Wisatawan{
 		Username: username,

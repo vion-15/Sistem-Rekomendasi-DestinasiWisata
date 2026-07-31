@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -89,8 +90,10 @@ func CariDanSimpanRekomendasi(c *gin.Context) {
 		Timeout: 60 * time.Second,
 	}
 
+	recommendationURL := os.Getenv("RECOMMENDATION_URL")
+
 	resp, err := client.Post(
-		"http://localhost:8000/recommend",
+		recommendationURL+"/recommend",
 		"application/json",
 		bytes.NewBuffer(jsonData),
 	)

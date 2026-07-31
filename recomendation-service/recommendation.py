@@ -2,6 +2,7 @@ from sentence_transformers import SentenceTransformer, util
 import torch
 import requests
 from preprocessing import clean_text
+import os
 
 # =========================
 # LOAD MODEL SEKALI
@@ -21,6 +22,11 @@ DESTINATION_EMBEDDINGS = None
 DESTINATIONS_CACHE = []
 
 MIN_SIMILARITY = 0.35
+
+BACKEND_URL = os.getenv(
+    "BACKEND_URL",
+    "http://localhost:8080"
+)
 
 # =========================
 # KAMUS FILTER
@@ -131,7 +137,7 @@ KATEGORI_MAPPING = {
 def load_destinations_from_backend():
 
     response = requests.get(
-        "http://localhost:8080/api/ai/destinasi"
+        f"{BACKEND_URL}/api/ai/destinasi"
     )
 
     response.raise_for_status()

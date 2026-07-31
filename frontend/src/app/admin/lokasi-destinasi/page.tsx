@@ -126,7 +126,7 @@ export default function LokasiDestinasiPage() {
             const fetchStatistik = async () => {
                 setIsLoadingStats(true);
                 try {
-                    const res = await fetch("http://localhost:8080/api/admin-aktivitas/statistik-destinasi");
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin-aktivitas/statistik-destinasi`);
                     if (res.ok) {
                         const data = await res.json();
                         setMonitoringData(data);
@@ -149,7 +149,7 @@ export default function LokasiDestinasiPage() {
             const userData = rawData ? JSON.parse(rawData) : null;
             const adminId = userData?.id || "00000000-0000-0000-0000-000000000000";
 
-            const res = await fetch("http://localhost:8080/api/admin-aktivitas/kirim-laporan-destinasi", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin-aktivitas/kirim-laporan-destinasi`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id_admin: adminId, periode: periodeLaporan })

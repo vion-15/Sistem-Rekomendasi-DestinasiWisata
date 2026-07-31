@@ -9,6 +9,7 @@ import {
 } from "@/helpers/language";
 
 import { t } from "@/helpers/translate";
+import { useRouter } from "next/navigation";
 
 type Destinasi = {
     id: string;
@@ -27,6 +28,9 @@ type Destinasi = {
 
     gambar: string;
 
+    latitude: number;
+    longitude: number;
+
     similarity_score?: number;
 };
 
@@ -36,11 +40,12 @@ export default function WisatawanDashboard() {
     const [userName, setUserName] = useState("");
     const [currentIndex, setCurrentIndex] = useState(0);
     const PER_PAGE = 6;
+    const router = useRouter();
 
     const fetchRekomendasiPersonal = async (userId: string) => {
         try {
             const res = await fetch(
-                `http://localhost:8080/api/wisatawan-aktivitas/rekomendasi/${userId}`
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-aktivitas/rekomendasi/${userId}`
             );
 
             const data = await res.json();
@@ -115,6 +120,61 @@ export default function WisatawanDashboard() {
         currentIndex,
         currentIndex + PER_PAGE
     );
+
+    const handleCekRoute = async (item: Destinasi) => {
+        try {
+            const userData = JSON.parse(
+                localStorage.getItem("user_data") || "{}"
+            );
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/wisatawan-aktivitas/riwayat-destinasi`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        id_wisatawan: userData.id,
+                        id_destinasi: item.id,
+                    }),
+                }
+            );
+            const data = await res.json();
+            if (!res.ok) {
+                alert(data.error || lang.saveHistoryFailed);
+                return;
+            }
+            localStorage.setItem(
+                "route_destination",
+                JSON.stringify({
+                    id: item.id,
+
+                    nama: item.nama,
+                    nama_en: item.nama_en,
+
+                    kategori: item.kategori,
+                    kategori_en: item.kategori_en,
+
+                    deskripsi: item.deskripsi,
+                    deskripsi_en: item.deskripsi_en,
+
+                    kota: item.kota,
+                    kota_en: item.kota_en,
+
+                    latitude: item.latitude,
+                    longitude: item.longitude,
+
+                    gambar: item.gambar,
+
+                    similarity_score: item.similarity_score,
+                })
+            );
+            router.push("/wisatawan/lokasi-destinasi");
+        } catch (err) {
+            console.error(err);
+            alert(lang.generalError);
+        }
+    }
 
     console.log(displayedRekomendasi);
 
@@ -233,14 +293,14 @@ export default function WisatawanDashboard() {
                                                 : d.deskripsi_en
                                         }
                                     </p>
-                                    <Link
-                                        href={`/wisatawan/cari-destinasi?dest=${d.id}`}
+                                    <button
+                                        onClick={() => handleCekRoute(d)}
                                         className="w-full block text-center py-2.5 bg-slate-50 hover:bg-blue-50 
                                         text-slate-700 hover:text-blue-700 font-semibold rounded-xl transition-colors border 
                                         border-slate-200 hover:border-blue-200"
                                     >
                                         {lang.dashboardRoute}
-                                    </Link>
+                                    </button>
                                 </div>
                             </div>
                         ))}
