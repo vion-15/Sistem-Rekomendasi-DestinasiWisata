@@ -39,6 +39,7 @@ export default function WisatawanDashboard() {
     const [isLoading, setIsLoading] = useState(true);
     const [userName, setUserName] = useState("");
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [userId, setUserId] = useState("");
     const PER_PAGE = 6;
     const router = useRouter();
 
@@ -106,6 +107,7 @@ export default function WisatawanDashboard() {
                 const userData = JSON.parse(rawData);
                 // eslint-disable-next-line react-hooks/set-state-in-effect
                 setUserName(userData.nama || userData.username || "");
+                setUserId(userData.id);
                 fetchRekomendasiPersonal(userData.id);
             } catch (e) {
                 console.error("Gagal parsing data user", e);
@@ -176,8 +178,6 @@ export default function WisatawanDashboard() {
         }
     }
 
-    console.log(displayedRekomendasi);
-
     return (
         <div className="space-y-8">
             <div className="bg-linear-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 
@@ -212,20 +212,14 @@ export default function WisatawanDashboard() {
                         <p className="text-slate-500 text-sm mt-1">{lang.dashboardRecommendationDescription}</p>
                     </div>
                     <button
-                        disabled={rekomendasi.length <= PER_PAGE}
-                        onClick={() => {
-                            if (currentIndex + PER_PAGE >= rekomendasi.length) {
-                                setCurrentIndex(0);
-                            } else {
-                                setCurrentIndex(currentIndex + PER_PAGE);
-                            }
-                        }}
-                        className={`text-sm font-medium ${rekomendasi.length <= PER_PAGE
-                            ? "text-gray-400 cursor-not-allowed"
-                            : "text-blue-600 hover:underline"
+                        onClick={() => fetchRekomendasiPersonal(userId)}
+                        disabled={isLoading}
+                        className={`text-sm font-medium ${isLoading
+                                ? "text-gray-400 cursor-not-allowed"
+                                : "text-blue-600 hover:underline"
                             }`}
                     >
-                        {lang.dashboardReload}
+                        {isLoading ? "Loading..." : lang.dashboardReload}
                     </button>
                 </div>
 

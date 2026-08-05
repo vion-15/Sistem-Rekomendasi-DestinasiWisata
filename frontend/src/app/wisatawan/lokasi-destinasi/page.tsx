@@ -177,7 +177,7 @@ export default function LokasiDestinasiPage() {
     };
 
     return (
-        <div className="fixed inset-0 top-42.5 bg-slate-100 overflow-hidden">
+        <div className="fixed inset-0 top-28 md:top-42.5 bg-slate-100 overflow-hidden">
             <MapGIS
                 key="lokasi-destinasi"
                 destinasiList={selectedDest ? [selectedDest] : []}
@@ -190,7 +190,7 @@ export default function LokasiDestinasiPage() {
             {!isCardOpen && (
                 <button
                     onClick={handleOpenCard}
-                    className="absolute top-6 left-14 z-20 bg-white/95 backdrop-blur-md rounded-xl shadow-lg 
+                    className="absolute top-6 left-14 md:left-14 z-20 bg-white/95 backdrop-blur-md rounded-xl shadow-lg 
                     border border-slate-200 px-5 py-3 font-semibold text-slate-700 hover:text-blue-600 transition 
                     flex items-center gap-2"
                 >
@@ -200,10 +200,14 @@ export default function LokasiDestinasiPage() {
             )}
 
             {isCardOpen && (
-                <div className="absolute top-6 left-14 bottom-6 w-105 z-20">
-                    <div className="bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200 
+                <div className="absolute z-20 left-0 right-0 bottom-0 h-[70vh] md:top-6 md:left-14
+                        md:right-auto md:bottom-6 md:h-auto md:w-105 transition-all duration-300 ease-in-out">
+                    <div className="bg-white/95 backdrop-blur-md rounded-t-3xl md:rounded-3xl border border-slate-200 
                     shadow-2xl h-full flex flex-col overflow-hidden">
-                        <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-100">
+                        <div className="md:hidden flex justify-center pt-3 pb-2">
+                            <div className="w-14 h-1.5 rounded-full bg-slate-300"></div>
+                        </div>
+                        <div className="flex items-center gap-3 px-5 py-4 md:px-6 md:py-5 border-b border-slate-100">
                             <button
                                 onClick={() => router.back()}
                                 className="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center transition"
@@ -211,7 +215,7 @@ export default function LokasiDestinasiPage() {
                                 <ArrowLeft size={22} />
                             </button>
 
-                            <h2 className="text-xl font-bold text-slate-800">
+                            <h2 className="text-lg md:text-xl font-bold text-slate-800">
                                 {lang.destinationInfo}
                             </h2>
                             <button
@@ -224,7 +228,7 @@ export default function LokasiDestinasiPage() {
 
                         {selectedDest ? (
                             <div className="flex-1 overflow-y-auto px-6 py-6">
-                                <h1 className="text-3xl font-black text-blue-700 mb-3">
+                                <h1 className="text-2xl md:text-3xl font-black text-blue-700 mb-3">
                                     {language === "id"
                                         ? selectedDest.nama
                                         : selectedDest.nama_en}
@@ -235,7 +239,7 @@ export default function LokasiDestinasiPage() {
                                         : selectedDest.kategori_en}
                                 </span>
 
-                                <div className="mt-8">
+                                <div className="mt-6 md:mt-8">
                                     <div className="flex justify-between mb-2">
                                         <span className="font-semibold text-slate-600">
                                             {lang.matchLevel}
@@ -282,12 +286,12 @@ export default function LokasiDestinasiPage() {
                                             {lang.calculatingRoute}
                                         </div>
                                     ) : routeInfo ? (
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-2 gap-3 md:gap-4">
                                             <div className="bg-blue-50 rounded-2xl border border-blue-100 p-5 text-center">
                                                 <div className="text-xs uppercase text-blue-500 font-bold mb-2">
                                                     {lang.distance}
                                                 </div>
-                                                <div className="text-3xl font-black text-blue-700">
+                                                <div className="text-2xl md:text-3xl font-black text-blue-700">
                                                     {routeInfo.distanceKm}
                                                 </div>
                                                 <div className="text-sm text-blue-500">
@@ -299,7 +303,7 @@ export default function LokasiDestinasiPage() {
                                                 <div className="text-xs uppercase text-blue-500 font-bold mb-2">
                                                     {lang.time}
                                                 </div>
-                                                <div className="text-3xl font-black text-blue-700">
+                                                <div className="text-2xl md:text-3xl font-black text-blue-700">
                                                     {routeInfo.durationMin}
                                                 </div>
                                                 <div className="text-sm text-blue-500">
@@ -332,12 +336,12 @@ export default function LokasiDestinasiPage() {
 
             {showLocationModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
+                    <div className="w-full max-w-md rounded-t-3xl md:rounded-3xl bg-white p-8 shadow-2xl">
                         <div className="text-5xl text-center mb-4">
                             📍
                         </div>
 
-                        <h2 className="text-xl font-bold text-center text-slate-800">
+                        <h2 className="text-lg md:text-xl font-bold text-center text-slate-800">
                             {lang.locationAccessRequired}
                         </h2>
 

@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { LogOut } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import {
     getLanguage,
@@ -38,6 +38,7 @@ export default function WisatawanLayout({
     const [foto, setFoto] = useState<File | null>(null);
     const [errorMsg, setErrorMsg] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [language, setCurrentLanguage] =
         useState<Language>("id");
 
@@ -202,7 +203,7 @@ export default function WisatawanLayout({
                             <h1 className="text-black font-extrabold text-2xl tracking-tight">Disparekraf</h1>
                         </div>
 
-                        <div className="flex items-center gap-5">
+                        <div className="hidden md:flex items-center gap-5">
                             <div className="flex items-center gap-3">
                                 <LanguageSwitcher />
                                 <span className="text-base font-semibold text-slate-800 hidden sm:block">
@@ -241,6 +242,13 @@ export default function WisatawanLayout({
                                 {lang.logout}
                             </button>
                         </div>
+
+                        <button
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            className="md:hidden"
+                        >
+                            {mobileMenuOpen ? <X size={28} className="text-slate-800" /> : <Menu size={28} className="text-slate-800" />}
+                        </button>
                     </div>
                     <nav className="hidden md:flex items-center gap-1 justify-between bg-slate-200/70 rounded-2xl px-2 py-2 overflow-x-auto">
                         <Link
@@ -287,6 +295,130 @@ export default function WisatawanLayout({
                         </Link>
                     </nav>
                 </div>
+                
+                {mobileMenuOpen && (
+                    <div className="md:hidden mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-lg">
+
+                        <div className="flex flex-col gap-2">
+
+                            <Link
+                                href="/wisatawan/dashboard"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={pathname.includes("/wisatawan/dashboard") ? activeClass : inactiveClass}
+                            >
+                                {lang.dashboard}
+                            </Link>
+
+                            <Link
+                                href="/wisatawan/destinasi"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={pathname.includes("/wisatawan/destinasi") ? activeClass : inactiveClass}
+                            >
+                                {lang.destination}
+                            </Link>
+
+                            <Link
+                                href="/wisatawan/pencarian"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={pathname.includes("/wisatawan/pencarian") ? activeClass : inactiveClass}
+                            >
+                                {lang.search}
+                            </Link>
+
+                            <Link
+                                href="/wisatawan/hasil-rekomendasi"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={pathname.includes("/wisatawan/hasil-rekomendasi") ? activeClass : inactiveClass}
+                            >
+                                {lang.recommendation}
+                            </Link>
+
+                            <Link
+                                href="/wisatawan/lokasi-destinasi"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={pathname.includes("/wisatawan/lokasi-destinasi") ? activeClass : inactiveClass}
+                            >
+                                {lang.location}
+                            </Link>
+
+                            <Link
+                                href="/wisatawan/ulasan-rating"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={pathname.includes("/wisatawan/ulasan-rating") ? activeClass : inactiveClass}
+                            >
+                                {lang.review}
+                            </Link>
+
+                            <Link
+                                href="/wisatawan/laporan"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={pathname.includes("/wisatawan/laporan") ? activeClass : inactiveClass}
+                            >
+                                {lang.report}
+                            </Link>
+
+                        </div>
+
+                        <div className="my-4 border-t border-slate-200"></div>
+
+                        <div className="flex items-center justify-between gap-3">
+
+                            <div className="flex items-center gap-3">
+
+                                <button
+                                    onClick={() => {
+                                        setUsername(userData?.username || "");
+                                        setEmail(userData?.email || "");
+                                        setAlamat(userData?.alamat || "");
+                                        setPassword("");
+                                        setFoto(null);
+                                        setErrorMsg("");
+                                        setIsProfileModalOpen(true);
+                                        setMobileMenuOpen(false);
+                                    }}
+                                >
+                                    <Image
+                                        src={
+                                            userData?.foto ||
+                                            `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                                userData?.username || "User"
+                                            )}`
+                                        }
+                                        alt="Profile"
+                                        width={42}
+                                        height={42}
+                                        className="rounded-full object-cover ring-2 ring-slate-200 hover:ring-blue-500 transition"
+                                    />
+                                </button>
+
+                                <div>
+                                    <p className="font-semibold text-slate-800">
+                                        {userData?.username || "Wisatawan"}
+                                    </p>
+
+                                    <p className="text-xs text-slate-500">
+                                        {userData?.email}
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <LanguageSwitcher />
+
+                        </div>
+
+                        <button
+                            onClick={() => {
+                                setMobileMenuOpen(false);
+                                setIsLogoutModalOpen(true);
+                            }}
+                            className="mt-4 w-full rounded-xl bg-red-600 py-2.5 font-semibold text-white transition hover:bg-red-700"
+                        >
+                            {lang.logout}
+                        </button>
+
+                    </div>
+                )}
             </header>
 
             <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
@@ -450,6 +582,6 @@ export default function WisatawanLayout({
                     </div>
                 </div>
             )}
-        </div>
+        </div >
     );
 }

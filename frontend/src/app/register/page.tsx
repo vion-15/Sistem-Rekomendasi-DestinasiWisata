@@ -3,7 +3,7 @@
 import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AlertCircle, CheckCircle, Eye, EyeOff } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle, Eye, EyeOff } from "lucide-react";
 import { getLanguage, Language } from "@/helpers/language";
 import { t } from "@/helpers/translate";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -21,6 +21,8 @@ export default function RegisterWisatawanPage() {
         useState<Language>("id");
 
     const lang = t(language);
+
+    console.log(process.env.NEXT_PUBLIC_API_URL);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -80,10 +82,13 @@ export default function RegisterWisatawanPage() {
     return (
         <div
             className="min-h-screen bg-gray-100 flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
-            style={{ backgroundImage: "url('/image/foto-bg-login-register.jpg')" }}
+            style={{ backgroundImage: "url('/images/foto-bg-login-register.jpg')" }}
         >
 
-            <div className="absolute top-5 right-5">
+            <div className="absolute top-5 right-5 flex items-center gap-3">
+                <Link href="/">
+                    <ArrowLeft className="bg-blue-700 rounded-sm"/>
+                </Link>
                 <LanguageSwitcher />
             </div>
 

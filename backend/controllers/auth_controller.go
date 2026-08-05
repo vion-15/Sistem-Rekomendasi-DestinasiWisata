@@ -157,7 +157,6 @@ func LoginUniversal(c *gin.Context) {
 				"data": gin.H{
 					"id":       wisatawan.ID,
 					"username": wisatawan.Username,
-					"alamat":   wisatawan.Alamat,
 					"email":    wisatawan.Email,
 					"foto":     wisatawan.Foto,
 				},
@@ -182,9 +181,8 @@ func RegisterWisatawan(c *gin.Context) {
 	username := strings.TrimSpace(c.PostForm("username"))
 	email := strings.ToLower(strings.TrimSpace(c.PostForm("email")))
 	password := c.PostForm("password")
-	alamat := strings.TrimSpace(c.PostForm("alamat"))
 
-	if username == "" || email == "" || password == "" || alamat == "" {
+	if username == "" || email == "" || password == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "semua field wajib diisi",
 		})
@@ -215,13 +213,6 @@ func RegisterWisatawan(c *gin.Context) {
 	if len(password) > 72 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "password maksimal 72 karakter",
-		})
-		return
-	}
-
-	if len(alamat) < 5 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "alamat terlalu pendek",
 		})
 		return
 	}
@@ -264,7 +255,6 @@ func RegisterWisatawan(c *gin.Context) {
 		Username: username,
 		Email:    email,
 		Password: string(hashedPassword),
-		Alamat:   alamat,
 		Foto:     fotoDefault,
 	}
 

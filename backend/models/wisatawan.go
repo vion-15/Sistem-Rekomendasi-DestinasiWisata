@@ -13,7 +13,6 @@ type Wisatawan struct {
 	Email     string         `gorm:"type:varchar(100);uniqueIndex;not null" json:"email"`
 	Password  string         `gorm:"type:varchar(255);not null" json:"-"`
 	Foto      string         `gorm:"type:varchar(255)" json:"foto"`
-	Alamat    string         `gorm:"type:text;not null" json:"alamat"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`

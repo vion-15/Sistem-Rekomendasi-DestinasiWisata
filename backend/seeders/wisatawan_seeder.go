@@ -28,21 +28,18 @@ func SeedWisatawan() error {
 				Username: "Budi Santoso",
 				Email:    "budi@gmail.com",
 				Password: string(hashedPassword),
-				Alamat:   "Jl. Malioboro No. 10, Yogyakarta",
 				Foto:     "https://ui-avatars.com/api/?name=Budi+Santoso&background=0D8ABC&color=fff",
 			},
 			{
 				Username: "Siti Rahma",
 				Email:    "siti.rahma@yahoo.com",
 				Password: string(hashedPassword),
-				Alamat:   "Jl. Asia Afrika No. 45, Bandung",
 				Foto:     "https://ui-avatars.com/api/?name=Siti+Rahma&background=F59E0B&color=fff",
 			},
 			{
 				Username: "Andi Wijaya",
 				Email:    "andi.w@outlook.com",
 				Password: string(hashedPassword),
-				Alamat:   "Jl. Sudirman No. 88, Jakarta Selatan",
 				Foto:     "https://ui-avatars.com/api/?name=Andi+Wijaya&background=10B981&color=fff",
 			},
 		}

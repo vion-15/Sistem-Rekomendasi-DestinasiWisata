@@ -136,7 +136,7 @@ func CariDestinasiCBF(c *gin.Context) {
 		Timeout: 60 * time.Second,
 	}
 
-	recommendationURL := "http://recommendation-service:8000"
+	recommendationURL := os.Getenv("RECOMMENDATION_URL")
 
 	fmt.Println("=== MENCOBA MENGHUBUNGI AI ===")
 	fmt.Println("URL:", recommendationURL)

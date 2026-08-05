@@ -91,16 +91,16 @@ export default function LaporanPage() {
     };
 
     return (
-        <div className="px-10 py-8">
-            <h2 className="text-3xl font-semibold text-gray-800 mb-8">
+        <div className="px-2 py-2 md:px-10 md:py-8">
+            <h2 className="text-xl md:text-3xl font-semibold text-gray-800 mb-8">
                 {lang.reportTitle}
             </h2>
 
             <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
                 <table className="w-full border-collapse">
                     <thead>
-                        <tr className="bg-gray-100 text-gray-700 text-lg">
-                            <th className="py-4 w-20 text-center font-semibold">
+                        <tr className="bg-gray-100 text-gray-700 text-sm md:text-xl">
+                            <th className="py-4 w-14 md:w-20 text-center font-semibold">
                                 {lang.reportTableNo}
                             </th>
                             <th className="py-4 px-6 text-left font-semibold">
@@ -144,17 +144,17 @@ export default function LaporanPage() {
                                     key={item.id}
                                     className="text-gray-700 text-base border-t border-gray-200 hover:bg-gray-50 transition"
                                 >
-                                    <td className="py-5 text-center">
+                                    <td className="py-5 text-center md:text-xl">
                                         {index + 1}
                                     </td>
-                                    <td className="px-6">
+                                    <td className="px-6 text-sm md:text-xl">
                                         {item.nama}
                                     </td>
                                     <td>
-                                        <div className="flex justify-center gap-3">
+                                        <div className="flex justify-center gap-3 p-2">
                                             <button
                                                 onClick={() => handleDownload(item.jenis)}
-                                                className="bg-blue-600 text-white px-8 py-2.5 rounded-lg hover:bg-blue-700 
+                                                className="bg-blue-600 text-white px-4 py-1 md:px-8 md:py-2.5 rounded-lg hover:bg-blue-700 
                                                 transition shadow-sm"
                                             >
                                                 {lang.reportDownload}

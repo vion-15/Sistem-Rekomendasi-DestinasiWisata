@@ -3,7 +3,7 @@
 import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { getLanguage, Language } from "@/helpers/language";
 import { t } from "@/helpers/translate";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -82,11 +82,14 @@ export default function UniversalLoginPage() {
     return (
         <div
             className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
-            style={{ backgroundImage: "url('/image/foto-bg-login-register.jpg')" }}
+            style={{ backgroundImage: "url('/images/foto-bg-login-register.jpg')" }}
         >
             <div className="absolute inset-0 bg-slate-900/40 z-0"></div>
 
-            <div className="absolute top-5 right-5">
+            <div className="absolute top-5 right-5 flex items-center gap-3">
+                <Link href="/">
+                    <ArrowLeft className="bg-blue-700 rounded-sm"/>
+                </Link>
                 <LanguageSwitcher />
             </div>
 

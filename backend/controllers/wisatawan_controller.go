@@ -18,7 +18,7 @@ func GetWisatawan(c *gin.Context) {
 	var wisatawanList []models.Wisatawan
 
 	err := config.DB.
-		Select("id", "username", "email", "foto", "alamat", "created_at").
+		Select("id", "username", "email", "foto", "created_at").
 		Order("created_at DESC").
 		Find(&wisatawanList).Error
 
@@ -149,7 +149,6 @@ func UpdateWisatawan(c *gin.Context) {
 
 	username := strings.TrimSpace(c.PostForm("username"))
 	email := strings.TrimSpace(c.PostForm("email"))
-	alamat := strings.TrimSpace(c.PostForm("alamat"))
 	password := c.PostForm("password")
 
 	if username == "" || email == "" {
@@ -184,7 +183,6 @@ func UpdateWisatawan(c *gin.Context) {
 
 	wisatawan.Username = username
 	wisatawan.Email = email
-	wisatawan.Alamat = alamat
 
 	// Password opsional
 	if password != "" {
@@ -243,7 +241,6 @@ func UpdateWisatawan(c *gin.Context) {
 			"id":       wisatawan.ID,
 			"username": wisatawan.Username,
 			"email":    wisatawan.Email,
-			"alamat":   wisatawan.Alamat,
 			"foto":     wisatawan.Foto,
 		},
 	})
