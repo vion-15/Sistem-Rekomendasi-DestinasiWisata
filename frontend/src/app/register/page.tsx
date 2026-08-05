@@ -13,7 +13,6 @@ export default function RegisterWisatawanPage() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [alamat, setAlamat] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [successMsg, setSuccessMsg] = useState("");
@@ -48,7 +47,6 @@ export default function RegisterWisatawanPage() {
         formData.append("username", username);
         formData.append("email", email);
         formData.append("password", password);
-        formData.append("alamat", alamat);
 
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
@@ -89,7 +87,7 @@ export default function RegisterWisatawanPage() {
                 <LanguageSwitcher />
             </div>
 
-            <div className="bg-white p-8 border border-slate-200 rounded-xl shadow-xl shadow-slate-900/5 w-full max-w-md">
+            <div className="mt-16 sm:mt-8 md:mt-0 bg-white p-6 md:p-8 border border-slate-200 rounded-xl shadow-xl shadow-slate-900/5 w-full max-w-md">
                 <h1 className="text-2xl font-bold text-slate-800 text-center mb-2">{lang.registerTitle}</h1>
                 <p className="text-slate-500 text-sm text-center mb-8">{lang.registerSubtitle}</p>
 
@@ -175,25 +173,6 @@ export default function RegisterWisatawanPage() {
                                 <Eye size={20} />
                             )}
                         </button>
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="alamat"
-                            className="mb-2 block text-sm font-medium text-slate-700">{lang.currentAddress}</label>
-                        <textarea
-                            id="alamat"
-                            value={alamat}
-                            onChange={(e) => setAlamat(e.target.value)}
-                            rows={3}
-                            required
-                            placeholder={lang.currentAddressPlaceholder}
-                            className="
-                                w-full rounded-xl border border-slate-300 px-4 py-3
-                                text-slate-900 placeholder:text-slate-400 outline-none resize-none  
-                                focus:border-blue-500 transition-all duration-200 focus:ring-2 focus:ring-blue-500
-                            "
-                        ></textarea>
                     </div>
 
                     <button
