@@ -59,7 +59,7 @@ func CariDanSimpanRekomendasi(c *gin.Context) {
 		return
 	}
 
-	riwayat := models.RiwayatPencarian{
+	riwayat := models.Pencarian{
 		WisatawanID: wisatawanID,
 		Keyword:     keyword,
 	}

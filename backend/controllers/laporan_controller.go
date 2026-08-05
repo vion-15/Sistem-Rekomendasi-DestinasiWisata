@@ -492,7 +492,7 @@ func downloadDataPencarian(c *gin.Context, laporan models.Laporan) {
 	// QUERY DATABASE
 	// ==========================
 
-	var riwayat []models.RiwayatPencarian
+	var riwayat []models.Pencarian
 
 	if err := config.DB.
 		Where("created_at >= ? AND created_at < ?", startDate, endDate).
@@ -717,7 +717,7 @@ func DownloadRiwayatPencarianWisatawan(c *gin.Context) {
 		return
 	}
 
-	var riwayat []models.RiwayatPencarian
+	var riwayat []models.Pencarian
 
 	if err := config.DB.
 		Where("wisatawan_id = ?", parsedID).

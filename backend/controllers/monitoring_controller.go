@@ -43,15 +43,15 @@ func GetStatistikPencarian(c *gin.Context) {
 	now := time.Now()
 	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 
-	config.DB.Model(&models.RiwayatPencarian{}).Count(&total)
+	config.DB.Model(&models.Pencarian{}).Count(&total)
 	response.TotalPencarian = total
 
-	config.DB.Model(&models.RiwayatPencarian{}).Where("created_at >= ?", startOfDay).Count(&hariIni)
+	config.DB.Model(&models.Pencarian{}).Where("created_at >= ?", startOfDay).Count(&hariIni)
 	response.PencarianHariIni = hariIni
 
 	var total30Hari int64
 	start30Days := startOfDay.AddDate(0, 0, -30)
-	config.DB.Model(&models.RiwayatPencarian{}).Where("created_at >= ?", start30Days).Count(&total30Hari)
+	config.DB.Model(&models.Pencarian{}).Where("created_at >= ?", start30Days).Count(&total30Hari)
 	response.RataRataHari = total30Hari / 30
 
 	namaHariIndo := map[time.Weekday]string{
@@ -73,7 +73,7 @@ func GetStatistikPencarian(c *gin.Context) {
 		nextDate := targetDate.AddDate(0, 0, 1)
 
 		var count int64
-		config.DB.Model(&models.RiwayatPencarian{}).
+		config.DB.Model(&models.Pencarian{}).
 			Where("created_at >= ? AND created_at < ?", targetDate, nextDate).
 			Count(&count)
 

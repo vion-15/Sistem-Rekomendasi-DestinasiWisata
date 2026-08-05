@@ -25,7 +25,7 @@ func GetRiwayatPencarianByWisatawan(c *gin.Context) {
 		return
 	}
 
-	var riwayatList []models.RiwayatPencarian
+	var riwayatList []models.Pencarian
 
 	if err := config.DB.
 		Where("wisatawan_id = ?", parsedID).
@@ -58,7 +58,7 @@ func DeleteRiwayatPencarian(c *gin.Context) {
 
 	result := config.DB.
 		Where("id = ?", parsedID).
-		Delete(&models.RiwayatPencarian{})
+		Delete(&models.Pencarian{})
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -106,7 +106,7 @@ func DeleteAllRiwayatPencarian(c *gin.Context) {
 		return
 	}
 
-	result := config.DB.Where("wisatawan_id = ?", parsedID).Delete(&models.RiwayatPencarian{})
+	result := config.DB.Where("wisatawan_id = ?", parsedID).Delete(&models.Pencarian{})
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

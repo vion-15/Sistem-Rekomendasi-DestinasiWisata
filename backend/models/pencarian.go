@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type RiwayatPencarian struct {
+type Pencarian struct {
 	ID uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
 
 	// Relasi ke tabel Wisatawan
@@ -20,7 +20,7 @@ type RiwayatPencarian struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (r *RiwayatPencarian) BeforeCreate(tx *gorm.DB) (err error) {
+func (r *Pencarian) BeforeCreate(tx *gorm.DB) (err error) {
 	r.ID = uuid.New()
 	return nil
 }

@@ -101,7 +101,7 @@ func CariDestinasiCBF(c *gin.Context) {
 	// ============================
 	// 3. SIMPAN RIWAYAT PENCARIAN
 	// ============================
-	riwayat := models.RiwayatPencarian{
+	riwayat := models.Pencarian{
 		WisatawanID: wisatawanID,
 		Keyword:     keyword,
 	}
@@ -240,7 +240,7 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 
 	var profileBuilder strings.Builder
 
-	var riwayatPencarian []models.RiwayatPencarian
+	var riwayatPencarian []models.Pencarian
 
 	config.DB.
 		Where("wisatawan_id = ?", wisatawanID).
@@ -714,7 +714,7 @@ func GetPencarian(c *gin.Context) {
 		return
 	}
 
-	var riwayat []models.RiwayatPencarian
+	var riwayat []models.Pencarian
 
 	err = config.DB.
 		Where("wisatawan_id = ?", wisatawanID).
