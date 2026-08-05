@@ -6,7 +6,7 @@ import HeroSection from "@/components/HeroSectionLandingPage";
 import AboutSection from "@/components/AboutSectionLandingPage";
 import DestinationSection from "@/components/DestinationSectionLandingPage";
 import Footer from "@/components/Footer";
-import { Globe } from "lucide-react";
+import { Globe, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
     getLanguage,
@@ -17,6 +17,7 @@ import { t } from "@/helpers/translate";
 
 export default function LandingPage() {
     const [language, setCurrentLanguage] = useState<Language>("id");
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const lang = t(language);
 
@@ -82,7 +83,7 @@ export default function LandingPage() {
                             className={navLinkStyle}>Destinasi Wisata</Link>
                     </div>
 
-                    <div className="flex items-center gap-5">
+                    <div className="hidden md:flex items-center gap-5">
                         <div
                             className="
                             flex items-center gap-2 rounded-full border border-slate-200
@@ -139,7 +140,72 @@ export default function LandingPage() {
                             Register
                         </Link>
                     </div>
+                    <button
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        className="md:hidden"
+                    >
+                        {mobileMenuOpen ? <X size={28} className="text-slate-800" /> : <Menu size={28} className="text-slate-800" />}
+                    </button>
                 </nav>
+                {
+                    mobileMenuOpen && (
+                        <div className="md:hidden mt-4 rounded-3xl border bg-white shadow-lg p-6">
+                            <div className="flex flex-col gap-5">
+                                <Link href="/" className={navLinkStyle}>Home</Link>
+                                <Link href="#about" className={navLinkStyle}>About</Link>
+                                <Link href="#destinasi" className={navLinkStyle}>
+                                    Destinasi Wisata
+                                </Link>
+                                <hr />
+                                {/* Language */}
+                                <div className="flex items-center gap-3">
+                                    <Globe size={18} className="text-slate-500" />
+                                    <button
+                                        onClick={() => {
+                                            saveLanguage("id");
+                                            setCurrentLanguage("id");
+                                        }}
+                                        className={`
+                                        rounded-full px-3 py-1 text-sm font-semibold transition-all
+                                        ${language === "id"
+                                                ? "bg-blue-600 text-white shadow-sm"
+                                                : "text-slate-600 hover:bg-slate-200"
+                                            }
+                                        `}
+                                    >
+                                        ID
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            saveLanguage("en");
+                                            setCurrentLanguage("en");
+                                        }}
+                                        className={`
+                                        rounded-full px-3 py-1 text-sm font-semibold transition-all
+                                        ${language === "en"
+                                                ? "bg-blue-600 text-white shadow-sm"
+                                                : "text-slate-600 hover:bg-slate-200"
+                                            }
+                                        `}
+                                    >
+                                        EN
+                                    </button>
+                                </div>
+                                <hr />
+                                <Link href="/login"  className="
+                                px-1 py-1 text-lg font-semibold text-slate-600 
+                                transition-colors duration-200 hover:text-blue-600">
+                                    Login
+                                </Link>
+                                <Link href="/register"  className="
+                                px-1 py-1 text-lg font-semibold text-slate-600 
+                                transition-colors duration-200 hover:text-blue-600">
+                                    Register
+                                </Link>
+                            </div>
+                        </div>
+                    )}
             </header>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
