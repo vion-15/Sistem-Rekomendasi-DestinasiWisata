@@ -11,6 +11,10 @@ RUN npm install
 
 COPY . .
 
+ARG ENV_FILE=.env.local
+
+COPY ${ENV_FILE} .env.production
+
 RUN npm run build
 
 # ===========================

@@ -27,7 +27,7 @@ const featuredDestinations = [
             id: "Jakarta Selatan",
             en: "South Jakarta",
         },
-        image: "/image/Ragunan.jpg",
+        image: "/images/Ragunan.jpg",
     },
     {
         id: 2,
@@ -43,7 +43,7 @@ const featuredDestinations = [
             id: "Jakarta Pusat",
             en: "Central Jakarta",
         },
-        image: "/image/Monas.jpg",
+        image: "/images/Monas.jpg",
     },
     {
         id: 3,
@@ -59,7 +59,7 @@ const featuredDestinations = [
             id: "Jakarta Barat",
             en: "West Jakarta",
         },
-        image: "/image/Kota-Tua.jpg",
+        image: "/images/Kota-Tua.jpg",
     },
 ];
 
