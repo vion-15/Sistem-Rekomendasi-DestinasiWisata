@@ -119,7 +119,7 @@ func GetStatistikDestinasi(c *gin.Context) {
 
 	// 3. Hitung Total Interaksi Pengguna
 	// Asumsi Anda memiliki model RiwayatDestinasi tempat riwayat klik disimpan
-	config.DB.Model(&models.RiwayatDestinasi{}).Count(&interaksiPengguna)
+	config.DB.Model(&models.LokasiDestinasi{}).Count(&interaksiPengguna)
 	response.InteraksiPengguna = interaksiPengguna
 
 	// 4. Susun Data Grafik 7 Hari Terakhir dari interaksi RiwayatDestinasi
@@ -141,7 +141,7 @@ func GetStatistikDestinasi(c *gin.Context) {
 		nextDate := targetDate.AddDate(0, 0, 1)
 
 		var count int64
-		config.DB.Model(&models.RiwayatDestinasi{}).
+		config.DB.Model(&models.LokasiDestinasi{}).
 			Where("created_at >= ? AND created_at < ?", targetDate, nextDate).
 			Count(&count)
 

@@ -32,7 +32,7 @@ func ConnectDatabase() {
 	fmt.Println("Koneksi database berhasil!")
 
 	// GORM akan otomatis membuat tabel 'admins'
-	err = database.AutoMigrate(&models.Admin{}, &models.Petugas{}, &models.Destinasi{}, &models.Wisatawan{}, &models.Ulasan{}, &models.Pencarian{}, &models.RiwayatDestinasi{}, &models.Laporan{}, &models.HasilRekomendasi{})
+	err = database.AutoMigrate(&models.Admin{}, &models.Petugas{}, &models.Destinasi{}, &models.Wisatawan{}, &models.Ulasan{}, &models.Pencarian{}, &models.LokasiDestinasi{}, &models.Laporan{}, &models.HasilRekomendasi{})
 	if err != nil {
 		log.Fatal("Gagal melakukan migrasi database:", err)
 	}

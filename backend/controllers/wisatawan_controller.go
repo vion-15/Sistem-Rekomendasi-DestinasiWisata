@@ -54,7 +54,7 @@ func DeleteWisatawan(c *gin.Context) {
 		Delete(&models.Ulasan{})
 
 	tx.Where("wisatawan_id = ?", wisatawan.ID).
-		Delete(&models.RiwayatDestinasi{})
+		Delete(&models.LokasiDestinasi{})
 
 	tx.Where("wisatawan_id = ?", wisatawan.ID).
 		Delete(&models.Pencarian{})

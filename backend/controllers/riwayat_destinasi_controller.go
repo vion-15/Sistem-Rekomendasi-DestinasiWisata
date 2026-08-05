@@ -47,7 +47,7 @@ func SimpanRiwayatDestinasi(c *gin.Context) {
 		return
 	}
 
-	riwayat := models.RiwayatDestinasi{
+	riwayat := models.LokasiDestinasi{
 		WisatawanID: wisatawanID,
 		DestinasiID: destinasiID,
 	}
@@ -98,7 +98,7 @@ func GetRiwayatDestinasiByWisatawan(c *gin.Context) {
 		return
 	}
 
-	var riwayatList []models.RiwayatDestinasi
+	var riwayatList []models.LokasiDestinasi
 
 	if err := config.DB.
 		Preload("Destinasi").
@@ -164,7 +164,7 @@ func DeleteRiwayatDestinasi(c *gin.Context) {
 	}
 
 	// Ambil data riwayat
-	var riwayat models.RiwayatDestinasi
+	var riwayat models.LokasiDestinasi
 
 	if err := config.DB.
 		Where("id = ?", riwayatID).
@@ -233,7 +233,7 @@ func DeleteAllRiwayatDestinasi(c *gin.Context) {
 	// Hard delete seluruh riwayat destinasi milik wisatawan
 	result := config.DB.
 		Where("wisatawan_id = ?", parsedID).
-		Delete(&models.RiwayatDestinasi{})
+		Delete(&models.LokasiDestinasi{})
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

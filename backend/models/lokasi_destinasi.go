@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type RiwayatDestinasi struct {
+type LokasiDestinasi struct {
 	ID uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
 
 	// Relasi ke tabel Wisatawan
@@ -22,7 +22,7 @@ type RiwayatDestinasi struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (r *RiwayatDestinasi) BeforeCreate(tx *gorm.DB) (err error) {
+func (r *LokasiDestinasi) BeforeCreate(tx *gorm.DB) (err error) {
 	r.ID = uuid.New()
 	return nil
 }

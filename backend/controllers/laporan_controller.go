@@ -201,10 +201,10 @@ func downloadDataLokasi(c *gin.Context, laporan models.Laporan) {
 	// QUERY DATABASE
 	// ==========================
 
-	var data []models.RiwayatDestinasi
+	var data []models.LokasiDestinasi
 
 	err = config.DB.
-		Model(&models.RiwayatDestinasi{}).
+		Model(&models.LokasiDestinasi{}).
 		Preload("Wisatawan").
 		Preload("Destinasi").
 		Where(
@@ -770,7 +770,7 @@ func DownloadRiwayatDestinasiWisatawan(c *gin.Context) {
 		return
 	}
 
-	var riwayat []models.RiwayatDestinasi
+	var riwayat []models.LokasiDestinasi
 
 	if err := config.DB.
 		Preload("Destinasi").

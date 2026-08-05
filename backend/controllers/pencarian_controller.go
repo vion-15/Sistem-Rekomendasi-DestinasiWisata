@@ -253,7 +253,7 @@ func RekomendasiDashboardCBF(c *gin.Context) {
 		profileBuilder.WriteString(" ")
 	}
 
-	var riwayatDestinasi []models.RiwayatDestinasi
+	var riwayatDestinasi []models.LokasiDestinasi
 
 	config.DB.
 		Preload("Destinasi").
