@@ -13,6 +13,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
+@app.on_event("startup")
+def startup():
+
+    print("Loading destination embeddings...")
+
+    build_destination_embeddings()
+
+    print("Destination embeddings ready.")
 
 # =========================
 # MODEL
@@ -68,29 +76,14 @@ def test_preprocessing(req: CleanRequest):
 @app.post("/recommend")
 def get_recommendations(request: RecommendationRequest):
 
-    try:
-        
-        if recommendation.DESTINATION_EMBEDDINGS is None:
-            build_destination_embeddings()
+    recommendations = get_cbf_recommendations(
+        user_history_text=request.user_history_text,
+        top_n=request.top_n
+    )
 
-        recommendations = get_cbf_recommendations(
-            user_history_text=request.user_history_text,
-            top_n=request.top_n
-        )
-
-        return {
-            "recommendations": recommendations
-        }
-
-    except Exception as e:
-
-        print("ERROR RECOMMENDATION:")
-        print(str(e))
-
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+    return {
+        "recommendations": recommendations
+    }
         
 @app.post("/reload-destinations")
 def reload_destinations():
