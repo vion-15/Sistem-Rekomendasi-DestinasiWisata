@@ -16,6 +16,15 @@ import (
 	"gorm.io/gorm"
 )
 
+type ResetPasswordInput struct {
+	Password        string `json:"password" binding:"required"`
+	ConfirmPassword string `json:"confirm_password" binding:"required"`
+}
+
+type ForgotPasswordInput struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
 type LoginInput struct {
 	Email    string `json:"email" form:"email" binding:"required,email"`
 	Password string `json:"password" form:"password" binding:"required"`
@@ -267,5 +276,129 @@ func RegisterWisatawan(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "registrasi berhasil, silakan login",
+	})
+}
+
+func ForgotPassword(c *gin.Context) {
+	var input ForgotPasswordInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "email tidak valid",
+		})
+		return
+	}
+
+	email := strings.ToLower(strings.TrimSpace(input.Email))
+
+	var wisatawan models.Wisatawan
+
+	err := config.DB.
+		Where("email = ?", email).
+		First(&wisatawan).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "email tidak terdaftar",
+		})
+		return
+	}
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "terjadi kesalahan server",
+		})
+		return
+	}
+
+	if err := utils.SendResetPasswordEmail(email); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "gagal mengirim email",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "link reset password berhasil dikirim ke email",
+	})
+}
+
+func ResetPassword(c *gin.Context) {
+
+	email := strings.ToLower(strings.TrimSpace(c.Query("email")))
+
+	if email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "email tidak ditemukan",
+		})
+		return
+	}
+
+	var input ResetPasswordInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "data tidak valid",
+		})
+		return
+	}
+
+	if len(input.Password) < 8 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "password minimal 8 karakter",
+		})
+		return
+	}
+
+	if input.Password != input.ConfirmPassword {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "konfirmasi password tidak sama",
+		})
+		return
+	}
+
+	var wisatawan models.Wisatawan
+
+	err := config.DB.
+		Where("email = ?", email).
+		First(&wisatawan).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "email tidak ditemukan",
+		})
+		return
+	}
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "terjadi kesalahan server",
+		})
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(input.Password),
+		bcrypt.DefaultCost,
+	)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "gagal memproses password",
+		})
+		return
+	}
+
+	wisatawan.Password = string(hashedPassword)
+
+	if err := config.DB.Save(&wisatawan).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "gagal mengubah password",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "password berhasil diubah",
 	})
 }

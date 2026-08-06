@@ -344,6 +344,21 @@ const en = {
     loginHere: "Sign in here",
 
     systemError: "A system error occurred",
+
+    forgetPassword: "Forget Password",
+
+    pwDescription: "Enter your registered email address to receive a password reset link.",
+    emailResetPlaceholder: "input email",
+    sendingLink: "sending...",
+    sendLink: "Send Password Reset Link",
+    backLogin: "Back To Login",
+
+    resetPwTitle: "Change Password",
+    resetPwDesc: "Please enter your new password.",
+    newPwLabel: "New Password",
+    confirmPw: "Confirm Password",
+    savingNewPw: "Saving...",
+    savePw: "Save Password",
 };
 
 export default en;

@@ -339,6 +339,25 @@ const id = {
     loginHere: "Login di sini",
 
     systemError: "Terjadi kesalahan sistem",
+
+    forgetPassword: "Lupa Password",
+
+    pwDescription: "Masukkan email yang terdaftar untuk menerima link reset password.",
+
+    emailResetPlaceholder: "Masukkan email",
+
+    sendingLink: "mengirim...",
+
+    sendLink: "Kirim Link Reset Password",
+
+    backLogin: "Kembali ke Login",
+
+    resetPwTitle: "Ganti Password",
+    resetPwDesc: "Silakan masukkan password baru Anda.",
+    newPwLabel: "Password Baru",
+    confirmPw: "Konfirmasi Password",
+    savingNewPw: "Menyimpan...",
+    savePw: "Simpan Password",
 };
 
 export default id;

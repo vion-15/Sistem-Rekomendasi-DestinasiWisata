@@ -88,7 +88,7 @@ export default function UniversalLoginPage() {
 
             <div className="absolute top-5 right-5 flex items-center gap-3">
                 <Link href="/">
-                    <ArrowLeft className="bg-blue-700 rounded-sm"/>
+                    <ArrowLeft className="bg-blue-700 rounded-sm" />
                 </Link>
                 <LanguageSwitcher />
             </div>
@@ -171,6 +171,15 @@ export default function UniversalLoginPage() {
                         href="/register"
                         className="text-blue-600 hover:text-blue-700 hover:underline font-bold transition-colors">
                         {lang.createAccount}
+                    </Link>
+                </div>
+
+                <div className="flex justify-center mt-2">
+                    <Link
+                        href="/forgot-password"
+                        className="text-sm text-blue-600 hover:underline"
+                    >
+                        {lang.forgetPassword}?
                     </Link>
                 </div>
             </div>

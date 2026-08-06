@@ -26,6 +26,8 @@ func SetupRouter() *gin.Engine {
 		{
 			auth.POST("/login", controllers.LoginUniversal)
 			auth.POST("/register", controllers.RegisterWisatawan)
+			auth.POST("/forgot-password", controllers.ForgotPassword)
+			auth.POST("/reset-password", controllers.ResetPassword)
 		}
 
 		admin := api.Group("/admin")
