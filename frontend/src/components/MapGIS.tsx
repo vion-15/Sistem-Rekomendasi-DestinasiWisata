@@ -18,7 +18,7 @@ L.Icon.Default.mergeOptions({
 });
 
 const userIcon = new L.Icon({
-    iconUrl: '/images/icon-user.png',
+    iconUrl: '/frontend-images/icon-user.png',
     iconSize: [55, 55],
     iconAnchor: [23, 23],
     popupAnchor: [0, -23],

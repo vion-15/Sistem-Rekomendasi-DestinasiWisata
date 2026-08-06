@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
             className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
             style={{
                 backgroundImage:
-                    "url('/images/foto-bg-login-register.jpg')",
+                    "url('/frontend-images/foto-bg-login-register.jpg')",
             }}
         >
             <div className="absolute inset-0 bg-slate-900/40 z-0"></div>

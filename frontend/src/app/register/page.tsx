@@ -82,7 +82,7 @@ export default function RegisterWisatawanPage() {
     return (
         <div
             className="min-h-screen bg-gray-100 flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
-            style={{ backgroundImage: "url('/images/foto-bg-login-register.jpg')" }}
+            style={{ backgroundImage: "url('/frontend-images/foto-bg-login-register.jpg')" }}
         >
 
             <div className="absolute top-5 right-5 flex items-center gap-3">

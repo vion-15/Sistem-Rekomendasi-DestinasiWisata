@@ -78,7 +78,7 @@ export default function HeroSection({
                         overflow-hidden rounded-3xl shadow-2xl 
                         border border-slate-200 select-none">
                     <Image
-                        src="/images/foto-herosection-landingpage.jpg"
+                        src="/frontend-images/foto-herosection-landingpage.jpg"
                         alt={lang.heroImageAlt}
                         width={1200}
                         height={800}

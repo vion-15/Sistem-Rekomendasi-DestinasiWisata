@@ -110,7 +110,7 @@ export default function ResetPasswordForm() {
             className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat relative"
             style={{
                 backgroundImage:
-                    "url('/images/foto-bg-login-register.jpg')",
+                    "url('/frontend-images/foto-bg-login-register.jpg')",
             }}
         >
 
