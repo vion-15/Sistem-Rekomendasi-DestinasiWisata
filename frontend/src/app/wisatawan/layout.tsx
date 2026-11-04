@@ -193,14 +193,7 @@ export default function WisatawanLayout({
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-3">
-                            <Image
-                                src="/logo-vektor.png"
-                                width={40}
-                                height={40}
-                                alt="gambar logo"
-                                className="object-contain"
-                            />
-                            <h1 className="text-black font-extrabold text-2xl tracking-tight">Disparekraf</h1>
+                            <h1 className="text-black font-extrabold text-2xl tracking-tight">Tourist Recommendation System</h1>
                         </div>
 
                         <div className="hidden md:flex items-center gap-5">
@@ -230,6 +223,7 @@ export default function WisatawanLayout({
                                         alt="Profile"
                                         width={40}
                                         height={40}
+                                        unoptimized
                                         className="w-10 h-10 rounded-full object-cover hover:ring-2 hover:ring-blue-500 transition"
                                     />
                                 </button>

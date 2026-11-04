@@ -67,8 +67,8 @@ export default function MapGIS({ destinasiList, selectedDest, onViewDetail, user
     return (
         <MapContainer center={defaultCenter} zoom={11} className="w-full h-full rounded-2xl z-0">
             <TileLayer
-                attribution='© OpenStreetMap © CARTO'
-                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
             <FitBoundsView destinasiList={destinasiList} routePath={routePath} />

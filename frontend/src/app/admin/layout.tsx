@@ -87,13 +87,7 @@ export default function AdminLayout({
             <aside className="w-64 bg-slate-800 text-white flex flex-col shadow-xl">
                 <div className="p-5 text-xl font-bold border-b border-slate-700
                 flex flex-row items-end gap-4">
-                    <Image
-                        src="/Logo.svg"
-                        width={40}
-                        height={40}
-                        alt="gambar logo"
-                    />
-                    <h3>Disparekraf</h3>
+                    <h3>Menu</h3>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">

@@ -61,14 +61,8 @@ export default function LandingPage() {
                         className="
                             flex items-center gap-2 text-slate-900 transition-opacity
                             hover:opacity-80 ">
-                        <Image
-                            src={"/logo-vektor.png"}
-                            width={40}
-                            height={48}
-                            alt="Logo Disparekraf"
-                        />
 
-                        <span className="font-bold text-lg tracking-tight">Disparekraf</span>
+                        <span className="font-bold text-lg tracking-tight">Tourist Recomendation System</span>
                     </Link>
 
                     <div className="hidden items-center gap-8 md:flex">
