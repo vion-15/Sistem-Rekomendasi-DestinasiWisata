@@ -6,10 +6,8 @@ services:
     container_name: wisata_db
     restart: unless-stopped
 
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password123
-      POSTGRES_DB: db_wisata
+    env_file:
+      - ./backend/.env
 
     ports:
       - "5433:5432"
